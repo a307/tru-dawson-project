@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+
 const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
 void main() {
-  runApp(MaterialApp(
-      home: CustomForm()//class
-  ));
+  runApp(MaterialApp(home: CustomForm() //class
+      ));
 }
 
 class CustomForm extends StatefulWidget {
@@ -14,7 +14,6 @@ class CustomForm extends StatefulWidget {
 }
 
 class _CustomFormState extends State<CustomForm> {
-
   final _formKey = GlobalKey<FormState>();
   String dropDownValue = list.first;
   @override
@@ -32,8 +31,7 @@ class _CustomFormState extends State<CustomForm> {
             ),
             Text(
               'Enter Phone Number',
-              textAlign: TextAlign.left
-              ,
+              textAlign: TextAlign.left,
             ),
             Material(
               child: TextFormField(
@@ -56,23 +54,16 @@ class _CustomFormState extends State<CustomForm> {
                     child: Text(value),
                   );
                 }).toList(),
-                onChanged: (String? value){
+                onChanged: (String? value) {
                   setState(() {
                     dropDownValue = value!;
                   });
-                }
-            ),
+                }),
             SizedBox(height: 50),
-            ElevatedButton(
-                onPressed: (){
-
-                },
-                child: const Text('Submit')
-            )
+            ElevatedButton(onPressed: () {}, child: const Text('Submit'))
           ],
         ),
       ),
     );
   }
 }
-
