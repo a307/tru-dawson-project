@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
 void main() {
-  runApp(MaterialApp(home: CustomForm() //class
+  runApp(const MaterialApp(home: CustomForm() //class
       ));
 }
 
@@ -26,26 +26,26 @@ class _CustomFormState extends State<CustomForm> {
         key: _formKey,
         child: Column(
           children: <Widget>[
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
-            Text(
+            const Text(
               'Enter Phone Number',
               textAlign: TextAlign.left,
             ),
             Material(
               child: TextFormField(
                 decoration: const InputDecoration(
-                  icon: const Icon(Icons.phone),
+                  icon: Icon(Icons.phone),
                   hintText: 'Enter a phone number',
                   labelText: 'Phone',
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
-            Text('Select from the Drop down'),
+            const Text('Select from the Drop down'),
             DropdownButton(
                 value: dropDownValue,
                 items: list.map<DropdownMenuItem<String>>((String value) {
@@ -59,7 +59,7 @@ class _CustomFormState extends State<CustomForm> {
                     dropDownValue = value!;
                   });
                 }),
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
             ElevatedButton(onPressed: () {}, child: const Text('Submit'))
           ],
         ),
