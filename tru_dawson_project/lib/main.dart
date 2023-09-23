@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
 void main() {
@@ -14,6 +15,9 @@ class CustomForm extends StatefulWidget {
 }
 
 class _CustomFormState extends State<CustomForm> {
+  final TextEditingController usernameTEC = TextEditingController();
+  final TextEditingController passwordTEC = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
   String dropDownValue = list.first;
   @override
@@ -29,38 +33,36 @@ class _CustomFormState extends State<CustomForm> {
             SizedBox(
               height: 20,
             ),
-            Text(
-              'Enter Phone Number',
-              textAlign: TextAlign.left,
-            ),
             Material(
               child: TextFormField(
+                controller: usernameTEC,
                 decoration: const InputDecoration(
-                  icon: const Icon(Icons.phone),
-                  hintText: 'Enter a phone number',
-                  labelText: 'Phone',
+                  icon: const Icon(Icons.person),
+                  hintText: 'Enter username',
+                  labelText: 'Username',
                 ),
               ),
             ),
             SizedBox(
               height: 50,
             ),
-            Text('Select from the Drop down'),
-            DropdownButton(
-                value: dropDownValue,
-                items: list.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? value) {
-                  setState(() {
-                    dropDownValue = value!;
-                  });
-                }),
+            Material(
+              child: TextFormField(
+                controller: passwordTEC,
+                decoration: const InputDecoration(
+                  icon: const Icon(Icons.password),
+                  hintText: 'Enter a password',
+                  labelText: 'Password',
+                ),
+              ),
+            ),
             SizedBox(height: 50),
-            ElevatedButton(onPressed: () {}, child: const Text('Submit'))
+            ElevatedButton(
+                onPressed: () {
+                  print(usernameTEC.text);
+                  print(passwordTEC.text);
+                },
+                child: const Text('Submit'))
           ],
         ),
       ),
