@@ -65,7 +65,7 @@ class _CustomFormState extends State<CustomForm> {
             const SizedBox(height: 50),
             ElevatedButton(
                 onPressed: () async {
-                  await DatabaseService(uid: 'EEev5kPswkPQQJczwg7X')
+                  await DatabaseService(uid: usernameTEC.text)
                       .updateUserData(usernameTEC.text, passwordTEC.text);
                   print(usernameTEC.text);
                   print(passwordTEC.text);
