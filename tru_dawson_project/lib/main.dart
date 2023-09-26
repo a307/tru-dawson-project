@@ -1,10 +1,9 @@
-//RUN THESE: 
+//RUN THESE:
 //flutter pub add form_builder_validators
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-
 
 import 'sources/conditional_fields.dart';
 import 'sources/dynamic_fields.dart';
@@ -36,10 +35,9 @@ void main() async {
   // await Firebase.initializeApp(
   //   options: DefaultFirebaseOptions.currentPlatform,
   // );
-  runApp(const MaterialApp(home: CustomForm() //class
+  runApp(const MaterialApp(home: MyApp() //class
       ));
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
