@@ -1,78 +1,37 @@
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter/material.dart';
-const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
-void main() {
-  runApp(MaterialApp(
-      home: CustomForm()//class
-  ));
-}
 
-class CustomForm extends StatefulWidget {
-  const CustomForm({super.key});
+class FormGenerator extends StatefulWidget {
+  const FormGenerator({super.key});
 
   @override
-  State<CustomForm> createState() => _CustomFormState();
+  State<FormGenerator> createState() => _FormGeneratorState();
 }
 
-class _CustomFormState extends State<CustomForm> {
-
-  final _formKey = GlobalKey<FormState>();
-  String dropDownValue = list.first;
+class _FormGeneratorState extends State<FormGenerator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-      ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              'Enter Phone Number',
-              textAlign: TextAlign.left
-              ,
-            ),
-            Material(
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  icon: const Icon(Icons.phone),
-                  hintText: 'Enter a phone number',
-                  labelText: 'Phone',
-                ),
+      body: Column(
+        children: [
+          const Expanded(
+            child: Text('Simple Form Generator from JSON'),
+          ),
+          const Expanded(
+            flex: 4,
+            child: Text('Placeholder'),
+          ),
+          Expanded(
+            child: Center(
+              child: MaterialButton(
+                color: Colors.blue,
+                onPressed: () {},
+                child: const Text('Generate Form'),
               ),
             ),
-            SizedBox(
-              height: 50,
-            ),
-            Text('Select from the Drop down'),
-            DropdownButton(
-                value: dropDownValue,
-                items: list.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? value){
-                  setState(() {
-                    dropDownValue = value!;
-                  });
-                }
-            ),
-            SizedBox(height: 50),
-            ElevatedButton(
-                onPressed: (){
-
-                },
-                child: const Text('Submit')
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
 }
-
