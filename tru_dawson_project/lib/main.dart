@@ -1,3 +1,19 @@
+//RUN THESE: 
+//flutter pub add form_builder_validators
+
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
+
+
+import 'sources/conditional_fields.dart';
+import 'sources/dynamic_fields.dart';
+import 'sources/related_fields.dart';
+import 'code_page.dart';
+import 'sources/complete_form.dart';
+import 'sources/custom_fields.dart';
+import 'sources/signup_form.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,71 +40,137 @@ void main() async {
       ));
 }
 
-class CustomForm extends StatefulWidget {
-  const CustomForm({super.key});
 
-  @override
-  State<CustomForm> createState() => _CustomFormState();
-}
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
-class _CustomFormState extends State<CustomForm> {
-  final TextEditingController usernameTEC = TextEditingController();
-  final TextEditingController passwordTEC = TextEditingController();
-  final AuthService auth = AuthService();
-  final _formKey = GlobalKey<FormState>();
-  String dropDownValue = list.first;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-      ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: <Widget>[
-            const SizedBox(
-              height: 20,
-            ),
-            Material(
-              child: TextFormField(
-                controller: usernameTEC,
-                decoration: const InputDecoration(
-                  hintText: 'Enter in text',
-                  labelText: 'Text',
+    return const MaterialApp(
+      title: 'Flutter FormBuilder Demo',
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        FormBuilderLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: FormBuilderLocalizations.supportedLocales,
+      home: _HomePage(),
+    );
+  }
+}
+
+class _HomePage extends StatelessWidget {
+  const _HomePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CodePage(
+      title: 'Flutter Form Builder',
+      child: ListView(
+        children: <Widget>[
+          ListTile(
+            title: const Text('Complete Form'),
+            trailing: const Icon(Icons.arrow_right_sharp),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CodePage(
+                      title: 'Complete Form',
+                      child: CompleteForm(),
+                    );
+                  },
                 ),
-              ),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            Material(
-              child: TextFormField(
-                controller: passwordTEC,
-                decoration: const InputDecoration(
-                  hintText: 'Enter a text',
-                  labelText: 'text',
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text('Custom Fields'),
+            trailing: const Icon(Icons.arrow_right_sharp),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CodePage(
+                      title: 'Custom Fields',
+                      child: CustomFields(),
+                    );
+                  },
                 ),
-              ),
-            ),
-            const SizedBox(height: 50),
-            ElevatedButton(
-                onPressed: () async {
-                  dynamic result = await auth.signInAnon();
-                  if (result == null) {
-                    print('error signing in');
-                  } else {
-                    print('user has signed in');
-                    print(result.uid);
-                  }
-                  await DatabaseService(uid: result.uid)
-                      .updateUserData(usernameTEC.text, passwordTEC.text);
-                  print(usernameTEC.text);
-                  print(passwordTEC.text);
-                },
-                child: const Text('Submit'))
-          ],
-        ),
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text('Signup Form'),
+            trailing: const Icon(Icons.arrow_right_sharp),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CodePage(
+                      title: 'Signup Form',
+                      child: SignupForm(),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text('Dynamic Form'),
+            trailing: const Icon(Icons.arrow_right_sharp),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CodePage(
+                      title: 'Dynamic Form',
+                      child: DynamicFields(),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text('Conditional Form'),
+            trailing: const Icon(Icons.arrow_right_sharp),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CodePage(
+                      title: 'Conditional Form',
+                      child: ConditionalFields(),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text('Related Fields'),
+            trailing: const Icon(Icons.arrow_right_sharp),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CodePage(
+                      title: 'Related Fields',
+                      child: RelatedFields(),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
