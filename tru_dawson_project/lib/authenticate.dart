@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tru_dawson_project/sign_in.dart';
 
 class Authenticate extends StatefulWidget {
   const Authenticate({super.key});
@@ -11,8 +10,6 @@ class Authenticate extends StatefulWidget {
 class _AuthenticateState extends State<Authenticate> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: SignIn(),
-    );
+    return Container();
   }
 }
