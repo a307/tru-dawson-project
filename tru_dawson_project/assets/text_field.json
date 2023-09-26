@@ -1,0 +1,9 @@
+{
+    "type":"text_field",
+    "meta_data": {
+        "control_name" : "String",
+        "options": "String", 
+        "id": "Number",
+        "selected_option" : "String"
+    }
+}
