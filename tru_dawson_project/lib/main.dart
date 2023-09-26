@@ -1,78 +1,152 @@
+//RUN THESE: 
+//flutter pub add form_builder_validators
+
 import 'package:flutter/material.dart';
-const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
-void main() {
-  runApp(MaterialApp(
-      home: CustomForm()//class
-  ));
-}
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
-class CustomForm extends StatefulWidget {
-  const CustomForm({super.key});
 
-  @override
-  State<CustomForm> createState() => _CustomFormState();
-}
+import 'sources/conditional_fields.dart';
+import 'sources/dynamic_fields.dart';
+import 'sources/related_fields.dart';
+import 'code_page.dart';
+import 'sources/complete_form.dart';
+import 'sources/custom_fields.dart';
+import 'sources/signup_form.dart';
 
-class _CustomFormState extends State<CustomForm> {
+void main() => runApp(const MyApp());
 
-  final _formKey = GlobalKey<FormState>();
-  String dropDownValue = list.first;
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-      ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              'Enter Phone Number',
-              textAlign: TextAlign.left
-              ,
-            ),
-            Material(
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  icon: const Icon(Icons.phone),
-                  hintText: 'Enter a phone number',
-                  labelText: 'Phone',
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 50,
-            ),
-            Text('Select from the Drop down'),
-            DropdownButton(
-                value: dropDownValue,
-                items: list.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? value){
-                  setState(() {
-                    dropDownValue = value!;
-                  });
-                }
-            ),
-            SizedBox(height: 50),
-            ElevatedButton(
-                onPressed: (){
-
-                },
-                child: const Text('Submit')
-            )
-          ],
-        ),
-      ),
+    return const MaterialApp(
+      title: 'Flutter FormBuilder Demo',
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        FormBuilderLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: FormBuilderLocalizations.supportedLocales,
+      home: _HomePage(),
     );
   }
 }
 
+class _HomePage extends StatelessWidget {
+  const _HomePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CodePage(
+      title: 'Flutter Form Builder',
+      child: ListView(
+        children: <Widget>[
+          ListTile(
+            title: const Text('Complete Form'),
+            trailing: const Icon(Icons.arrow_right_sharp),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CodePage(
+                      title: 'Complete Form',
+                      child: CompleteForm(),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text('Custom Fields'),
+            trailing: const Icon(Icons.arrow_right_sharp),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CodePage(
+                      title: 'Custom Fields',
+                      child: CustomFields(),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text('Signup Form'),
+            trailing: const Icon(Icons.arrow_right_sharp),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CodePage(
+                      title: 'Signup Form',
+                      child: SignupForm(),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text('Dynamic Form'),
+            trailing: const Icon(Icons.arrow_right_sharp),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CodePage(
+                      title: 'Dynamic Form',
+                      child: DynamicFields(),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text('Conditional Form'),
+            trailing: const Icon(Icons.arrow_right_sharp),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CodePage(
+                      title: 'Conditional Form',
+                      child: ConditionalFields(),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text('Related Fields'),
+            trailing: const Icon(Icons.arrow_right_sharp),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CodePage(
+                      title: 'Related Fields',
+                      child: RelatedFields(),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
