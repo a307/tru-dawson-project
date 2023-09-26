@@ -1,9 +1,27 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:tru_dawson_project/database.dart';
+import 'firebase_options.dart';
+import 'package:tru_dawson_project/auth.dart';
+
 const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
-void main() {
-  runApp(MaterialApp(
-      home: CustomForm()//class
-  ));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+            apiKey: 'AIzaSyChE23oQe0lYW_Y2TAKbCCjl1ox5yTikTc',
+            appId: "1:203503274066:web:d1b68e01a632af4186378b",
+            messagingSenderId: '203503274066',
+            projectId: "tru-dawson-project-2023"));
+  }
+
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
+  runApp(const MaterialApp(home: CustomForm() //class
+      ));
 }
 
 class CustomForm extends StatefulWidget {
@@ -14,7 +32,9 @@ class CustomForm extends StatefulWidget {
 }
 
 class _CustomFormState extends State<CustomForm> {
-
+  final TextEditingController usernameTEC = TextEditingController();
+  final TextEditingController passwordTEC = TextEditingController();
+  final AuthService auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   String dropDownValue = list.first;
   @override
@@ -27,52 +47,49 @@ class _CustomFormState extends State<CustomForm> {
         key: _formKey,
         child: Column(
           children: <Widget>[
-            SizedBox(
+            const SizedBox(
               height: 20,
-            ),
-            Text(
-              'Enter Phone Number',
-              textAlign: TextAlign.left
-              ,
             ),
             Material(
               child: TextFormField(
+                controller: usernameTEC,
                 decoration: const InputDecoration(
-                  icon: const Icon(Icons.phone),
-                  hintText: 'Enter a phone number',
-                  labelText: 'Phone',
+                  hintText: 'Enter in text',
+                  labelText: 'Text',
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
-            Text('Select from the Drop down'),
-            DropdownButton(
-                value: dropDownValue,
-                items: list.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? value){
-                  setState(() {
-                    dropDownValue = value!;
-                  });
-                }
+            Material(
+              child: TextFormField(
+                controller: passwordTEC,
+                decoration: const InputDecoration(
+                  hintText: 'Enter a text',
+                  labelText: 'text',
+                ),
+              ),
             ),
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
             ElevatedButton(
-                onPressed: (){
-
+                onPressed: () async {
+                  dynamic result = await auth.signInAnon();
+                  if (result == null) {
+                    print('error signing in');
+                  } else {
+                    print('user has signed in');
+                    print(result.uid);
+                  }
+                  await DatabaseService(uid: result.uid)
+                      .updateUserData(usernameTEC.text, passwordTEC.text);
+                  print(usernameTEC.text);
+                  print(passwordTEC.text);
                 },
-                child: const Text('Submit')
-            )
+                child: const Text('Submit'))
           ],
         ),
       ),
     );
   }
 }
-
