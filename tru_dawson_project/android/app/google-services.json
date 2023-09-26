@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "203503274066",
+    "project_id": "tru-dawson-project-2023",
+    "storage_bucket": "tru-dawson-project-2023.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:203503274066:android:79a3c897352c751286378b",
+        "android_client_info": {
+          "package_name": "com.example.tru_dawson_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUIZyBwKtZRKaSR4T3801SOFlyZ24r9Es"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -14,7 +14,32 @@ import 'sources/complete_form.dart';
 import 'sources/custom_fields.dart';
 import 'sources/signup_form.dart';
 
-void main() => runApp(const MyApp());
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:tru_dawson_project/database.dart';
+import 'firebase_options.dart';
+import 'package:tru_dawson_project/auth.dart';
+
+const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+            apiKey: 'AIzaSyChE23oQe0lYW_Y2TAKbCCjl1ox5yTikTc',
+            appId: "1:203503274066:web:d1b68e01a632af4186378b",
+            messagingSenderId: '203503274066',
+            projectId: "tru-dawson-project-2023"));
+  }
+
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
+  runApp(const MaterialApp(home: CustomForm() //class
+      ));
+}
+
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
