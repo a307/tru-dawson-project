@@ -13,7 +13,7 @@ class DatabaseService {
         .set({'username': username, 'password': password});
   }
 
-  Future updateConditionalFormData(int? option, String textfield) async {
+  Future updateConditionalFormData(String option, String textfield) async {
     return await conditionalCollection
         .doc()
         .set({'option': option, 'textfield': textfield});

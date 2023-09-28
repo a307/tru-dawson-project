@@ -169,6 +169,23 @@ class _HomePage extends StatelessWidget {
               );
             },
           ),
+          const Divider(),
+          ListTile(
+            title: const Text('Test Form'),
+            trailing: const Icon(Icons.arrow_right_sharp),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CodePage(
+                      title: 'Test Form',
+                      child: RelatedFields(),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
         ],
       ),
     );

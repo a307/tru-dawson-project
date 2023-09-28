@@ -37,7 +37,7 @@ class _ConditionalFieldsState extends State<ConditionalFields> {
               });
             },
             items: const [
-              DropdownMenuItem(value: 0, child: Text('Show textfield')),
+              DropdownMenuItem(value: 0, child: Text('Show text field')),
               DropdownMenuItem(value: 1, child: Text('Show info text')),
             ],
           ),
@@ -48,6 +48,7 @@ class _ConditionalFieldsState extends State<ConditionalFields> {
             // maintainState: false,
             child: FormBuilderTextField(
               name: 'textfield',
+              controller: textfieldTEC,
               validator: FormBuilderValidators.minLength(4),
               decoration: const InputDecoration(
                 label: Text('Magic field'),
@@ -66,19 +67,24 @@ class _ConditionalFieldsState extends State<ConditionalFields> {
               style: TextStyle(color: Colors.white),
             ),
             onPressed: () async {
-              dynamic result = await auth.signInAnon();
-              if (result == null) {
-                print('error signing in');
-              } else {
-                print('user has signed in');
-                print(result.uid);
-              }
               if (_formKey.currentState!.saveAndValidate() == true) {
+                dynamic result = await auth.signInAnon();
+                if (result == null) {
+                  print('error signing in');
+                } else {
+                  print('user has signed in');
+                  print(result.uid);
+                }
                 debugPrint(
                     _formKey.currentState?.instantValue.toString() ?? '');
-
+                String optionStr = '';
+                if (option == 0) {
+                  optionStr = 'Show text field';
+                } else if (option == 1) {
+                  optionStr = 'Show info text';
+                }
                 await DatabaseService(uid: result.uid)
-                    .updateConditionalFormData(option, textfieldTEC.text);
+                    .updateConditionalFormData(optionStr, textfieldTEC.text);
               }
             },
           ),
