@@ -24,6 +24,7 @@ const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
+    //ISSUE: Inititlized wrong for windows, fix eventually
     await Firebase.initializeApp(
         options: const FirebaseOptions(
             apiKey: 'AIzaSyChE23oQe0lYW_Y2TAKbCCjl1ox5yTikTc',

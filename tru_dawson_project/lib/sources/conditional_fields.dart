@@ -1,6 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:tru_dawson_project/auth.dart';
+import 'package:tru_dawson_project/database.dart';
 
 class ConditionalFields extends StatefulWidget {
   const ConditionalFields({Key? key}) : super(key: key);
@@ -12,7 +16,8 @@ class ConditionalFields extends StatefulWidget {
 class _ConditionalFieldsState extends State<ConditionalFields> {
   final _formKey = GlobalKey<FormBuilderState>();
   int? option;
-
+  final AuthService auth = AuthService();
+  final TextEditingController textfieldTEC = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return FormBuilder(
@@ -60,9 +65,21 @@ class _ConditionalFieldsState extends State<ConditionalFields> {
               "Submit",
               style: TextStyle(color: Colors.white),
             ),
-            onPressed: () {
-              _formKey.currentState!.saveAndValidate();
-              debugPrint(_formKey.currentState?.instantValue.toString() ?? '');
+            onPressed: () async {
+              dynamic result = await auth.signInAnon();
+              if (result == null) {
+                print('error signing in');
+              } else {
+                print('user has signed in');
+                print(result.uid);
+              }
+              if (_formKey.currentState!.saveAndValidate() == true) {
+                debugPrint(
+                    _formKey.currentState?.instantValue.toString() ?? '');
+
+                await DatabaseService(uid: result.uid)
+                    .updateConditionalFormData(option, textfieldTEC.text);
+              }
             },
           ),
         ],
