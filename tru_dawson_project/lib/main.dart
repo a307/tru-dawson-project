@@ -39,7 +39,7 @@ void main() async {
   final snapshot = await ref.child('forms').get();
   //Print data out if there is any
   if (snapshot.exists) {
-    print(snapshot.value);
+    print(snapshot.child('simple_road_inspection/pages/0/label').value);
   } else {
     print('No data available.');
   }
