@@ -41,6 +41,12 @@ void main() async {
   final snapshot = await ref.get();
   //Print data out if there is any
   if (snapshot.exists) {
+    //print whole file structure
+    //print(snapshot.value);
+
+    //print just form 0
+    //print(snapshot.child('form0').value);
+
     //Loop through forms
     for (int i = 0; i < snapshot.children.length; i++) {
       //print out form names from metadata
