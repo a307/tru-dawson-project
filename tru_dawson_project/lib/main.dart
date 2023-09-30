@@ -1,5 +1,7 @@
 //RUN THESE:
 //flutter pub add form_builder_validators
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,6 +25,7 @@ import 'firebase_options.dart';
 import 'package:tru_dawson_project/auth.dart';
 
 void main() async {
+  List<String> list = [];
   //Ensures flutter widgets are initialized
   WidgetsFlutterBinding.ensureInitialized();
   //Initialize Firebase
@@ -50,22 +53,24 @@ void main() async {
     //Loop through forms
     for (int i = 0; i < snapshot.children.length; i++) {
       //print out form names from metadata
-      print(snapshot.child('form$i/metadata/formName').value);
+      list.add(snapshot.child('form$i/metadata/formName').value.toString());
+      //print(snapshot.child('form$i/metadata/formName').value);
     }
   } else {
     print('No data available.');
   }
   //Run Application starting with MyApp as home
-  runApp(const MaterialApp(home: MyApp() //class
+  runApp(MaterialApp(home: MyApp(list) //class
       ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
+  //const MyApp({Key? key}) : super(key: key);
+  final List<String> list;
+  MyApp(this.list);
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Flutter FormBuilder Demo',
       debugShowCheckedModeBanner: false,
       localizationsDelegates: [
@@ -74,140 +79,49 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
       ],
       supportedLocales: FormBuilderLocalizations.supportedLocales,
-      home: _HomePage(),
-    );
-  }
-}
-
-class _HomePage extends StatelessWidget {
-  const _HomePage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return CodePage(
-      title: 'Flutter Form Builder',
-      child: ListView(
-        children: <Widget>[
-          ListTile(
-            title: const Text('Complete Form'),
-            trailing: const Icon(Icons.arrow_right_sharp),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CodePage(
-                      title: 'Complete Form',
-                      child: CompleteForm(),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Custom Fields'),
-            trailing: const Icon(Icons.arrow_right_sharp),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CodePage(
-                      title: 'Custom Fields',
-                      child: CustomFields(),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Signup Form'),
-            trailing: const Icon(Icons.arrow_right_sharp),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CodePage(
-                      title: 'Signup Form',
-                      child: SignupForm(),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Dynamic Form'),
-            trailing: const Icon(Icons.arrow_right_sharp),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CodePage(
-                      title: 'Dynamic Form',
-                      child: DynamicFields(),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Conditional Form'),
-            trailing: const Icon(Icons.arrow_right_sharp),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CodePage(
-                      title: 'Conditional Form',
-                      child: ConditionalFields(),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Related Fields'),
-            trailing: const Icon(Icons.arrow_right_sharp),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CodePage(
-                      title: 'Related Fields',
-                      child: RelatedFields(),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Test Form'),
-            trailing: const Icon(Icons.arrow_right_sharp),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CodePage(
-                      title: 'Test Form',
-                      child: RelatedFields(),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-        ],
+      home: CodePage(
+        title: 'Dawson Forms',
+        child: ListView(
+          children: <Widget>[
+            for (String item in list)
+              Column(
+                children: [
+                  ListTile(
+                    trailing: const Icon(Icons.arrow_right_sharp),
+                    title: Text(item),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return Placeholder(); // Placeholder is just a placeholder, replace with your desired page.
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(), // Add a Divider() after each ListTile
+                ],
+              ),
+          ],
+        ),
       ),
     );
   }
 }
+
+// class _HomePage extends StatelessWidget {
+//   const _HomePage({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return CodePage(
+//         title: 'Flutter Form Builder',
+//         child: ListView(
+//           children: list.map((String item) {
+//             return ListTile(
+//               title: Text(item),
+//             );
+//           }).toList(),
+//         ));
+//   }
+// }
