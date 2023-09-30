@@ -1,5 +1,7 @@
 //RUN THESE:
 //flutter pub add form_builder_validators
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -36,10 +38,12 @@ void main() async {
   //Connect to Firebase Real time database
   final ref = FirebaseDatabase.instance.ref();
   //get instance of json: simple_road_inspection
-  final snapshot = await ref.child('forms').get();
+  final snapshot = await ref.get();
   //Print data out if there is any
   if (snapshot.exists) {
-    print(snapshot.child('simple_road_inspection/pages/0/label').value);
+    for (int i = 0; i < snapshot.children.length; i++) {
+      print(snapshot.child('form$i/metadata/formName').value);
+    }
   } else {
     print('No data available.');
   }
@@ -75,126 +79,7 @@ class _HomePage extends StatelessWidget {
     return CodePage(
       title: 'Flutter Form Builder',
       child: ListView(
-        children: <Widget>[
-          ListTile(
-            title: const Text('Complete Form'),
-            trailing: const Icon(Icons.arrow_right_sharp),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CodePage(
-                      title: 'Complete Form',
-                      child: CompleteForm(),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Custom Fields'),
-            trailing: const Icon(Icons.arrow_right_sharp),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CodePage(
-                      title: 'Custom Fields',
-                      child: CustomFields(),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Signup Form'),
-            trailing: const Icon(Icons.arrow_right_sharp),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CodePage(
-                      title: 'Signup Form',
-                      child: SignupForm(),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Dynamic Form'),
-            trailing: const Icon(Icons.arrow_right_sharp),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CodePage(
-                      title: 'Dynamic Form',
-                      child: DynamicFields(),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Conditional Form'),
-            trailing: const Icon(Icons.arrow_right_sharp),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CodePage(
-                      title: 'Conditional Form',
-                      child: ConditionalFields(),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Related Fields'),
-            trailing: const Icon(Icons.arrow_right_sharp),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CodePage(
-                      title: 'Related Fields',
-                      child: RelatedFields(),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Test Form'),
-            trailing: const Icon(Icons.arrow_right_sharp),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CodePage(
-                      title: 'Test Form',
-                      child: RelatedFields(),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-        ],
+        children: <Widget>[],
       ),
     );
   }
