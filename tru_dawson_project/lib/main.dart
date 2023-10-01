@@ -42,6 +42,10 @@ void main() async {
   final ref = FirebaseDatabase.instance.ref();
   //get instance of json: simple_road_inspection
   final snapshot = await ref.get();
+
+  //Convert DataSnapshot to JSON map
+  Map<String, dynamic>? jsonMap = dataSnapshotToMap(snapshot);
+
   //Print data out if there is any
   if (snapshot.exists) {
     //print whole file structure
@@ -52,9 +56,12 @@ void main() async {
 
     //Loop through forms
     for (int i = 0; i < snapshot.children.length; i++) {
-      //print out form names from metadata
+      //print out form names from metadata, two ways, through snapshot or through map
       list.add(snapshot.child('form$i/metadata/formName').value.toString());
+      //list.add(jsonMap?['form$i']['metadata']['formName']);
+
       //print(snapshot.child('form$i/metadata/formName').value);
+      //print(jsonMap?['form$i']['metadata']['formName']);
     }
   } else {
     print('No data available.');
@@ -62,6 +69,26 @@ void main() async {
   //Run Application starting with MyApp as home
   runApp(MaterialApp(home: MyApp(list) //class
       ));
+}
+
+//Convert DataSnapshot to JSON map
+Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
+  if (snapshot == null || snapshot.value == null) {
+    return null;
+  }
+
+  Map<String, dynamic> result = {};
+
+  // Check if the value is a Map
+  if (snapshot.value is Map) {
+    // Iterate over the children of the DataSnapshot
+    (snapshot.value as Map).forEach((key, value) {
+      // Add each child to the result map
+      result[key] = value;
+    });
+  }
+
+  return result;
 }
 
 class MyApp extends StatelessWidget {
