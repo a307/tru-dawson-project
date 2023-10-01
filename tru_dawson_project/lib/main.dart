@@ -43,7 +43,7 @@ void main() async {
   //get instance of json: simple_road_inspection
   final snapshot = await ref.get();
 
-  //Convert DataSnapshot to JSON map
+  //Convert DataSnapshot to JSON map (string of JSON form content)
   Map<String, dynamic>? jsonMap = dataSnapshotToMap(snapshot);
 
   //Print data out if there is any
@@ -91,10 +91,11 @@ Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
   return result;
 }
 
+// dynamically create form list based on # of JSON forms pulled
 class MyApp extends StatelessWidget {
-  //const MyApp({Key? key}) : super(key: key);
   final List<String> list;
   MyApp(this.list);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -107,12 +108,12 @@ class MyApp extends StatelessWidget {
       ],
       supportedLocales: FormBuilderLocalizations.supportedLocales,
       home: CodePage(
-        title: 'Dawson Forms',
+        title: 'Dawson Forms', // page title
         child: ListView(
           children: <Widget>[
-            for (String item in list)
+            for (String item in list) // number of forms = loop size
               Column(
-                children: [
+                children: [ // creation of individual form list for UI display (ie sign inspection, road inspection, etc) 
                   ListTile(
                     trailing: const Icon(Icons.arrow_right_sharp),
                     title: Text(item),
@@ -120,7 +121,7 @@ class MyApp extends StatelessWidget {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return Placeholder(); // Placeholder is just a placeholder, replace with your desired page.
+                            return PlaceholderPage(); // Replace with your desired page.
                           },
                         ),
                       );
@@ -129,6 +130,32 @@ class MyApp extends StatelessWidget {
                   const Divider(), // Add a Divider() after each ListTile
                 ],
               ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PlaceholderPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Placeholder Page'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('This is a placeholder page. Forms will be generated'),
+            ElevatedButton(
+              onPressed: () {
+                // Navigate back to the previous page when the button is pressed.
+                Navigator.of(context).pop();
+              },
+              child: Text('Go Back'),
+            ),
           ],
         ),
       ),
