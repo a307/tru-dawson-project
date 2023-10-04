@@ -113,7 +113,8 @@ class MyApp extends StatelessWidget {
           children: <Widget>[
             for (String item in list) // number of forms = loop size
               Column(
-                children: [ // creation of individual form list for UI display (ie sign inspection, road inspection, etc) 
+                children: [
+                  // creation of individual form list for UI display (ie sign inspection, road inspection, etc)
                   ListTile(
                     trailing: const Icon(Icons.arrow_right_sharp),
                     title: Text(item),
@@ -121,7 +122,7 @@ class MyApp extends StatelessWidget {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return PlaceholderPage(); // Replace with your desired page.
+                            return FormPage(); // Replace with your desired page.
                           },
                         ),
                       );
@@ -137,7 +138,15 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class PlaceholderPage extends StatelessWidget {
+void submitForm() {}
+
+List<Widget> buildForm(List<dynamic> questions) {
+  List<Widget> formFields = [];
+
+  return formFields;
+}
+
+class FormPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,13 +157,14 @@ class PlaceholderPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('This is a placeholder page. Forms will be generated'),
+            Text('This is a placeholder page. A Form will be generated'),
+            ElevatedButton(onPressed: submitForm, child: Text('Submit')),
             ElevatedButton(
               onPressed: () {
                 // Navigate back to the previous page when the button is pressed.
                 Navigator.of(context).pop();
               },
-              child: Text('Go Back'),
+              child: const Text('Go Back'),
             ),
           ],
         ),
