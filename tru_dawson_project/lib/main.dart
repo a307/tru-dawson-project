@@ -9,6 +9,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 import 'sources/conditional_fields.dart';
 import 'sources/dynamic_fields.dart';
@@ -24,8 +25,12 @@ import 'package:tru_dawson_project/database.dart';
 import 'firebase_options.dart';
 import 'package:tru_dawson_project/auth.dart';
 
+// List to hold all of the individual JSONs
+List<Map<String, dynamic>>? separatedForms = [];
+
 void main() async {
   List<String> list = [];
+
   //Ensures flutter widgets are initialized
   WidgetsFlutterBinding.ensureInitialized();
   //Initialize Firebase
@@ -45,6 +50,11 @@ void main() async {
 
   //Convert DataSnapshot to JSON map (string of JSON form content)
   Map<String, dynamic>? jsonMap = dataSnapshotToMap(snapshot);
+
+  jsonMap?.forEach((key, value) {
+    // For each form in the original map, create a new map and add it to the list
+    separatedForms?.add(value);
+  });
 
   //Print data out if there is any
   if (snapshot.exists) {
@@ -122,7 +132,24 @@ class MyApp extends StatelessWidget {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return FormPage(); // Replace with your desired page.
+                            try {
+                              // Searching for the form with the name equal to item
+                              Map<String, dynamic>? targetForm =
+                                  separatedForms?.firstWhere(
+                                (formMap) =>
+                                    formMap.values.first['metadata']
+                                        ['formName'] ==
+                                    item,
+                              );
+                              final formFields = generateForm(targetForm);
+                              return FormPage(
+                                  formFields:
+                                      formFields); // Pass formFields to the Form Page
+                            } catch (e) {
+                              // If the form isn't found for some reason, then print an error message
+                              print('Form with the name $item not found');
+                              return FormPage(); // If the form isn't found then return an empty form page
+                            }
                           },
                         ),
                       );
@@ -138,30 +165,37 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// Logic for form submission
 void submitForm() {}
 
-List<Widget> buildForm(List<dynamic> questions) {
+// Logic for Generating Forms
+List<Widget> generateForm(Map<String, dynamic>? form) {
   List<Widget> formFields = [];
 
-  return formFields;
+  return formFields; // Return the form fields based on the JSON data
 }
 
 class FormPage extends StatelessWidget {
+  final List<Widget> formFields;
+
+  FormPage({Key? key, this.formFields = const []}) : super(key: key);
+
+  final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Placeholder Page'),
+        title: Text('Form Page'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: FormBuilder(
+        key: _fbKey,
+        child: ListView(
           children: [
-            Text('This is a placeholder page. A Form will be generated'),
+            ...formFields, // THe form fields will be inserted here
             ElevatedButton(onPressed: submitForm, child: Text('Submit')),
             ElevatedButton(
               onPressed: () {
-                // Navigate back to the previous page when the button is pressed.
                 Navigator.of(context).pop();
               },
               child: const Text('Go Back'),
