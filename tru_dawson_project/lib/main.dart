@@ -135,21 +135,24 @@ class MyApp extends StatelessWidget {
                             try {
                               // Searching for the form with the name equal to item
                               Map<String, dynamic>? targetForm =
-                                  separatedForms?.firstWhere(
-                                (formMap) =>
-                                    formMap.values.first['metadata']
-                                        ['formName'] ==
-                                    item,
-                              );
+                                  separatedForms?.firstWhere((formMap) {
+                                // Will find the first instance of a form that has the same name as item
+                                return formMap['metadata']['formName']
+                                        .toString() ==
+                                    item; // If this statement is true then it was a success
+                              });
                               final formFields = generateForm(
-                                  targetForm); // This variable holds the fields of the form
+                                  targetForm); // This variable holds the fields of the form after the generateForm function runs
                               return FormPage(
+                                  formName: item,
                                   formFields:
                                       formFields); // Pass formFields to the Form Page
                             } catch (e) {
                               // If the form isn't found for some reason, then print an error message
                               print('Form with the name $item not found');
-                              return FormPage(); // If the form isn't found then return an empty form page
+                              return FormPage(
+                                formName: '',
+                              ); // If the form isn't found then return an empty form page with no name
                             }
                           },
                         ),
@@ -170,8 +173,34 @@ class MyApp extends StatelessWidget {
 void submitForm() {}
 
 // Logic for Generating Forms
+// This is made under the assumption that the dawson forms will all have a similar JSON structure to the simple_sign_inspection.json
 List<Widget> generateForm(Map<String, dynamic>? form) {
   List<Widget> formFields = [];
+
+  for (var page in form?['pages']) {
+    // Loop through the pages in the form
+    for (var section in form?['sections']) {
+      // Loop through the sections on each page
+      var label = form?['sections']['label'] ??
+          ''; // Use an empty string if label doesn't exist
+      formFields.add(Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (label.isNotEmpty) Text(label),
+        ],
+      ));
+      for (var question in form?['questions']) {
+        // var
+        switch (form?['questions']['control']['type']) {
+          // Check the type of the field
+          case 'date_field':
+            formFields.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+            ));
+        }
+      }
+    }
+  }
 
   return formFields; // Return the form fields based on the JSON data
 }
@@ -179,7 +208,10 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
 class FormPage extends StatelessWidget {
   final List<Widget> formFields;
 
-  FormPage({Key? key, this.formFields = const []}) : super(key: key);
+  final String formName;
+
+  FormPage({Key? key, this.formFields = const [], required this.formName})
+      : super(key: key);
 
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
 
@@ -187,7 +219,7 @@ class FormPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Form Page'),
+        title: Text(formName),
       ),
       body: FormBuilder(
         key: _fbKey,
@@ -195,7 +227,7 @@ class FormPage extends StatelessWidget {
           padding: EdgeInsets.symmetric(
               horizontal: 16.0, vertical: 12.0), // Padding for the whole form
           children: [
-            ...formFields,
+            ...formFields, // This is where the form fields will go
             SizedBox(height: 20.0), // Space between form fields and buttons
             SizedBox(
               width: 150,
@@ -230,7 +262,6 @@ class FormPage extends StatelessWidget {
     );
   }
 }
-
 
 // class _HomePage extends StatelessWidget {
 //   const _HomePage({Key? key}) : super(key: key);
