@@ -141,7 +141,8 @@ class MyApp extends StatelessWidget {
                                         ['formName'] ==
                                     item,
                               );
-                              final formFields = generateForm(targetForm);
+                              final formFields = generateForm(
+                                  targetForm); // This variable holds the fields of the form
                               return FormPage(
                                   formFields:
                                       formFields); // Pass formFields to the Form Page
@@ -191,14 +192,37 @@ class FormPage extends StatelessWidget {
       body: FormBuilder(
         key: _fbKey,
         child: ListView(
+          padding: EdgeInsets.symmetric(
+              horizontal: 16.0, vertical: 12.0), // Padding for the whole form
           children: [
-            ...formFields, // THe form fields will be inserted here
-            ElevatedButton(onPressed: submitForm, child: Text('Submit')),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Go Back'),
+            ...formFields,
+            SizedBox(height: 20.0), // Space between form fields and buttons
+            SizedBox(
+              width: 150,
+              child: ElevatedButton(
+                onPressed: submitForm,
+                child: Text('Submit'),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                      vertical: 10.0,
+                      horizontal: 20.0), // Padding inside the button
+                ),
+              ),
+            ),
+            SizedBox(height: 12.0), // Space between buttons
+            SizedBox(
+              width: 150,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Go Back'),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                      vertical: 10.0,
+                      horizontal: 20.0), // Padding inside the button
+                ),
+              ),
             ),
           ],
         ),
@@ -206,6 +230,7 @@ class FormPage extends StatelessWidget {
     );
   }
 }
+
 
 // class _HomePage extends StatelessWidget {
 //   const _HomePage({Key? key}) : super(key: key);
