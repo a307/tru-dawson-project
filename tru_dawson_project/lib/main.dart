@@ -137,8 +137,7 @@ class MyApp extends StatelessWidget {
                               Map<String, dynamic>? targetForm =
                                   separatedForms?.firstWhere((formMap) {
                                 // Will find the first instance of a form that has the same name as item
-                                return formMap['metadata']['formName']
-                                        .toString() ==
+                                return formMap['metadata']['formName'] ==
                                     item; // If this statement is true then it was a success
                               });
                               final formFields = generateForm(
@@ -149,7 +148,7 @@ class MyApp extends StatelessWidget {
                                       formFields); // Pass formFields to the Form Page
                             } catch (e) {
                               // If the form isn't found for some reason, then print an error message
-                              print('Form with the name $item not found');
+                              print('Something Went wrong');
                               return FormPage(
                                 formName: '',
                               ); // If the form isn't found then return an empty form page with no name
@@ -179,29 +178,83 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
 
   for (var page in form?['pages']) {
     // Loop through the pages in the form
-    for (var section in form?['sections']) {
+    for (var section in page['sections']) {
       // Loop through the sections on each page
-      var label = form?['sections']['label'] ??
-          ''; // Use an empty string if label doesn't exist
+      var label = section['label'];
       formFields.add(Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (label.isNotEmpty) Text(label),
+          Text(label),
         ],
       ));
-      for (var question in form?['questions']) {
-        // var
-        switch (form?['questions']['control']['type']) {
-          // Check the type of the field
+      for (var question in section['questions']) {
+        var controlName = question['control']['meta_data']['control_name'];
+        switch (question['control']['type']) {
+          // More types may need to be added depending on the forms. I don't really know how to make this more dynamic for accepting anything other than something with a similar structure to the simple_sign_inspection.json
           case 'date_field':
-            formFields.add(Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-            ));
+            {
+              formFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FormBuilderDateTimePicker(
+                    name: controlName,
+                    decoration: InputDecoration(labelText: controlName),
+                    inputType: InputType.date,
+                  )
+                ],
+              ));
+              break;
+            }
+          case 'text_field':
+            {
+              formFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FormBuilderTextField(
+                    name: controlName,
+                    decoration: InputDecoration(labelText: controlName),
+                  )
+                ],
+              ));
+              break;
+            }
+          case 'Dropdown':
+            {
+              var options = question['control']['meta_data'][
+                  'options']; // This variable stores the options in the dropdown menu
+              formFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FormBuilderDropdown(
+                    name: controlName,
+                    items: options.map<DropdownMenuItem<String>>((option) {
+                      return DropdownMenuItem<String>(
+                        value: option,
+                        child: Text(option),
+                      );
+                    }).toList(),
+                  )
+                ],
+              ));
+              break;
+            }
+          default: // Add a blank text field for the default case
+            {
+              formFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FormBuilderTextField(
+                    name: '',
+                    decoration: const InputDecoration(labelText: ''),
+                  )
+                ],
+              ));
+              break;
+            }
         }
       }
     }
   }
-
   return formFields; // Return the form fields based on the JSON data
 }
 
