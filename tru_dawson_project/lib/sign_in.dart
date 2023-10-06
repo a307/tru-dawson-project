@@ -23,52 +23,77 @@ class _SignInState extends State<SignIn> {
     final TextEditingController emailTEC = TextEditingController();
     final TextEditingController passwordTEC = TextEditingController();
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Sign In"),
-        ),
-        body: FormBuilder(
-          key: _formKey,
-          child: Column(
-            children: [
-              SizedBox(height: 20.0),
-              Text("Email"),
-              FormBuilderTextField(
-                name: "email",
-                controller: emailTEC,
-              ),
-              SizedBox(height: 20.0),
-              Text("Password"),
-              FormBuilderTextField(
-                name: "password",
-                controller: passwordTEC,
-              ),
-              SizedBox(height: 20.0),
-              ElevatedButton(
-                  onPressed: () async {
-                    //Validate that forms are valid with the formkey
-                    if (_formKey.currentState!.saveAndValidate() == true) {
-                      //attempt to sign in anonymously and get back result containing Uid
-                      dynamic result = await auth.SignInEmailPass(
-                          emailTEC.text.trim(), passwordTEC.text.trim());
+      appBar: AppBar(
+        title: Text("Sign In"),
+      ),
+      body: FormBuilder(
+        key: _formKey,
+        child: Column(
+          children: [
+            SizedBox(height: 20.0),
+            Text("Email"),
+            FormBuilderTextField(
+              name: "email",
+              controller: emailTEC,
+            ),
+            SizedBox(height: 20.0),
+            Text("Password"),
+            FormBuilderTextField(
+              name: "password",
+              controller: passwordTEC,
+            ),
+            SizedBox(height: 20.0),
+            ElevatedButton(
+                onPressed: () async {
+                  //Validate that forms are valid with the formkey
+                  if (_formKey.currentState!.saveAndValidate() == true) {
+                    //attempt to sign in anonymously and get back result containing Uid
+                    dynamic result = await auth.SignInEmailPass(
+                        emailTEC.text.trim(), passwordTEC.text.trim());
 
-                      //If theres data print out the Uid
-                      if (result == null) {
-                        print('error signing in');
-                      } else {
-                        print('user has signed in');
-                        print(result.uid);
-                      }
-                      print("");
-                      //print out data in form
-                      debugPrint(
-                          _formKey.currentState?.instantValue.toString() ?? '');
-
-                      //Login to firebase
+                    //If theres data print out the Uid
+                    if (result == null) {
+                      print('error signing in');
+                    } else {
+                      print('user has signed in');
+                      print(result.uid);
                     }
-                  },
-                  child: Text("Sign In"))
-            ],
-          ),
-        ));
+                    print("");
+                    //print out data in form
+                    debugPrint(
+                        _formKey.currentState?.instantValue.toString() ?? '');
+
+                    //Login to firebase
+                  }
+                },
+                child: Text("Sign In")),
+            ElevatedButton(
+                onPressed: () async {
+                  //Validate that forms are valid with the formkey
+                  if (_formKey.currentState!.saveAndValidate() == true) {
+                    //attempt to sign in anonymously and get back result containing Uid
+                    dynamic result = await auth.SignUp(
+                        emailTEC.text.trim(), passwordTEC.text.trim());
+
+                    //If theres data print out the Uid
+                    if (result == null) {
+                      print('error signing up');
+                    } else {
+                      print('user has signed up');
+                      print(result.uid);
+                    }
+                    print("");
+                    //print out data in form
+                    debugPrint(
+                        _formKey.currentState?.instantValue.toString() ?? '');
+
+                    //Login to firebase
+                  }
+                },
+                child: Text("Sign up"))
+          ],
+        ),
+      ),
+    );
   }
 }

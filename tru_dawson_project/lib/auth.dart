@@ -28,8 +28,21 @@ class AuthService {
 
   Future SignInEmailPass(String email, String password) async {
     try {
-      //Call signInAnonymously to actually complete the sign in
+      //Call signInWithEmailAndPassword to actually complete the sign in
       UserCredential result = await _auth.signInWithEmailAndPassword(
+          email: email.trim(), password: password);
+      User? user = result.user;
+      //Call function to get DawsonUser from FirebaseUser
+      return _userFromFirebaseUser(user);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future SignUp(String email, String password) async {
+    try {
+      //Call createUserWithEmailAndPassword to actually complete the signup
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email.trim(), password: password);
       User? user = result.user;
       //Call function to get DawsonUser from FirebaseUser
