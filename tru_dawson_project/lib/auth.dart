@@ -25,4 +25,17 @@ class AuthService {
       print(e.toString());
     }
   }
+
+  Future SignInEmailPass(String email, String password) async {
+    try {
+      //Call signInAnonymously to actually complete the sign in
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+          email: email.trim(), password: password);
+      User? user = result.user;
+      //Call function to get DawsonUser from FirebaseUser
+      return _userFromFirebaseUser(user);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }
