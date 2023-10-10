@@ -54,6 +54,8 @@ class _SignInState extends State<SignIn> {
                     //If theres data print out the Uid
                     if (result == null) {
                       print('error signing in');
+                      showAlertDialog(context, "User Not Found!",
+                          "Email or password incorrect. Please try again.");
                     } else {
                       print('user has signed in');
                       print(result.uid);
@@ -67,6 +69,7 @@ class _SignInState extends State<SignIn> {
                   }
                 },
                 child: Text("Sign In")),
+            SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () async {
                   //Validate that forms are valid with the formkey
@@ -96,4 +99,31 @@ class _SignInState extends State<SignIn> {
       ),
     );
   }
+}
+
+showAlertDialog(BuildContext context, String title, String content) {
+  // set up the buttons
+  Widget continueButton = TextButton(
+    child: Text("Continue"),
+    onPressed: () {
+      Navigator.of(context).pop();
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text(title),
+    content: Text(content),
+    actions: [
+      continueButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }
