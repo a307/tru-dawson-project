@@ -46,6 +46,7 @@ class _SignInState extends State<SignIn> {
             Text("Password"),
             FormBuilderTextField(
               name: "password",
+              obscureText: true,
               controller: passwordTEC,
             ),
             SizedBox(height: 20.0),
