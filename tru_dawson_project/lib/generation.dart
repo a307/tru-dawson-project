@@ -66,8 +66,8 @@ class Generator extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
       ],
       supportedLocales: FormBuilderLocalizations.supportedLocales,
-      home: CodePage(
-        title: 'Dawson Forms', // page title
+      home: Container(
+        // page title
         child: ListView(
           children: <Widget>[
             for (String item in list) // number of forms = loop size
