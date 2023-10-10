@@ -1,7 +1,11 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:tru_dawson_project/auth.dart';
+import 'package:tru_dawson_project/code_page.dart';
 import 'package:tru_dawson_project/database.dart';
+import 'package:tru_dawson_project/generation.dart';
+import 'package:tru_dawson_project/main.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -11,6 +15,8 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  dynamic variable = getJSON();
+
   @override
   Widget build(BuildContext context) {
     //Initialize form key, used for validation later on
@@ -58,6 +64,16 @@ class _SignInState extends State<SignIn> {
                           "Email or password incorrect. Please try again.");
                     } else {
                       print('user has signed in');
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return CodePage(
+                              title: 'Complete Form',
+                              child: Generator(list, separatedForms),
+                            );
+                          },
+                        ),
+                      );
                       print(result.uid);
                     }
                     print("");
@@ -81,8 +97,12 @@ class _SignInState extends State<SignIn> {
                     //If theres data print out the Uid
                     if (result == null) {
                       print('error signing up');
+                      showAlertDialog(
+                          context, "Error Signing Up", "Please try again.");
                     } else {
                       print('user has signed up');
+                      showAlertDialog(context, 'Successful Sign Up!',
+                          "Please press Sign In.");
                       print(result.uid);
                     }
                     print("");
@@ -126,4 +146,43 @@ showAlertDialog(BuildContext context, String title, String content) {
       return alert;
     },
   );
+}
+
+List<Map<String, dynamic>>? separatedForms = [];
+List<String> list = [];
+getJSON() async {
+  //Connect to Firebase Real time database
+  final ref = FirebaseDatabase.instance.ref();
+  //get instance of json
+  final snapshot = await ref.get();
+
+  //Convert DataSnapshot to JSON map (string of JSON form content)
+  Map<String, dynamic>? jsonMap = dataSnapshotToMap(snapshot);
+
+  // Since the Data snapshot grabs a giant block of data, it needs to be separated into separate forms
+  jsonMap?.forEach((key, value) {
+    // For each form in the original map, create a new map and add it to the list
+    separatedForms?.add(value);
+  });
+
+  //Print data out if there is any
+  if (snapshot.exists) {
+    //print whole file structure
+    //print(snapshot.value);
+
+    //print just form 0
+    //print(snapshot.child('form0').value);
+
+    //Loop through forms
+    for (int i = 0; i < snapshot.children.length; i++) {
+      //print out form names from metadata, two ways, through snapshot or through map
+      list.add(snapshot.child('form$i/metadata/formName').value.toString());
+      //list.add(jsonMap?['form$i']['metadata']['formName']);
+
+      //print(snapshot.child('form$i/metadata/formName').value);
+      //print(jsonMap?['form$i']['metadata']['formName']);
+    }
+  } else {
+    print('No data available.');
+  }
 }
