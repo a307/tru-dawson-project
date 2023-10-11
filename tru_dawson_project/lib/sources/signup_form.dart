@@ -80,8 +80,7 @@ class _SignupFormState extends State<SignupForm> {
                     errorText: field.errorText,
                   ),
                   child: SwitchListTile(
-                    title: const Text(
-                        'I have read and accept the terms of service.'),
+                    title: Text('I have read and accept the terms of service.'),
                     onChanged: field.didChange,
                     value: field.value ?? false,
                   ),

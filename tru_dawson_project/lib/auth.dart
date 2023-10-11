@@ -1,7 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:tru_dawson_project/user.dart';
 
 class AuthService {
@@ -18,6 +15,32 @@ class AuthService {
     try {
       //Call signInAnonymously to actually complete the sign in
       UserCredential result = await _auth.signInAnonymously();
+      User? user = result.user;
+      //Call function to get DawsonUser from FirebaseUser
+      return _userFromFirebaseUser(user);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future SignInEmailPass(String email, String password) async {
+    try {
+      //Call signInWithEmailAndPassword to actually complete the sign in
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+          email: email.trim(), password: password);
+      User? user = result.user;
+      //Call function to get DawsonUser from FirebaseUser
+      return _userFromFirebaseUser(user);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future SignUp(String email, String password) async {
+    try {
+      //Call createUserWithEmailAndPassword to actually complete the signup
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
+          email: email.trim(), password: password);
       User? user = result.user;
       //Call function to get DawsonUser from FirebaseUser
       return _userFromFirebaseUser(user);
