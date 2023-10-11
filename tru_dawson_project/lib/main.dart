@@ -32,8 +32,6 @@ List<Map<String, dynamic>>? separatedForms =
     []; // List that contains each individual form
 
 void main() async {
-  List<String> list = [];
-
   //Ensures flutter widgets are initialized
   WidgetsFlutterBinding.ensureInitialized();
   //Initialize Firebase
@@ -46,40 +44,6 @@ void main() async {
     //Must be used to connect to Firebase Realtime database
     databaseURL: 'https://tru-dawson-project-2023-default-rtdb.firebaseio.com/',
   ));
-  //Connect to Firebase Real time database
-  final ref = FirebaseDatabase.instance.ref();
-  //get instance of json
-  final snapshot = await ref.get();
-
-  //Convert DataSnapshot to JSON map (string of JSON form content)
-  Map<String, dynamic>? jsonMap = dataSnapshotToMap(snapshot);
-
-  // Since the Data snapshot grabs a giant block of data, it needs to be separated into separate forms
-  jsonMap?.forEach((key, value) {
-    // For each form in the original map, create a new map and add it to the list
-    separatedForms?.add(value);
-  });
-
-  //Print data out if there is any
-  if (snapshot.exists) {
-    //print whole file structure
-    //print(snapshot.value);
-
-    //print just form 0
-    //print(snapshot.child('form0').value);
-
-    //Loop through forms
-    for (int i = 0; i < snapshot.children.length; i++) {
-      //print out form names from metadata, two ways, through snapshot or through map
-      list.add(snapshot.child('form$i/metadata/formName').value.toString());
-      //list.add(jsonMap?['form$i']['metadata']['formName']);
-
-      //print(snapshot.child('form$i/metadata/formName').value);
-      //print(jsonMap?['form$i']['metadata']['formName']);
-    }
-  } else {
-    print('No data available.');
-  }
   //Run Application starting with Generator as home
   // runApp(MaterialApp(home: Generator(list, separatedForms) //class
   //     ));

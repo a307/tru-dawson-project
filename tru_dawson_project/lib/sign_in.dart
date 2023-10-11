@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:tru_dawson_project/auth.dart';
@@ -50,71 +51,71 @@ class _SignInState extends State<SignIn> {
               controller: passwordTEC,
             ),
             SizedBox(height: 20.0),
-            ElevatedButton(
-                onPressed: () async {
-                  //Validate that forms are valid with the formkey
-                  if (_formKey.currentState!.saveAndValidate() == true) {
-                    //attempt to sign in anonymously and get back result containing Uid
-                    dynamic result = await auth.SignInEmailPass(
-                        emailTEC.text.trim(), passwordTEC.text.trim());
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                    onPressed: () async {
+                      //Validate that forms are valid with the formkey
+                      if (_formKey.currentState!.saveAndValidate() == true) {
+                        //attempt to sign in anonymously and get back result containing Uid
+                        dynamic result = await auth.SignInEmailPass(
+                            emailTEC.text.trim(), passwordTEC.text.trim());
+                        //If theres data print out the Uid
+                        if (result == null) {
+                          print('error signing in');
+                          showAlertDialog(context, "User Not Found!",
+                              "Email or password incorrect. Please try again.");
+                        } else {
+                          print('user has signed in');
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return CodePage(
+                                  title: 'Dawson Group Forms',
+                                  child: Generator(list, separatedForms),
+                                );
+                              },
+                            ),
+                          );
+                          print(result.uid);
+                        }
+                        print("");
+                      }
+                    },
+                    child: const Text("Sign In")),
+                const SizedBox(width: 20),
+                ElevatedButton(
+                    onPressed: () async {
+                      //Validate that forms are valid with the formkey
+                      if (_formKey.currentState!.saveAndValidate() == true) {
+                        //attempt to sign in anonymously and get back result containing Uid
+                        dynamic result = await auth.SignUp(
+                            emailTEC.text.trim(), passwordTEC.text.trim());
 
-                    //If theres data print out the Uid
-                    if (result == null) {
-                      print('error signing in');
-                      showAlertDialog(context, "User Not Found!",
-                          "Email or password incorrect. Please try again.");
-                    } else {
-                      print('user has signed in');
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return CodePage(
-                              title: 'Complete Form',
-                              child: Generator(list, separatedForms),
-                            );
-                          },
-                        ),
-                      );
-                      print(result.uid);
-                    }
-                    print("");
-                    //print out data in form
-                    debugPrint(
-                        _formKey.currentState?.instantValue.toString() ?? '');
+                        //If theres data print out the Uid
+                        if (result == null) {
+                          print('error signing up');
+                          showAlertDialog(
+                              context, "Error Signing Up", "Please try again.");
+                        } else {
+                          print('user has signed up');
+                          showAlertDialog(context, 'Successful Sign Up!',
+                              "Please press Sign In.");
+                          print(result.uid);
+                        }
+                        print("");
+                        //print out data in form
+                        debugPrint(
+                            _formKey.currentState?.instantValue.toString() ??
+                                '');
 
-                    //Login to firebase
-                  }
-                },
-                child: Text("Sign In")),
-            SizedBox(height: 20),
-            ElevatedButton(
-                onPressed: () async {
-                  //Validate that forms are valid with the formkey
-                  if (_formKey.currentState!.saveAndValidate() == true) {
-                    //attempt to sign in anonymously and get back result containing Uid
-                    dynamic result = await auth.SignUp(
-                        emailTEC.text.trim(), passwordTEC.text.trim());
-
-                    //If theres data print out the Uid
-                    if (result == null) {
-                      print('error signing up');
-                      showAlertDialog(
-                          context, "Error Signing Up", "Please try again.");
-                    } else {
-                      print('user has signed up');
-                      showAlertDialog(context, 'Successful Sign Up!',
-                          "Please press Sign In.");
-                      print(result.uid);
-                    }
-                    print("");
-                    //print out data in form
-                    debugPrint(
-                        _formKey.currentState?.instantValue.toString() ?? '');
-
-                    //Login to firebase
-                  }
-                },
-                child: Text("Sign up"))
+                        //Login to firebase
+                      }
+                    },
+                    child: const Text("Sign up"))
+              ],
+            )
           ],
         ),
       ),
@@ -125,7 +126,7 @@ class _SignInState extends State<SignIn> {
 showAlertDialog(BuildContext context, String title, String content) {
   // set up the buttons
   Widget continueButton = TextButton(
-    child: Text("Continue"),
+    child: const Text("Continue"),
     onPressed: () {
       Navigator.of(context).pop();
     },
