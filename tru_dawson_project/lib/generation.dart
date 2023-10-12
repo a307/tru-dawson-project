@@ -238,8 +238,8 @@ class FormPage extends StatelessWidget {
             SizedBox(
               width: 150,
               child: ElevatedButton(
-                onPressed: submitForm,
-                child: Text('Submit'),
+                onPressed: submitForm, // submit function call on press
+                child: Text('Submit'), // submit button
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(
                       vertical: 10.0,
