@@ -48,4 +48,9 @@ class AuthService {
       print(e.toString());
     }
   }
+
+  void SignOut() async {
+    await _auth.signOut();
+    print('Signed out of Firebase');
+  }
 }

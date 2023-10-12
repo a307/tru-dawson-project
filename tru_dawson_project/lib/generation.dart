@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:tru_dawson_project/auth.dart';
 
 // List to hold all of the individual JSONs
 List<Map<String, dynamic>>? separatedForms =
@@ -36,7 +37,9 @@ class Generator extends StatelessWidget {
   final List<String> list;
   List<Map<String, dynamic>>? separatedForms;
   dynamic result;
-  Generator(this.list, this.separatedForms, this.result);
+  AuthService auth;
+  Generator(this.list, this.separatedForms, this.result, this.auth);
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +52,21 @@ class Generator extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
       ],
       supportedLocales: FormBuilderLocalizations.supportedLocales,
-      home: Container(
-        // page title
-        child: ListView(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Dawson Forms'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              tooltip: 'Sign Out',
+              onPressed: () {
+                Navigator.of(context).pop();
+                auth.SignOut();
+              },
+            ),
+          ],
+        ),
+        body: ListView(
           children: <Widget>[
             for (String item in list) // number of forms = loop size
               Column(
