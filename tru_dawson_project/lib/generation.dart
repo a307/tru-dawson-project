@@ -40,6 +40,7 @@ class Generator extends StatelessWidget {
   AuthService auth;
   Generator(this.list, this.separatedForms, this.result, this.auth);
 
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
