@@ -71,11 +71,9 @@ class _SignInState extends State<SignIn> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) {
-                                return CodePage(
-                                  title: 'Dawson Group Forms',
-                                  child:
-                                      Generator(list, separatedForms, result),
-                                );
+                                return Material(
+                                    child: Generator(
+                                        list, separatedForms, result, auth));
                               },
                             ),
                           );
