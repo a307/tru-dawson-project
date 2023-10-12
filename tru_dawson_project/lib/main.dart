@@ -2,30 +2,9 @@
 //flutter pub add form_builder_validators
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
-import 'dart:convert';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:tru_dawson_project/generation.dart';
 import 'package:tru_dawson_project/sign_in.dart';
-
-import 'sources/conditional_fields.dart';
-import 'sources/dynamic_fields.dart';
-import 'sources/related_fields.dart';
-import 'code_page.dart';
-import 'sources/complete_form.dart';
-import 'sources/custom_fields.dart';
-import 'sources/signup_form.dart';
-
-import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:tru_dawson_project/database.dart';
-import 'firebase_options.dart';
-import 'package:tru_dawson_project/auth.dart';
 
 // List to hold all of the individual JSONs
 List<Map<String, dynamic>>? separatedForms =
