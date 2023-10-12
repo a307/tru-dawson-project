@@ -73,7 +73,8 @@ class _SignInState extends State<SignIn> {
                               builder: (context) {
                                 return CodePage(
                                   title: 'Dawson Group Forms',
-                                  child: Generator(list, separatedForms),
+                                  child:
+                                      Generator(list, separatedForms, result),
                                 );
                               },
                             ),
