@@ -35,7 +35,8 @@ Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
 class Generator extends StatelessWidget {
   final List<String> list;
   List<Map<String, dynamic>>? separatedForms;
-  Generator(this.list, this.separatedForms);
+  dynamic result;
+  Generator(this.list, this.separatedForms, this.result);
 
   @override
   Widget build(BuildContext context) {
