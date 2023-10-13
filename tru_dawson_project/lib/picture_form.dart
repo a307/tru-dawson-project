@@ -29,7 +29,7 @@ class _PictureWidgetState extends State<PictureWidget> {
       children: [
         Text(
           widget.controlName ?? "",
-          textScaleFactor: 1.1,
+          textScaleFactor: 1.25,
         ),
         Row(
           children: [
