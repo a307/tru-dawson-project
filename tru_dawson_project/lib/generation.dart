@@ -168,7 +168,8 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
                   FormBuilderTextField(
                     name: controlName,
                     decoration: InputDecoration(labelText: controlName),
-                  )
+                  ),
+                  SizedBox(height: 20)
                 ],
               ));
               break;

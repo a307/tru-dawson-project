@@ -27,7 +27,6 @@ class _PictureWidgetState extends State<PictureWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 20),
         Text(
           widget.controlName ?? "",
           textScaleFactor: 1.1,
@@ -57,7 +56,7 @@ class _PictureWidgetState extends State<PictureWidget> {
                 width: 100.0,
                 height: 100.0,
               )
-            : const Text(""),
+            : SizedBox(height: 0),
         _selectedFile != null &&
                     defaultTargetPlatform == TargetPlatform.android ||
                 defaultTargetPlatform == TargetPlatform.iOS
@@ -67,7 +66,7 @@ class _PictureWidgetState extends State<PictureWidget> {
                 width: 100.0,
                 height: 100.0,
               )
-            : const Text(""),
+            : SizedBox(height: 0),
         SizedBox(height: 20)
       ],
     );
