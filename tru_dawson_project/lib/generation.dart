@@ -138,9 +138,7 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
           section['label']; // Store the label for the section in the variable
       formFields.add(Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, textScaleFactor: 1.1),
-        ],
+        children: [Text(label, textScaleFactor: 1.25), SizedBox(height: 5)],
       ));
       for (var question in section['questions']) {
         var controlName = question['control']['meta_data']['control_name'];
@@ -178,9 +176,12 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
             {
               var options = question['control']['meta_data'][
                   'options']; // This variable stores the options in the dropdown menu
+              var controlName =
+                  question['control']['meta_data']['control_name'];
               formFields.add(Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(controlName),
                   FormBuilderDropdown(
                     name: controlName,
                     items: options.map<DropdownMenuItem<String>>((option) {
@@ -189,7 +190,8 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
                         child: Text(option),
                       );
                     }).toList(),
-                  )
+                  ),
+                  SizedBox(height: 5),
                 ],
               ));
               break;
