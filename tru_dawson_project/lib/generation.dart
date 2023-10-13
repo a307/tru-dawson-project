@@ -194,7 +194,9 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
             }
           case 'picture':
             {
-              formFields.add(PictureWidget());
+              String controlName =
+                  question['control']['meta_data']['control_name'];
+              formFields.add(PictureWidget(controlName: controlName));
             }
           default: // Add a blank text field for the default case
             {
@@ -217,8 +219,11 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
 }
 
 class PictureWidget extends StatefulWidget {
-  const PictureWidget({super.key});
-
+  final String? controlName;
+  const PictureWidget({
+    super.key,
+    required this.controlName,
+  });
   @override
   State<PictureWidget> createState() => _PictureWidgetState();
 }
@@ -231,17 +236,29 @@ class _PictureWidgetState extends State<PictureWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MaterialButton(
-          onPressed: () {
-            _pickImageFromGallery();
-          },
-          child: const Text('Pick from Gallery'),
+        SizedBox(height: 20),
+        Text(
+          widget.controlName ?? "",
+          textScaleFactor: 1.25,
         ),
-        MaterialButton(
-            onPressed: () {
-              _pickImageFromCamera();
-            },
-            child: const Text('Take Photo with Camera')),
+        Row(
+          children: [
+            MaterialButton(
+              onPressed: () {
+                _pickImageFromGallery();
+              },
+              color: Colors.blue,
+              child: const Text('Pick from Gallery'),
+            ),
+            SizedBox(width: 10),
+            MaterialButton(
+                onPressed: () {
+                  _pickImageFromCamera();
+                },
+                color: Colors.blue,
+                child: const Text('Take Photo with Camera')),
+          ],
+        ),
         _selectedImageString != null && kIsWeb
             ? Image.network(
                 _selectedImageString!,
@@ -260,6 +277,7 @@ class _PictureWidgetState extends State<PictureWidget> {
                 height: 100.0,
               )
             : const Text(""),
+        SizedBox(height: 20)
       ],
     );
   }
