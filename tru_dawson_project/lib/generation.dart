@@ -228,7 +228,7 @@ class _PictureWidgetState extends State<PictureWidget> {
   File? _selectedFile;
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         MaterialButton(
@@ -249,12 +249,17 @@ class _PictureWidgetState extends State<PictureWidget> {
                 width: 100.0,
                 height: 100.0,
               )
-            : const Text("Please select an image"),
-        // _selectedFile != null &&
-        //             defaultTargetPlatform == TargetPlatform.android ||
-        //         defaultTargetPlatform == TargetPlatform.iOS
-        //     ? Image.file(_selectedFile!)
-        //     : const Text("Please select an image"),
+            : const Text(""),
+        _selectedFile != null &&
+                    defaultTargetPlatform == TargetPlatform.android ||
+                defaultTargetPlatform == TargetPlatform.iOS
+            ? Image.file(
+                _selectedFile!,
+                fit: BoxFit.contain,
+                width: 100.0,
+                height: 100.0,
+              )
+            : const Text(""),
       ],
     );
   }
@@ -263,7 +268,12 @@ class _PictureWidgetState extends State<PictureWidget> {
     final returnedImage =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     setState(() {
-      _selectedImageString = returnedImage!.path;
+      if (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS) {
+        _selectedFile = File(returnedImage!.path);
+      } else {
+        _selectedImageString = returnedImage!.path;
+      }
     });
   }
 
@@ -271,7 +281,12 @@ class _PictureWidgetState extends State<PictureWidget> {
     final returnedImage =
         await ImagePicker().pickImage(source: ImageSource.camera);
     setState(() {
-      _selectedImageString = returnedImage!.path;
+      if (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS) {
+        _selectedFile = File(returnedImage!.path);
+      } else {
+        _selectedImageString = returnedImage!.path;
+      }
     });
   }
 }
