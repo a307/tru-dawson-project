@@ -3,6 +3,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tru_dawson_project/auth.dart';
 import 'package:tru_dawson_project/picture_form.dart';
+import 'package:tru_dawson_project/sign_in.dart';
 
 // List to hold all of the individual JSONs
 List<Map<String, dynamic>>? separatedForms =
@@ -37,13 +39,17 @@ Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
   return result as Map<String, dynamic>;
 }
 
+dynamic globalResult;
+
 // dynamically create form list based on # of JSON forms pulled
 class Generator extends StatelessWidget {
   final List<String> list;
   List<Map<String, dynamic>>? separatedForms;
   dynamic result;
   AuthService auth;
-  Generator(this.list, this.separatedForms, this.result, this.auth);
+  Generator(this.list, this.separatedForms, this.result, this.auth) {
+    globalResult = result;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -222,16 +228,24 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
   return formFields; // Return the form fields based on the JSON data
 }
 
+void submitFormToFirebase(
+  Map<String, dynamic> formData,
+  CollectionReference collection,
+) async {
+  // Initialize the Firebase database reference
+  final databaseReference = FirebaseDatabase.instance.ref();
+
+  return await collection.doc(globalResult.uid).set(formData);
+}
+
 class FormPage extends StatelessWidget {
   final List<Widget> formFields;
 
   final String formName;
 
   FormPage({Key? key, this.formFields = const [], required this.formName})
-      : super(
-            key:
-                key); // This is required for building the formFields and getting the form name
-
+      : super(key: key);
+  // This is required for building the formFields and getting the form name
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
 
   @override
@@ -251,7 +265,23 @@ class FormPage extends StatelessWidget {
             SizedBox(
               width: 150,
               child: ElevatedButton(
-                onPressed: submitForm, // submit function call on press
+                onPressed: () {
+                  // Prepare the form data as a Map<String, dynamic>
+                  final formData = _fbKey.currentState?.value;
+                  if (formData != null) {
+                    // Define the Firebase path where you want to store the data
+                    final CollectionReference collection =
+                        FirebaseFirestore.instance.collection(formName);
+                    print(_fbKey.currentState?.value);
+                    // Call the submit function to send the data to Firebase
+                    submitFormToFirebase(
+                      formData,
+                      collection,
+                    );
+
+                    // You can also add success messages or navigation to a confirmation screen.
+                  }
+                }, // submit function call on press
                 child: Text('Submit'), // submit button
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(
