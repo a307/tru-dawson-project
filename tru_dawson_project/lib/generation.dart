@@ -194,7 +194,6 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
             }
           case 'picture':
             {
-              File? _selectedImage;
               formFields.add(PictureWidget());
             }
           default: // Add a blank text field for the default case
@@ -236,19 +235,26 @@ class _PictureWidgetState extends State<PictureWidget> {
           onPressed: () {
             _pickImageFromGallery();
           },
-          child: Text('Pick from Gallery'),
+          child: const Text('Pick from Gallery'),
         ),
         MaterialButton(
             onPressed: () {
               _pickImageFromCamera();
             },
-            child: Text('Take Photo with Camera')),
+            child: const Text('Take Photo with Camera')),
         _selectedImageString != null && kIsWeb
-            ? Image.network(_selectedImageString!)
+            ? Image.network(
+                _selectedImageString!,
+                fit: BoxFit.contain,
+                width: 100.0,
+                height: 100.0,
+              )
             : const Text("Please select an image"),
-        _selectedFile != null && Platform.isAndroid || Platform.isIOS
-            ? Image.file(_selectedFile!)
-            : const Text("Please select an image"),
+        // _selectedFile != null &&
+        //             defaultTargetPlatform == TargetPlatform.android ||
+        //         defaultTargetPlatform == TargetPlatform.iOS
+        //     ? Image.file(_selectedFile!)
+        //     : const Text("Please select an image"),
       ],
     );
   }
