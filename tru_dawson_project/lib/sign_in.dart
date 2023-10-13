@@ -159,11 +159,26 @@ getJSON() async {
 
   //Convert DataSnapshot to JSON map (string of JSON form content)
   Map<String, dynamic>? jsonMap = dataSnapshotToMap(snapshot);
+  Map<String, dynamic> convertedMap = {};
+// Initialize an empty map with the desired type
+
+  jsonMap?.forEach((key, value) {
+    if (value is Map<Object?, Object?>) {
+      // If the value is another map, recursively convert it
+      Map<String, dynamic> convertedValue = convertToMap(value);
+      convertedMap[key.toString()] = convertedValue;
+    } else {
+      // Otherwise, add the value as is
+      convertedMap[key.toString()] = value as dynamic;
+    }
+  });
 
   // Since the Data snapshot grabs a giant block of data, it needs to be separated into separate forms
-  jsonMap?.forEach((key, value) {
+  convertedMap.forEach((key, value) {
     // For each form in the original map, create a new map and add it to the list
     separatedForms?.add(value);
+    // print(value);
+    // print('\n');
   });
 
   //Print data out if there is any
@@ -186,4 +201,17 @@ getJSON() async {
   } else {
     print('No data available.');
   }
+}
+
+Map<String, dynamic> convertToMap(Map<Object?, Object?> original) {
+  Map<String, dynamic> converted = {};
+  original.forEach((key, value) {
+    if (value is Map<Object?, Object?>) {
+      Map<String, dynamic> convertedValue = convertToMap(value);
+      converted[key.toString()] = convertedValue;
+    } else {
+      converted[key.toString()] = value as dynamic;
+    }
+  });
+  return converted;
 }

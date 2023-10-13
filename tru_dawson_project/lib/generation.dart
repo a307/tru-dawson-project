@@ -33,7 +33,7 @@ Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
     });
   }
 
-  return result;
+  return result as Map<String, dynamic>;
 }
 
 // dynamically create form list based on # of JSON forms pulled
