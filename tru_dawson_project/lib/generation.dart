@@ -1,11 +1,15 @@
 //RUN THESE:
 //flutter pub add form_builder_validators
 // ignore_for_file: prefer_const_literals_to_create_immutables
+import 'dart:io';
+
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tru_dawson_project/auth.dart';
 
 // List to hold all of the individual JSONs
@@ -29,7 +33,7 @@ Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
     });
   }
 
-  return result;
+  return result as Map<String, dynamic>;
 }
 
 // dynamically create form list based on # of JSON forms pulled
@@ -39,7 +43,6 @@ class Generator extends StatelessWidget {
   dynamic result;
   AuthService auth;
   Generator(this.list, this.separatedForms, this.result, this.auth);
-
 
   @override
   Widget build(BuildContext context) {
@@ -189,6 +192,10 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
               ));
               break;
             }
+          case 'picture':
+            {
+              formFields.add(PictureWidget());
+            }
           default: // Add a blank text field for the default case
             {
               formFields.add(Column(
@@ -207,6 +214,81 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
     }
   }
   return formFields; // Return the form fields based on the JSON data
+}
+
+class PictureWidget extends StatefulWidget {
+  const PictureWidget({super.key});
+
+  @override
+  State<PictureWidget> createState() => _PictureWidgetState();
+}
+
+class _PictureWidgetState extends State<PictureWidget> {
+  String? _selectedImageString;
+  File? _selectedFile;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        MaterialButton(
+          onPressed: () {
+            _pickImageFromGallery();
+          },
+          child: const Text('Pick from Gallery'),
+        ),
+        MaterialButton(
+            onPressed: () {
+              _pickImageFromCamera();
+            },
+            child: const Text('Take Photo with Camera')),
+        _selectedImageString != null && kIsWeb
+            ? Image.network(
+                _selectedImageString!,
+                fit: BoxFit.contain,
+                width: 100.0,
+                height: 100.0,
+              )
+            : const Text(""),
+        _selectedFile != null &&
+                    defaultTargetPlatform == TargetPlatform.android ||
+                defaultTargetPlatform == TargetPlatform.iOS
+            ? Image.file(
+                _selectedFile!,
+                fit: BoxFit.contain,
+                width: 100.0,
+                height: 100.0,
+              )
+            : const Text(""),
+      ],
+    );
+  }
+
+  Future _pickImageFromGallery() async {
+    final returnedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    setState(() {
+      if (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS) {
+        _selectedFile = File(returnedImage!.path);
+      } else {
+        _selectedImageString = returnedImage!.path;
+      }
+    });
+  }
+
+  Future _pickImageFromCamera() async {
+    final returnedImage =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    setState(() {
+      if (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS) {
+        _selectedFile = File(returnedImage!.path);
+      } else {
+        _selectedImageString = returnedImage!.path;
+      }
+    });
+  }
 }
 
 class FormPage extends StatelessWidget {
