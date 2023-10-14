@@ -31,6 +31,7 @@ class _SignInState extends State<SignIn> {
     final TextEditingController passwordTEC = TextEditingController();
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFF234094), // Set the background color to #234094,
         title: Text("Sign In"),
       ),
       body: FormBuilder(
@@ -82,6 +83,10 @@ class _SignInState extends State<SignIn> {
                         print("");
                       }
                     },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFF6F768A),
+                      minimumSize: Size(72, 36),
+                    ),
                     child: const Text("Sign In")),
                 const SizedBox(width: 20),
                 ElevatedButton(
@@ -112,6 +117,10 @@ class _SignInState extends State<SignIn> {
                         //Login to firebase
                       }
                     },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFF6F768A),
+                      minimumSize: Size(72, 36),
+                    ),
                     child: const Text("Sign up"))
               ],
             )
