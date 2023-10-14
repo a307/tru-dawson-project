@@ -47,22 +47,36 @@ class _PictureWidgetState extends State<PictureWidget> {
                 },
                 color: Colors.blue,
                 child: const Text('Take Photo with Camera')),
+            SizedBox(width: 10),
+            MaterialButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedImageString = null;
+                    _selectedFile = null;
+                  });
+                },
+                color: Colors.blue,
+                child: const Text('Remove Image')),
           ],
         ),
+        //if the slected image string (chrome) isnt null and platform is web, get image using Image.Network, otherwise display empty sizedbox
         _selectedImageString != null && kIsWeb
             ? Image.network(
                 _selectedImageString!,
                 fit: BoxFit.contain,
+                //Make photo only 100x100
                 width: 100.0,
                 height: 100.0,
               )
             : SizedBox(height: 0),
+        //if selected file (ios and android) isnt null and platform is android or ios, get image using Image.file, otherwise display empty sizedbox
         _selectedFile != null &&
                     defaultTargetPlatform == TargetPlatform.android ||
                 defaultTargetPlatform == TargetPlatform.iOS
             ? Image.file(
                 _selectedFile!,
                 fit: BoxFit.contain,
+                //Make photo only 100x100
                 width: 100.0,
                 height: 100.0,
               )
@@ -73,28 +87,40 @@ class _PictureWidgetState extends State<PictureWidget> {
   }
 
   Future _pickImageFromGallery() async {
+    //get image from gallery or file system
     final returnedImage =
         await ImagePicker().pickImage(source: ImageSource.gallery);
-    setState(() {
-      if (defaultTargetPlatform == TargetPlatform.android ||
-          defaultTargetPlatform == TargetPlatform.iOS) {
-        _selectedFile = File(returnedImage!.path);
-      } else {
-        _selectedImageString = returnedImage!.path;
-      }
-    });
+    //make sure return image isnt null or else if we dont select a photo it will just crash
+    if (returnedImage != null) {
+      setState(() {
+        if (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS) {
+          //get selected file when on ios or android
+          _selectedFile = File(returnedImage!.path);
+        } else {
+          //just get the path when on chrome
+          _selectedImageString = returnedImage!.path;
+        }
+      });
+    }
   }
 
   Future _pickImageFromCamera() async {
+    //get image from camera (on chrome it just opens another filesystem)
     final returnedImage =
         await ImagePicker().pickImage(source: ImageSource.camera);
-    setState(() {
-      if (defaultTargetPlatform == TargetPlatform.android ||
-          defaultTargetPlatform == TargetPlatform.iOS) {
-        _selectedFile = File(returnedImage!.path);
-      } else {
-        _selectedImageString = returnedImage!.path;
-      }
-    });
+    //make sure return image isnt null or else if we dont select a photo it will just crash
+    if (returnedImage != null) {
+      setState(() {
+        if (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS) {
+          //get selected file when on ios or android
+          _selectedFile = File(returnedImage!.path);
+        } else {
+          //just get the path when on chrome
+          _selectedImageString = returnedImage!.path;
+        }
+      });
+    }
   }
 }

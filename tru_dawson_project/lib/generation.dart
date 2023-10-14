@@ -3,6 +3,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tru_dawson_project/auth.dart';
 import 'package:tru_dawson_project/picture_form.dart';
+import 'package:tru_dawson_project/sign_in.dart';
 
 // List to hold all of the individual JSONs
 List<Map<String, dynamic>>? separatedForms =
@@ -37,13 +39,17 @@ Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
   return result as Map<String, dynamic>;
 }
 
+dynamic globalResult;
+
 // dynamically create form list based on # of JSON forms pulled
 class Generator extends StatelessWidget {
   final List<String> list;
   List<Map<String, dynamic>>? separatedForms;
   dynamic result;
   AuthService auth;
-  Generator(this.list, this.separatedForms, this.result, this.auth);
+  Generator(this.list, this.separatedForms, this.result, this.auth) {
+    globalResult = result;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,25 +91,40 @@ class Generator extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) {
                             try {
-                              // Searching for the form with the name equal to item
                               Map<String, dynamic>? targetForm =
                                   separatedForms?.firstWhere((formMap) {
-                                // Will find the first instance of a form that has the same name as item
-                                return formMap['metadata']['formName'] ==
-                                    item; // If this statement is true then it was a success and the following code will execute
+                                return formMap['metadata']['formName'] == item;
                               });
-                              final formFields = generateForm(
-                                  targetForm); // This variable holds the fields of the form after the generateForm function runs
+
+                              List<Widget> formFields =
+                                  generateForm(targetForm);
+
                               return FormPage(
-                                  formName: item,
-                                  formFields:
-                                      formFields); // Pass formFields to the Form Page
+                                formName: item,
+                                formFields: formFields,
+                                //onsubmit function mentioned in FormPage, allows us to pass the data from the form into a a firebase reference
+                                onSubmit: (formData) {
+                                  print('Form Data: $formData');
+                                  print('Submitting form data to Firebase...');
+                                  final CollectionReference collection =
+                                      FirebaseFirestore.instance
+                                          .collection(item);
+                                  submitFormToFirebase(formData, collection);
+                                },
+                              );
                             } catch (e) {
-                              // If the form isn't found or something happens during the building, then an error message will display
                               print('$e Something Went wrong');
                               return FormPage(
                                 formName: '',
-                              ); // If the form isn't found then return an empty form page with no name
+                                onSubmit: (formData) {
+                                  print('Form Data: $formData');
+                                  print('Submitting form data to Firebase...');
+                                  final CollectionReference collection =
+                                      FirebaseFirestore.instance
+                                          .collection(item);
+                                  submitFormToFirebase(formData, collection);
+                                },
+                              );
                             }
                           },
                         ),
@@ -198,8 +219,10 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
             }
           case 'picture':
             {
+              //get control name from JSON
               String controlName =
                   question['control']['meta_data']['control_name'];
+              //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
               formFields.add(PictureWidget(controlName: controlName));
             }
           default: // Add a blank text field for the default case
@@ -208,7 +231,7 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   FormBuilderTextField(
-                    name: '',
+                    name: 'FILL',
                     decoration: const InputDecoration(labelText: ''),
                   )
                 ],
@@ -222,45 +245,72 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
   return formFields; // Return the form fields based on the JSON data
 }
 
-class FormPage extends StatelessWidget {
+void submitFormToFirebase(
+  Map<String, dynamic> formData,
+  CollectionReference collection,
+) async {
+  // Initialize the Firebase database reference
+  final databaseReference = FirebaseDatabase.instance.ref();
+  //send data to the database with UID and formdata
+  return await collection.doc(globalResult.uid).set(formData);
+}
+
+class FormPage extends StatefulWidget {
   final List<Widget> formFields;
-
   final String formName;
+  //create onsubmit function so when we create a FormPage later in Generator we can use an onsubmit function to send the data to firebase
+  final Function(Map<String, dynamic>) onSubmit;
 
-  FormPage({Key? key, this.formFields = const [], required this.formName})
-      : super(
-            key:
-                key); // This is required for building the formFields and getting the form name
+  FormPage({
+    Key? key,
+    this.formFields = const [],
+    required this.formName,
+    required this.onSubmit,
+  }) : super(key: key);
 
+  @override
+  _FormPageState createState() => _FormPageState();
+}
+
+class _FormPageState extends State<FormPage> {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(formName),
+        title: Text(widget.formName),
       ),
       body: FormBuilder(
         key: _fbKey,
         child: ListView(
-          padding: EdgeInsets.symmetric(
-              horizontal: 16.0, vertical: 12.0), // Padding for the whole form
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           children: [
-            ...formFields, // This is where the form fields will go in the formPage widget when it is built
-            SizedBox(height: 20.0), // Space between form fields and buttons
+            ...widget.formFields,
+            SizedBox(height: 20.0),
             SizedBox(
               width: 150,
               child: ElevatedButton(
-                onPressed: submitForm, // submit function call on press
-                child: Text('Submit'), // submit button
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 10.0,
-                      horizontal: 20.0), // Padding inside the button
-                ),
+                onPressed: () {
+                  //validate form fields
+                  bool isValid =
+                      _fbKey.currentState?.saveAndValidate() ?? false;
+
+                  if (isValid) {
+                    //get form data from the key associated with form fields
+                    Map<String, dynamic>? formData = _fbKey.currentState?.value;
+                    if (formData != null) {
+                      //as long as the form data isnt null, call class onsubmit function with formdata
+                      widget.onSubmit(formData);
+                    }
+                  } else {
+                    print('Form validation failed.');
+                  }
+                },
+                child: Text('Submit'),
               ),
             ),
-            SizedBox(height: 12.0), // Space between buttons
+            SizedBox(height: 12.0),
             SizedBox(
               width: 150,
               child: ElevatedButton(
@@ -268,11 +318,6 @@ class FormPage extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
                 child: Text('Go Back'),
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 10.0,
-                      horizontal: 20.0), // Padding inside the button
-                ),
               ),
             ),
           ],
@@ -281,6 +326,7 @@ class FormPage extends StatelessWidget {
     );
   }
 }
+
 
 // class _HomePage extends StatelessWidget {
 //   const _HomePage({Key? key}) : super(key: key);
