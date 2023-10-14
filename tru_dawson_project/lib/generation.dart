@@ -19,6 +19,9 @@ import 'package:tru_dawson_project/sign_in.dart';
 List<Map<String, dynamic>>? separatedForms =
     []; // List that contains each individual form
 
+// Map to hold the amount of times a section needs to be repeated if it's "Repeatable"
+Map<String, int> sectionCounts = {};
+
 //Convert DataSnapshot to JSON map
 Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
   if (snapshot == null || snapshot.value == null) {
@@ -64,7 +67,8 @@ class Generator extends StatelessWidget {
       supportedLocales: FormBuilderLocalizations.supportedLocales,
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xFF234094), // Set the background color to #234094
+          backgroundColor:
+              Color(0xFF234094), // Set the background color to #234094
           title: const Text('Dawson Forms'),
           actions: [
             IconButton(
@@ -177,11 +181,11 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey),
                         borderRadius: BorderRadius.circular(8.0),
-                       ),
                       ),
-                      inputType: InputType.date,
+                    ),
+                    inputType: InputType.date,
                   ),
-                   SizedBox(height: 10),
+                  SizedBox(height: 10),
                 ],
               ));
               break;
@@ -198,8 +202,8 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey),
                         borderRadius: BorderRadius.circular(8.0),
-                       ),
                       ),
+                    ),
                   ),
                   SizedBox(height: 20)
                 ],
@@ -209,7 +213,8 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
           case 'Dropdown':
             {
               var options = question['control']['meta_data']['options'];
-              var controlName = question['control']['meta_data']['control_name'];
+              var controlName =
+                  question['control']['meta_data']['control_name'];
               formFields.add(Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -253,7 +258,6 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
                     name: 'FILL',
                     decoration: const InputDecoration(labelText: ''),
                   ),
-                  
                   SizedBox(height: 10),
                 ],
               ));
@@ -300,7 +304,8 @@ class _FormPageState extends State<FormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF234094), // Set the background color to #234094
+        backgroundColor:
+            Color(0xFF234094), // Set the background color to #234094
         title: Text(widget.formName),
       ),
       body: FormBuilder(
@@ -311,9 +316,9 @@ class _FormPageState extends State<FormPage> {
             ...widget.formFields,
             SizedBox(height: 20.0),
             SizedBox(
-              child:Align(
+              child: Align(
                 alignment: Alignment.center,
-                child:Container(
+                child: Container(
                   width: 300,
                   child: ElevatedButton(
                     onPressed: () {
@@ -321,7 +326,8 @@ class _FormPageState extends State<FormPage> {
                           _fbKey.currentState?.saveAndValidate() ?? false;
 
                       if (isValid) {
-                        Map<String, dynamic>? formData = _fbKey.currentState?.value;
+                        Map<String, dynamic>? formData =
+                            _fbKey.currentState?.value;
                         if (formData != null) {
                           widget.onSubmit(formData);
                         }
@@ -340,9 +346,9 @@ class _FormPageState extends State<FormPage> {
             ),
             SizedBox(height: 12.0),
             SizedBox(
-              child:Align(
+              child: Align(
                 alignment: Alignment.center,
-                child:Container(
+                child: Container(
                   width: 300,
                   child: ElevatedButton(
                     onPressed: () {

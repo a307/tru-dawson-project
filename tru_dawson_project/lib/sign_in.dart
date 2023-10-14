@@ -31,7 +31,8 @@ class _SignInState extends State<SignIn> {
     final TextEditingController passwordTEC = TextEditingController();
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF234094), // Set the background color to #234094,
+        backgroundColor:
+            Color(0xFF234094), // Set the background color to #234094,
         title: Text("Sign In"),
       ),
       body: FormBuilder(
@@ -39,21 +40,21 @@ class _SignInState extends State<SignIn> {
         child: Column(
           children: [
             SizedBox(height: 20.0),
-           Text("Email"),
-           Container(
-            width: 300,
-            child: FormBuilderTextField(
-              name: "email",
-              controller: emailTEC,
-              decoration: InputDecoration(
-                labelText: "Email",
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8.0),
+            Text("Email"),
+            Container(
+              width: 300,
+              child: FormBuilderTextField(
+                name: "email",
+                controller: emailTEC,
+                decoration: InputDecoration(
+                  labelText: "Email",
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
               ),
             ),
-           ),
             SizedBox(height: 20.0),
             Text("Password"),
             Container(
@@ -180,6 +181,7 @@ showAlertDialog(BuildContext context, String title, String content) {
 
 List<Map<String, dynamic>>? separatedForms = [];
 List<String> list = [];
+
 getJSON() async {
   //Connect to Firebase Real time database
   final ref = FirebaseDatabase.instance.ref();
@@ -205,6 +207,7 @@ getJSON() async {
   // Since the Data snapshot grabs a giant block of data, it needs to be separated into separate forms
   convertedMap.forEach((key, value) {
     // For each form in the original map, create a new map and add it to the list
+    // Map to hold the amount of times a section needs to be repeated if it's "Repeatable"
     separatedForms?.add(value);
     // print(value);
     // print('\n');
@@ -229,6 +232,20 @@ getJSON() async {
     }
   } else {
     print('No data available.');
+  }
+}
+
+// Map for holding section counts for each individual form. Each form name represents a key that leads to map containing the labels of each section and their respective counts if they are "Repeatable"
+Map<String, Map<String, int>> formSectionCounts = {};
+
+// Function for looking through a form and finding the repeatable sections within
+void findRepeatableSections(Map<String, dynamic>? form) {
+  String formName = form?['formName'];
+  for (var page in form?['pages']) {
+    // Loop through the pages in the form
+    for (var section in page['sections']) {
+      if (section['type'] == "Repeatable") {}
+    }
   }
 }
 
