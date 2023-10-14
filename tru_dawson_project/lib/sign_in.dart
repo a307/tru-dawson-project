@@ -41,7 +41,7 @@ class _SignInState extends State<SignIn> {
             SizedBox(height: 20.0),
            Text("Email"),
            Container(
-            width: 200,
+            width: 300,
             child: FormBuilderTextField(
               name: "email",
               controller: emailTEC,
@@ -57,7 +57,7 @@ class _SignInState extends State<SignIn> {
             SizedBox(height: 20.0),
             Text("Password"),
             Container(
-              width: 200,
+              width: 300,
               child: FormBuilderTextField(
                 name: "password",
                 obscureText: true,

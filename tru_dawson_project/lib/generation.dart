@@ -308,40 +308,50 @@ class _FormPageState extends State<FormPage> {
             ...widget.formFields,
             SizedBox(height: 20.0),
             SizedBox(
-              width: 150,
-              child: ElevatedButton(
-                onPressed: () {
-                  bool isValid =
-                      _fbKey.currentState?.saveAndValidate() ?? false;
+              child:Align(
+                alignment: Alignment.center,
+                child:Container(
+                  width: 300,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      bool isValid =
+                          _fbKey.currentState?.saveAndValidate() ?? false;
 
-                  if (isValid) {
-                    Map<String, dynamic>? formData = _fbKey.currentState?.value;
-                    if (formData != null) {
-                      widget.onSubmit(formData);
-                    }
-                  } else {
-                    print('Form validation failed.');
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Color(0xFF6F768A),
-                  minimumSize: Size(72, 36),
+                      if (isValid) {
+                        Map<String, dynamic>? formData = _fbKey.currentState?.value;
+                        if (formData != null) {
+                          widget.onSubmit(formData);
+                        }
+                      } else {
+                        print('Form validation failed.');
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFF6F768A),
+                      //minimumSize: Size(72, 36),
+                    ),
+                    child: Text('Submit'),
+                  ),
                 ),
-                child: Text('Submit'),
               ),
             ),
             SizedBox(height: 12.0),
             SizedBox(
-              width: 150,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Color(0xFF6F768A),
-                  minimumSize: Size(72, 36),
+              child:Align(
+                alignment: Alignment.center,
+                child:Container(
+                  width: 300,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFF6F768A),
+                      //minimumSize: Size(72, 36),
+                    ),
+                    child: Text('Go Back'),
+                  ),
                 ),
-                child: Text('Go Back'),
               ),
             ),
           ],
