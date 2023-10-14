@@ -108,6 +108,10 @@ class Generator extends StatelessWidget {
                                   // You can call your submitFormToFirebase function here
                                   // For simplicity, let's just print the form data
                                   print('Submitting form data to Firebase...');
+                                  final CollectionReference collection =
+                                      FirebaseFirestore.instance
+                                          .collection(item);
+                                  submitFormToFirebase(formData, collection);
                                 },
                               );
                             } catch (e) {
