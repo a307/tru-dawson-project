@@ -91,25 +91,37 @@ class Generator extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) {
                             try {
-                              // Searching for the form with the name equal to item
                               Map<String, dynamic>? targetForm =
                                   separatedForms?.firstWhere((formMap) {
-                                // Will find the first instance of a form that has the same name as item
-                                return formMap['metadata']['formName'] ==
-                                    item; // If this statement is true then it was a success and the following code will execute
+                                return formMap['metadata']['formName'] == item;
                               });
-                              final formFields = generateForm(
-                                  targetForm); // This variable holds the fields of the form after the generateForm function runs
+
+                              List<Widget> formFields =
+                                  generateForm(targetForm);
+
                               return FormPage(
-                                  formName: item,
-                                  formFields:
-                                      formFields); // Pass formFields to the Form Page
+                                formName: item,
+                                formFields: formFields,
+                                onSubmit: (formData) {
+                                  // Handle form submission here
+                                  print('Form Data: $formData');
+                                  // You can call your submitFormToFirebase function here
+                                  // For simplicity, let's just print the form data
+                                  print('Submitting form data to Firebase...');
+                                },
+                              );
                             } catch (e) {
-                              // If the form isn't found or something happens during the building, then an error message will display
                               print('$e Something Went wrong');
                               return FormPage(
                                 formName: '',
-                              ); // If the form isn't found then return an empty form page with no name
+                                onSubmit: (formData) {
+                                  // Handle form submission here
+                                  print('Form Data: $formData');
+                                  // You can call your submitFormToFirebase function here
+                                  // For simplicity, let's just print the form data
+                                  print('Submitting form data to Firebase...');
+                                },
+                              );
                             }
                           },
                         ),
@@ -238,59 +250,58 @@ void submitFormToFirebase(
   return await collection.doc(globalResult.uid).set(formData);
 }
 
-class FormPage extends StatelessWidget {
+class FormPage extends StatefulWidget {
   final List<Widget> formFields;
-
   final String formName;
+  final Function(Map<String, dynamic>) onSubmit;
 
-  FormPage({Key? key, this.formFields = const [], required this.formName})
-      : super(key: key);
-  // This is required for building the formFields and getting the form name
+  FormPage({
+    Key? key,
+    this.formFields = const [],
+    required this.formName,
+    required this.onSubmit,
+  }) : super(key: key);
+
+  @override
+  _FormPageState createState() => _FormPageState();
+}
+
+class _FormPageState extends State<FormPage> {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(formName),
+        title: Text(widget.formName),
       ),
       body: FormBuilder(
         key: _fbKey,
         child: ListView(
-          padding: EdgeInsets.symmetric(
-              horizontal: 16.0, vertical: 12.0), // Padding for the whole form
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           children: [
-            ...formFields, // This is where the form fields will go in the formPage widget when it is built
-            SizedBox(height: 20.0), // Space between form fields and buttons
+            ...widget.formFields,
+            SizedBox(height: 20.0),
             SizedBox(
               width: 150,
               child: ElevatedButton(
                 onPressed: () {
-                  // Prepare the form data as a Map<String, dynamic>
-                  final formData = _fbKey.currentState?.value;
-                  if (formData != null) {
-                    // Define the Firebase path where you want to store the data
-                    final CollectionReference collection =
-                        FirebaseFirestore.instance.collection(formName);
-                    print(_fbKey.currentState?.value);
-                    // Call the submit function to send the data to Firebase
-                    submitFormToFirebase(
-                      formData,
-                      collection,
-                    );
+                  bool isValid =
+                      _fbKey.currentState?.saveAndValidate() ?? false;
 
-                    // You can also add success messages or navigation to a confirmation screen.
+                  if (isValid) {
+                    Map<String, dynamic>? formData = _fbKey.currentState?.value;
+                    if (formData != null) {
+                      widget.onSubmit(formData);
+                    }
+                  } else {
+                    print('Form validation failed.');
                   }
-                }, // submit function call on press
-                child: Text('Submit'), // submit button
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 10.0,
-                      horizontal: 20.0), // Padding inside the button
-                ),
+                },
+                child: Text('Submit'),
               ),
             ),
-            SizedBox(height: 12.0), // Space between buttons
+            SizedBox(height: 12.0),
             SizedBox(
               width: 150,
               child: ElevatedButton(
@@ -298,11 +309,6 @@ class FormPage extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
                 child: Text('Go Back'),
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 10.0,
-                      horizontal: 20.0), // Padding inside the button
-                ),
               ),
             ),
           ],
@@ -311,6 +317,7 @@ class FormPage extends StatelessWidget {
     );
   }
 }
+
 
 // class _HomePage extends StatelessWidget {
 //   const _HomePage({Key? key}) : super(key: key);
