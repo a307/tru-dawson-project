@@ -39,17 +39,37 @@ class _SignInState extends State<SignIn> {
         child: Column(
           children: [
             SizedBox(height: 20.0),
-            Text("Email"),
-            FormBuilderTextField(
+           Text("Email"),
+           Container(
+            width: 200,
+            child: FormBuilderTextField(
               name: "email",
               controller: emailTEC,
+              decoration: InputDecoration(
+                labelText: "Email",
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
             ),
+           ),
             SizedBox(height: 20.0),
             Text("Password"),
-            FormBuilderTextField(
-              name: "password",
-              obscureText: true,
-              controller: passwordTEC,
+            Container(
+              width: 200,
+              child: FormBuilderTextField(
+                name: "password",
+                obscureText: true,
+                controller: passwordTEC,
+                decoration: InputDecoration(
+                  labelText: "Password",
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
             ),
             SizedBox(height: 20.0),
             Row(
