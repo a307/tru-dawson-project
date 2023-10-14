@@ -94,8 +94,8 @@ class _SignInState extends State<SignIn> {
                             MaterialPageRoute(
                               builder: (context) {
                                 return Material(
-                                    child: Generator(list, separatedForms,
-                                        formSectionCounts, result, auth));
+                                    child: Generator(
+                                        list, separatedForms, result, auth));
                               },
                             ),
                           );
@@ -183,7 +183,7 @@ List<Map<String, dynamic>>? separatedForms = [];
 List<String> list = [];
 
 // Map for holding section counts for each individual form. Each form name represents a key that leads to map containing the labels of each section and their respective counts if they are "Repeatable"
-Map<String, Map<String, int>> formSectionCounts = {};
+// Map<String, Map<String, int>> formSectionCounts = {};
 
 getJSON() async {
   //Connect to Firebase Real time database
@@ -211,7 +211,6 @@ getJSON() async {
   convertedMap.forEach((key, value) {
     // For each form in the original map, create a new map and add it to the list
     separatedForms?.add(value);
-    findRepeatableSections(value);
   });
 
   //Print data out if there is any
@@ -233,39 +232,6 @@ getJSON() async {
     }
   } else {
     print('No data available.');
-  }
-}
-
-// Function for looking through a form and finding the repeatable sections within. There are a bunch of null checks present, as it breaks the code without them.
-void findRepeatableSections(Map<String, dynamic> form) {
-  if (form.containsKey('metadata') && form['metadata'] != null) {
-    String? formName =
-        form['metadata']['formName']; // Get the form name and make that a key
-    if (formName != null) {
-      Map<String, int> sectionCounts =
-          {}; // Create a map that holds each section label as the key and then a count integer representing the number of times it needs to be repeated
-      formSectionCounts[formName] = sectionCounts;
-      List<dynamic>? pages = form[
-          'pages']; // Create a list of the pages and then loop through them
-      if (pages != null) {
-        for (var page in pages) {
-          List<dynamic>? sections = page['sections'];
-          if (sections != null) {
-            for (var section in sections) {
-              if (section['type'] == "Repeatable") {
-                // If the section is a repeatable section
-                String? label =
-                    section['label']; // Get the section label for the key
-                if (label != null) {
-                  sectionCounts[label] =
-                      1; // Assign the count of this section with an initial value of one
-                }
-              }
-            }
-          }
-        }
-      }
-    }
   }
 }
 
