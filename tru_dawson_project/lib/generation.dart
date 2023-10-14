@@ -64,6 +64,7 @@ class Generator extends StatelessWidget {
       supportedLocales: FormBuilderLocalizations.supportedLocales,
       home: Scaffold(
         appBar: AppBar(
+          backgroundColor: Color(0xFF234094), // Set the background color to #234094
           title: const Text('Dawson Forms'),
           actions: [
             IconButton(
@@ -158,7 +159,7 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
           section['label']; // Store the label for the section in the variable
       formFields.add(Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [Text(label, textScaleFactor: 1.25), SizedBox(height: 5)],
+        children: [Text(label, textScaleFactor: 1.25), SizedBox(height: 10)],
       ));
       for (var question in section['questions']) {
         var controlName = question['control']['meta_data']['control_name'];
@@ -171,9 +172,16 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
                 children: [
                   FormBuilderDateTimePicker(
                     name: controlName,
-                    decoration: InputDecoration(labelText: controlName),
-                    inputType: InputType.date,
-                  )
+                    decoration: InputDecoration(
+                      labelText: controlName,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8.0),
+                       ),
+                      ),
+                      inputType: InputType.date,
+                  ),
+                   SizedBox(height: 10),
                 ],
               ));
               break;
@@ -185,25 +193,37 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
                 children: [
                   FormBuilderTextField(
                     name: controlName,
-                    decoration: InputDecoration(labelText: controlName),
+                    decoration: InputDecoration(
+                      labelText: controlName,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8.0),
+                       ),
+                      ),
                   ),
                   SizedBox(height: 20)
                 ],
               ));
               break;
             }
-          case 'Dropdown': // If the type is Dropdown, build a dropdown field
+          case 'Dropdown':
             {
-              var options = question['control']['meta_data'][
-                  'options']; // This variable stores the options in the dropdown menu
-              var controlName =
-                  question['control']['meta_data']['control_name'];
+              var options = question['control']['meta_data']['options'];
+              var controlName = question['control']['meta_data']['control_name'];
               formFields.add(Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(controlName),
+                  SizedBox(height: 10),
                   FormBuilderDropdown(
                     name: controlName,
+                    decoration: InputDecoration(
+                      labelText: controlName,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
                     items: options.map<DropdownMenuItem<String>>((option) {
                       return DropdownMenuItem<String>(
                         value: option,
@@ -211,7 +231,7 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
                       );
                     }).toList(),
                   ),
-                  SizedBox(height: 5),
+                  SizedBox(height: 20),
                 ],
               ));
               break;
@@ -232,7 +252,9 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
                   FormBuilderTextField(
                     name: 'FILL',
                     decoration: const InputDecoration(labelText: ''),
-                  )
+                  ),
+                  
+                  SizedBox(height: 10),
                 ],
               ));
               break;
@@ -278,6 +300,7 @@ class _FormPageState extends State<FormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFF234094), // Set the background color to #234094
         title: Text(widget.formName),
       ),
       body: FormBuilder(
@@ -288,35 +311,50 @@ class _FormPageState extends State<FormPage> {
             ...widget.formFields,
             SizedBox(height: 20.0),
             SizedBox(
-              width: 150,
-              child: ElevatedButton(
-                onPressed: () {
-                  //validate form fields
-                  bool isValid =
-                      _fbKey.currentState?.saveAndValidate() ?? false;
+              child:Align(
+                alignment: Alignment.center,
+                child:Container(
+                  width: 300,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      bool isValid =
+                          _fbKey.currentState?.saveAndValidate() ?? false;
 
-                  if (isValid) {
-                    //get form data from the key associated with form fields
-                    Map<String, dynamic>? formData = _fbKey.currentState?.value;
-                    if (formData != null) {
-                      //as long as the form data isnt null, call class onsubmit function with formdata
-                      widget.onSubmit(formData);
-                    }
-                  } else {
-                    print('Form validation failed.');
-                  }
-                },
-                child: Text('Submit'),
+                      if (isValid) {
+                        Map<String, dynamic>? formData = _fbKey.currentState?.value;
+                        if (formData != null) {
+                          widget.onSubmit(formData);
+                        }
+                      } else {
+                        print('Form validation failed.');
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFF6F768A),
+                      //minimumSize: Size(72, 36),
+                    ),
+                    child: Text('Submit'),
+                  ),
+                ),
               ),
             ),
             SizedBox(height: 12.0),
             SizedBox(
-              width: 150,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('Go Back'),
+              child:Align(
+                alignment: Alignment.center,
+                child:Container(
+                  width: 300,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFF6F768A),
+                      //minimumSize: Size(72, 36),
+                    ),
+                    child: Text('Go Back'),
+                  ),
+                ),
               ),
             ),
           ],

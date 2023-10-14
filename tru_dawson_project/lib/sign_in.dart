@@ -31,6 +31,7 @@ class _SignInState extends State<SignIn> {
     final TextEditingController passwordTEC = TextEditingController();
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFF234094), // Set the background color to #234094,
         title: Text("Sign In"),
       ),
       body: FormBuilder(
@@ -38,17 +39,37 @@ class _SignInState extends State<SignIn> {
         child: Column(
           children: [
             SizedBox(height: 20.0),
-            Text("Email"),
-            FormBuilderTextField(
+           Text("Email"),
+           Container(
+            width: 300,
+            child: FormBuilderTextField(
               name: "email",
               controller: emailTEC,
+              decoration: InputDecoration(
+                labelText: "Email",
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
             ),
+           ),
             SizedBox(height: 20.0),
             Text("Password"),
-            FormBuilderTextField(
-              name: "password",
-              obscureText: true,
-              controller: passwordTEC,
+            Container(
+              width: 300,
+              child: FormBuilderTextField(
+                name: "password",
+                obscureText: true,
+                controller: passwordTEC,
+                decoration: InputDecoration(
+                  labelText: "Password",
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
             ),
             SizedBox(height: 20.0),
             Row(
@@ -82,6 +103,10 @@ class _SignInState extends State<SignIn> {
                         print("");
                       }
                     },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFF6F768A),
+                      minimumSize: Size(72, 36),
+                    ),
                     child: const Text("Sign In")),
                 const SizedBox(width: 20),
                 ElevatedButton(
@@ -112,6 +137,10 @@ class _SignInState extends State<SignIn> {
                         //Login to firebase
                       }
                     },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFF6F768A),
+                      minimumSize: Size(72, 36),
+                    ),
                     child: const Text("Sign up"))
               ],
             )
