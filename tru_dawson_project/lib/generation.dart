@@ -102,6 +102,7 @@ class Generator extends StatelessWidget {
                               return FormPage(
                                 formName: item,
                                 formFields: formFields,
+                                //onsubmit function mentioned in FormPage, allows us to pass the data from the form into a a firebase reference
                                 onSubmit: (formData) {
                                   print('Form Data: $formData');
                                   print('Submitting form data to Firebase...');
@@ -218,8 +219,10 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
             }
           case 'picture':
             {
+              //get control name from JSON
               String controlName =
                   question['control']['meta_data']['control_name'];
+              //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
               formFields.add(PictureWidget(controlName: controlName));
             }
           default: // Add a blank text field for the default case
@@ -248,13 +251,14 @@ void submitFormToFirebase(
 ) async {
   // Initialize the Firebase database reference
   final databaseReference = FirebaseDatabase.instance.ref();
-
+  //send data to the database with UID and formdata
   return await collection.doc(globalResult.uid).set(formData);
 }
 
 class FormPage extends StatefulWidget {
   final List<Widget> formFields;
   final String formName;
+  //create onsubmit function so when we create a FormPage later in Generator we can use an onsubmit function to send the data to firebase
   final Function(Map<String, dynamic>) onSubmit;
 
   FormPage({
@@ -288,12 +292,15 @@ class _FormPageState extends State<FormPage> {
               width: 150,
               child: ElevatedButton(
                 onPressed: () {
+                  //validate form fields
                   bool isValid =
                       _fbKey.currentState?.saveAndValidate() ?? false;
 
                   if (isValid) {
+                    //get form data from the key associated with form fields
                     Map<String, dynamic>? formData = _fbKey.currentState?.value;
                     if (formData != null) {
+                      //as long as the form data isnt null, call class onsubmit function with formdata
                       widget.onSubmit(formData);
                     }
                   } else {
