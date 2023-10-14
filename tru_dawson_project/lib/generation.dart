@@ -171,7 +171,9 @@ List<Widget> generateSection(Map<String, dynamic> section) {
 
   // Check if sections are repeatable
   if (section['type'] == "Repeatable") {
-    sectionFields.add(RepeatableSection(section: section));
+    sectionFields.add(RepeatableSection(
+        section:
+            section)); // If the section is repeatable, a repeatable section widget will be added
   } else {
     for (var question in section['questions']) {
       var controlName = question['control']['meta_data']['control_name'];
@@ -394,7 +396,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
   void initState() {
     super.initState();
     // Start with a default set of fields
-    repeatableFields.add(widget.section);
+    repeatableFields.add(widget.section); // Add a section by default
   }
 
   // This function belongs to the widget and is required for regenerating sections if desired
@@ -506,7 +508,9 @@ class _RepeatableSectionState extends State<RepeatableSection> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        for (var field in repeatableFields) ..._generateRepeatableFields(field),
+        for (var field in repeatableFields)
+          ..._generateRepeatableFields(
+              field), // Here the fields are added to the widget
         ElevatedButton(
           // A button is added at the bottom of the section to add another one of these sections if desired
           onPressed: () {
@@ -520,20 +524,3 @@ class _RepeatableSectionState extends State<RepeatableSection> {
     );
   }
 }
-
-// class _HomePage extends StatelessWidget {
-//   const _HomePage({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return CodePage(
-//         title: 'Flutter Form Builder',
-//         child: ListView(
-//           children: list.map((String item) {
-//             return ListTile(
-//               title: Text(item),
-//             );
-//           }).toList(),
-//         ));
-//   }
-// }
