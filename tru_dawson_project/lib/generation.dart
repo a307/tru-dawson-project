@@ -14,6 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tru_dawson_project/auth.dart';
 import 'package:tru_dawson_project/picture_form.dart';
 import 'package:tru_dawson_project/sign_in.dart';
+import 'user_settings_page.dart';
 
 // List to hold all of the individual JSONs
 List<Map<String, dynamic>>? separatedForms =
@@ -75,6 +76,18 @@ class Generator extends StatelessWidget {
                 auth.SignOut();
               },
             ),
+            IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'User Settings',
+            onPressed: () {
+              // Navigate to the User Settings page when the gear icon is pressed
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => UserSettingsPage(),
+                ),
+              );
+            },
+          ),
           ],
         ),
         body: ListView(
