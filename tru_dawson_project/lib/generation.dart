@@ -16,11 +16,6 @@ import 'package:tru_dawson_project/picture_form.dart';
 import 'package:tru_dawson_project/sign_in.dart';
 
 // List to hold all of the individual JSONs
-List<Map<String, dynamic>>? separatedForms =
-    []; // List that contains each individual form
-
-// Map to hold the amount of times a section needs to be repeated if it's "Repeatable"
-Map<String, int> sectionCounts = {};
 
 //Convert DataSnapshot to JSON map
 Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
@@ -48,9 +43,11 @@ dynamic globalResult;
 class Generator extends StatelessWidget {
   final List<String> list;
   List<Map<String, dynamic>>? separatedForms;
+  Map<String, Map<String, int>> formSectionCounts;
   dynamic result;
   AuthService auth;
-  Generator(this.list, this.separatedForms, this.result, this.auth) {
+  Generator(this.list, this.separatedForms, this.formSectionCounts, this.result,
+      this.auth) {
     globalResult = result;
   }
 
