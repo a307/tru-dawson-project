@@ -118,6 +118,10 @@ class Generator extends StatelessWidget {
                                 onSubmit: (formData) {
                                   print('Form Data: $formData');
                                   print('Submitting form data to Firebase...');
+                                  final CollectionReference collection =
+                                      FirebaseFirestore.instance
+                                          .collection(item);
+                                  submitFormToFirebase(formData, collection);
                                 },
                               );
                             }
@@ -224,7 +228,7 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   FormBuilderTextField(
-                    name: '',
+                    name: 'FILL',
                     decoration: const InputDecoration(labelText: ''),
                   )
                 ],
