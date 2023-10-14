@@ -234,8 +234,6 @@ getJSON() async {
   } else {
     print('No data available.');
   }
-
-  print(formSectionCounts);
 }
 
 // Function for looking through a form and finding the repeatable sections within. There are a bunch of null checks present, as it breaks the code without them.
@@ -255,10 +253,12 @@ void findRepeatableSections(Map<String, dynamic> form) {
           if (sections != null) {
             for (var section in sections) {
               if (section['type'] == "Repeatable") {
-                String? label = section['label'];
+                // If the section is a repeatable section
+                String? label =
+                    section['label']; // Get the section label for the key
                 if (label != null) {
                   sectionCounts[label] =
-                      1; // Assign the count with an initial value of one
+                      1; // Assign the count of this section with an initial value of one
                 }
               }
             }

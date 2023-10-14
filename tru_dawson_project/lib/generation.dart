@@ -151,120 +151,133 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
   List<Widget> formFields = [];
 
   for (var page in form?['pages']) {
-    // Loop through the pages
     // Loop through the pages in the form
     for (var section in page['sections']) {
-      // Loop through the sections
+      formFields.addAll(generateSection(section));
       // Loop through the sections on each page
       var label =
           section['label']; // Store the label for the section in the variable
-      formFields.add(Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [Text(label, textScaleFactor: 1.25), SizedBox(height: 10)],
-      ));
-      for (var question in section['questions']) {
-        var controlName = question['control']['meta_data']['control_name'];
-        switch (question['control']['type']) {
-          // More types may need to be added depending on the forms. I don't really know how to make this more dynamic for accepting anything other than something with a similar structure to the simple_sign_inspection.json
-          case 'date_field': // If the type is date_field, build a date field
-            {
-              formFields.add(Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FormBuilderDateTimePicker(
-                    name: controlName,
-                    decoration: InputDecoration(
-                      labelText: controlName,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    inputType: InputType.date,
-                  ),
-                  SizedBox(height: 10),
-                ],
-              ));
-              break;
-            }
-          case 'text_field': // If the type is text_field, build a date field
-            {
-              formFields.add(Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FormBuilderTextField(
-                    name: controlName,
-                    decoration: InputDecoration(
-                      labelText: controlName,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20)
-                ],
-              ));
-              break;
-            }
-          case 'Dropdown':
-            {
-              var options = question['control']['meta_data']['options'];
-              var controlName =
-                  question['control']['meta_data']['control_name'];
-              formFields.add(Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(controlName),
-                  SizedBox(height: 10),
-                  FormBuilderDropdown(
-                    name: controlName,
-                    decoration: InputDecoration(
-                      labelText: controlName,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    items: options.map<DropdownMenuItem<String>>((option) {
-                      return DropdownMenuItem<String>(
-                        value: option,
-                        child: Text(option),
-                      );
-                    }).toList(),
-                  ),
-                  SizedBox(height: 20),
-                ],
-              ));
-              break;
-            }
-          case 'picture':
-            {
-              //get control name from JSON
-              String controlName =
-                  question['control']['meta_data']['control_name'];
-              //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
-              formFields.add(PictureWidget(controlName: controlName));
-            }
-          default: // Add a blank text field for the default case
-            {
-              formFields.add(Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FormBuilderTextField(
-                    name: 'FILL',
-                    decoration: const InputDecoration(labelText: ''),
-                  ),
-                  SizedBox(height: 10),
-                ],
-              ));
-              break;
-            }
-        }
+      if (section['type'] == 'Repeatable') {
+        String? formName = form?['metadata']
+            ['formName']; // Get the form name and make that a key
+        Map<String, dynamic>? section = formSectionCounts[formName];
+        for (int i = 0; i < section?[label]; i++) {}
       }
     }
   }
   return formFields; // Return the form fields based on the JSON data
+}
+
+// Function for handling section generation
+List<Widget> generateSection(Map<String, dynamic> section) {
+  List<Widget> sectionFields = [];
+  // Loop through the sections on each page
+  var label =
+      section['label']; // Store the label for the section in the variable
+  sectionFields.add(Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [Text(label, textScaleFactor: 1.25), SizedBox(height: 10)],
+  ));
+  for (var question in section['questions']) {
+    var controlName = question['control']['meta_data']['control_name'];
+    switch (question['control']['type']) {
+      // More types may need to be added depending on the forms. I don't really know how to make this more dynamic for accepting anything other than something with a similar structure to the simple_sign_inspection.json
+      case 'date_field': // If the type is date_field, build a date field
+        {
+          sectionFields.add(Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FormBuilderDateTimePicker(
+                name: controlName,
+                decoration: InputDecoration(
+                  labelText: controlName,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                inputType: InputType.date,
+              ),
+              SizedBox(height: 10),
+            ],
+          ));
+          break;
+        }
+      case 'text_field': // If the type is text_field, build a date field
+        {
+          sectionFields.add(Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FormBuilderTextField(
+                name: controlName,
+                decoration: InputDecoration(
+                  labelText: controlName,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20)
+            ],
+          ));
+          break;
+        }
+      case 'Dropdown':
+        {
+          var options = question['control']['meta_data']['options'];
+          var controlName = question['control']['meta_data']['control_name'];
+          sectionFields.add(Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(controlName),
+              SizedBox(height: 10),
+              FormBuilderDropdown(
+                name: controlName,
+                decoration: InputDecoration(
+                  labelText: controlName,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                items: options.map<DropdownMenuItem<String>>((option) {
+                  return DropdownMenuItem<String>(
+                    value: option,
+                    child: Text(option),
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: 20),
+            ],
+          ));
+          break;
+        }
+      case 'picture':
+        {
+          //get control name from JSON
+          String controlName = question['control']['meta_data']['control_name'];
+          //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
+          sectionFields.add(PictureWidget(controlName: controlName));
+        }
+      default: // Add a blank text field for the default case
+        {
+          sectionFields.add(Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FormBuilderTextField(
+                name: 'FILL',
+                decoration: const InputDecoration(labelText: ''),
+              ),
+              SizedBox(height: 10),
+            ],
+          ));
+          break;
+        }
+    }
+  }
+
+  return sectionFields;
 }
 
 void submitFormToFirebase(
@@ -367,6 +380,52 @@ class _FormPageState extends State<FormPage> {
   }
 }
 
+class RepeatableSection extends StatefulWidget {
+  final dynamic section;
+
+  RepeatableSection({required this.section});
+
+  @override
+  _RepeatableSectionState createState() => _RepeatableSectionState();
+}
+
+class _RepeatableSectionState extends State<RepeatableSection> {
+  List<Map<String, dynamic>> repeatableFields = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Start with a default set of fields
+    repeatableFields.add(widget.section);
+  }
+
+  List<Widget> _generateRepeatableFields(Map<String, dynamic> section) {
+    List<Widget> fields = [];
+    for (var question in section['questions']) {
+      // Handle each type of question control
+      var controlType = question['control']['type'];
+      // ... Based on controlType, add appropriate widgets to fields
+    }
+    return fields;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (var field in repeatableFields) ..._generateRepeatableFields(field),
+        ElevatedButton(
+          onPressed: () {
+            setState(() {
+              repeatableFields.add(widget.section);
+            });
+          },
+          child: Icon(Icons.add),
+        ),
+      ],
+    );
+  }
+}
 
 // class _HomePage extends StatelessWidget {
 //   const _HomePage({Key? key}) : super(key: key);
