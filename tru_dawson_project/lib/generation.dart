@@ -103,10 +103,7 @@ class Generator extends StatelessWidget {
                                 formName: item,
                                 formFields: formFields,
                                 onSubmit: (formData) {
-                                  // Handle form submission here
                                   print('Form Data: $formData');
-                                  // You can call your submitFormToFirebase function here
-                                  // For simplicity, let's just print the form data
                                   print('Submitting form data to Firebase...');
                                   final CollectionReference collection =
                                       FirebaseFirestore.instance
@@ -119,10 +116,7 @@ class Generator extends StatelessWidget {
                               return FormPage(
                                 formName: '',
                                 onSubmit: (formData) {
-                                  // Handle form submission here
                                   print('Form Data: $formData');
-                                  // You can call your submitFormToFirebase function here
-                                  // For simplicity, let's just print the form data
                                   print('Submitting form data to Firebase...');
                                 },
                               );
