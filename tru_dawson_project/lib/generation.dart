@@ -102,13 +102,15 @@ class Generator extends StatelessWidget {
                               return FormPage(
                                 formName: item,
                                 formFields: formFields,
-                                //onsubmit function mentioned in FormPage, allows us to pass the data from the form into a a firebase reference
+                                //onsubmit function mentioned in FormPage, allows us to pass the data from the form into a a firebase submission function
                                 onSubmit: (formData) {
                                   print('Form Data: $formData');
                                   print('Submitting form data to Firebase...');
+                                  //get collection with name as the form name (item)
                                   final CollectionReference collection =
                                       FirebaseFirestore.instance
                                           .collection(item);
+                                  //pass formData and collection to submission function
                                   submitFormToFirebase(formData, collection);
                                 },
                               );
@@ -140,9 +142,6 @@ class Generator extends StatelessWidget {
     );
   }
 }
-
-// Logic for form submission
-void submitForm() {}
 
 // Logic for Generating Forms
 // This is made under the assumption that the dawson forms will all have a similar JSON structure to the simple_sign_inspection.json containing pages, sections, and questions
