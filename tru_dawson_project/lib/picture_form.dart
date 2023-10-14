@@ -38,7 +38,7 @@ class _PictureWidgetState extends State<PictureWidget> {
                 _pickImageFromGallery();
               },
               color: Colors.blue,
-              child: const Text('Pick from Gallery'),
+              child: const Text('Gallery'),
             ),
             SizedBox(width: 10),
             MaterialButton(
@@ -46,7 +46,7 @@ class _PictureWidgetState extends State<PictureWidget> {
                   _pickImageFromCamera();
                 },
                 color: Colors.blue,
-                child: const Text('Take Photo with Camera')),
+                child: const Text('Camera')),
             SizedBox(width: 10),
             MaterialButton(
                 onPressed: () {
