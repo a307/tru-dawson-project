@@ -344,7 +344,6 @@ class _FormPageState extends State<FormPage> {
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Color(0xFF6F768A),
-                      //minimumSize: Size(72, 36),
                     ),
                     child: Text('Submit'),
                   ),
@@ -363,7 +362,6 @@ class _FormPageState extends State<FormPage> {
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Color(0xFF6F768A),
-                      //minimumSize: Size(72, 36),
                     ),
                     child: Text('Go Back'),
                   ),
@@ -376,21 +374,3 @@ class _FormPageState extends State<FormPage> {
     );
   }
 }
-
-
-// class _HomePage extends StatelessWidget {
-//   const _HomePage({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return CodePage(
-//         title: 'Flutter Form Builder',
-//         child: ListView(
-//           children: list.map((String item) {
-//             return ListTile(
-//               title: Text(item),
-//             );
-//           }).toList(),
-//         ));
-//   }
-// }
