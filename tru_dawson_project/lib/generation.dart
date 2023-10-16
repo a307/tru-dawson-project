@@ -391,7 +391,7 @@ class RepeatableSection extends StatefulWidget {
 
 class _RepeatableSectionState extends State<RepeatableSection> {
   List<Map<String, dynamic>> repeatableFields = [];
-
+  int i = 0;
   @override
   void initState() {
     super.initState();
@@ -412,7 +412,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FormBuilderDateTimePicker(
-                  name: controlName,
+                  name: controlName + "$i",
                   decoration: InputDecoration(
                     labelText: controlName,
                     border: OutlineInputBorder(
@@ -433,7 +433,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FormBuilderTextField(
-                  name: controlName,
+                  name: controlName + "$i",
                   decoration: InputDecoration(
                     labelText: controlName,
                     border: OutlineInputBorder(
@@ -457,7 +457,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
                 Text(controlName),
                 SizedBox(height: 10),
                 FormBuilderDropdown(
-                  name: controlName,
+                  name: controlName + "$i",
                   decoration: InputDecoration(
                     labelText: controlName,
                     border: OutlineInputBorder(
@@ -483,7 +483,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
             String controlName =
                 question['control']['meta_data']['control_name'];
             //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
-            fields.add(PictureWidget(controlName: controlName));
+            fields.add(PictureWidget(controlName: controlName + "$i"));
           }
         default: // Add a blank text field for the default case
           {
@@ -516,6 +516,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
           onPressed: () {
             setState(() {
               repeatableFields.add(widget.section);
+              i++;
             });
           },
           child: Icon(Icons.add),
