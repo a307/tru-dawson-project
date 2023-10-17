@@ -37,17 +37,19 @@ class _PictureWidgetState extends State<PictureWidget> {
               onPressed: () {
                 _pickImageFromGallery();
               },
-              color: Colors.blue,
-              child: const Text('Pick from Gallery'),
+              color: Color(0xFF6F768A),
+              textColor: Colors.white,
+              child: const Text('Gallery'),
             ),
-            SizedBox(width: 10),
+            SizedBox(width: 10, height: 10,),
             MaterialButton(
                 onPressed: () {
                   _pickImageFromCamera();
                 },
-                color: Colors.blue,
-                child: const Text('Take Photo with Camera')),
-            SizedBox(width: 10),
+                color: Color(0xFF6F768A),
+                textColor: Colors.white,
+                child: const Text('Camera')),
+            SizedBox(width: 10, height: 10),
             MaterialButton(
                 onPressed: () {
                   setState(() {
@@ -55,7 +57,8 @@ class _PictureWidgetState extends State<PictureWidget> {
                     _selectedFile = null;
                   });
                 },
-                color: Colors.blue,
+                color: Color(0xFF6F768A),
+                textColor: Colors.white,
                 child: const Text('Remove Image')),
           ],
         ),

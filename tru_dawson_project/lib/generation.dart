@@ -1,5 +1,6 @@
 //RUN THESE:
 //flutter pub add form_builder_validators
+//flutter pub add signature
 // ignore_for_file: prefer_const_literals_to_create_immutables
 import 'dart:io';
 
@@ -14,7 +15,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tru_dawson_project/auth.dart';
 import 'package:tru_dawson_project/picture_form.dart';
 import 'package:tru_dawson_project/sign_in.dart';
+import 'user_settings_page.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:signature/signature.dart';
 // List to hold all of the individual JSONs
 
 //Convert DataSnapshot to JSON map
@@ -36,6 +40,11 @@ Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
 
   return result as Map<String, dynamic>;
 }
+//Make signature cnroller to be called later 
+SignatureController _controller = SignatureController(
+  penColor: Colors.black, //can adjust parameters in here if you like
+  penStrokeWidth: 5.0,
+);
 
 dynamic globalResult;
 
@@ -74,6 +83,18 @@ class Generator extends StatelessWidget {
                 auth.SignOut();
               },
             ),
+            IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'User Settings',
+            onPressed: () {
+              // Navigate to the User Settings page when the gear icon is pressed
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => UserSettingsPage(),
+                ),
+              );
+            },
+          ),
           ],
         ),
         body: ListView(
@@ -252,6 +273,43 @@ List<Widget> generateSection(
                       borderSide: BorderSide(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
+                  SizedBox(height: 20),
+                ],
+              ));
+              break;
+            }
+          case 'picture':
+            {
+              //get control name from JSON
+              String controlName =
+                  question['control']['meta_data']['control_name'];
+              //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
+              formFields.add(PictureWidget(controlName: controlName));
+            }
+            case 'Signature': // If the type is signature, make signature box.
+            {
+              formFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect( //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
+                        child: Signature(
+                          height: 200, //you can make the field smaller by adjusting this
+                          controller: SignatureController(),
+                          backgroundColor: Colors.white,
+                        ),
+                      )
+                ],
+              ));
+              break;
+            }
+          default: // Add a blank text field for the default case
+            {
+              formFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FormBuilderTextField(
+                    name: 'FILL',
+                    decoration: const InputDecoration(labelText: ''),
                   ),
                   items: options.map<DropdownMenuItem<String>>((option) {
                     return DropdownMenuItem<String>(
@@ -261,28 +319,6 @@ List<Widget> generateSection(
                   }).toList(),
                 ),
                 SizedBox(height: 20),
-              ],
-            ));
-            break;
-          }
-        case 'picture':
-          {
-            //get control name from JSON
-            String controlName =
-                question['control']['meta_data']['control_name'];
-            //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
-            sectionFields.add(PictureWidget(controlName: controlName));
-          }
-        default: // Add a blank text field for the default case
-          {
-            sectionFields.add(Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FormBuilderTextField(
-                  name: 'FILL',
-                  decoration: const InputDecoration(labelText: ''),
-                ),
-                SizedBox(height: 10),
               ],
             ));
             break;
@@ -324,6 +360,9 @@ class FormPage extends StatefulWidget {
 }
 
 class _FormPageState extends State<FormPage> {
+  final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
+  //  final SharedPreferences prefs;
+  // Map<String, dynamic> savedFormData = {};
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -354,15 +393,57 @@ class _FormPageState extends State<FormPage> {
                             widget.fbKey.currentState?.value;
                         print("On submission: $formData");
                         if (formData != null) {
-                          widget.onSubmit(formData);
-                        }
+                         // bool isSubmitted = widget.onSubmit(formData);
+                        widget.onSubmit(formData);
+                         // if (isSubmitted) {
+                          // Form submission successful
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle,  // You can use any icon you prefer
+                                      color: Colors.green,
+                                      size: 48.0,
+                                    ),
+                                    SizedBox(height: 16.0),
+                                    Text(
+                                      'Form Submission Successful',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 12.0),
+                                    Text(
+                                      'Your form has been submitted successfully.',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(); // Close the alert dialog
+                                    },
+                                    child: Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          }
+                        //}
                       } else {
                         print('Form validation failed.');
                       }
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Color(0xFF6F768A),
-                      //minimumSize: Size(72, 36),
                     ),
                     child: Text('Submit'),
                   ),
@@ -381,7 +462,6 @@ class _FormPageState extends State<FormPage> {
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Color(0xFF6F768A),
-                      //minimumSize: Size(72, 36),
                     ),
                     child: Text('Go Back'),
                   ),
@@ -611,3 +691,5 @@ class _RepeatableSectionState extends State<RepeatableSection> {
     );
   }
 }
+                
+

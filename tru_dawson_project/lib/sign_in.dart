@@ -87,7 +87,7 @@ class _SignInState extends State<SignIn> {
                         if (result == null) {
                           print('error signing in');
                           showAlertDialog(context, "User Not Found!",
-                              "Email or password incorrect. Please try again.");
+                              "Email or password may be incorrect. \nDid you Sign Up?");
                         } else {
                           print('user has signed in');
                           Navigator.of(context).push(
