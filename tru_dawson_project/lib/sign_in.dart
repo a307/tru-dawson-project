@@ -181,6 +181,10 @@ showAlertDialog(BuildContext context, String title, String content) {
 
 List<Map<String, dynamic>>? separatedForms = [];
 List<String> list = [];
+
+// Map for holding section counts for each individual form. Each form name represents a key that leads to map containing the labels of each section and their respective counts if they are "Repeatable"
+// Map<String, Map<String, int>> formSectionCounts = {};
+
 getJSON() async {
   //Connect to Firebase Real time database
   final ref = FirebaseDatabase.instance.ref();
@@ -207,8 +211,6 @@ getJSON() async {
   convertedMap.forEach((key, value) {
     // For each form in the original map, create a new map and add it to the list
     separatedForms?.add(value);
-    // print(value);
-    // print('\n');
   });
 
   //Print data out if there is any
