@@ -352,6 +352,7 @@ class _FormPageState extends State<FormPage> {
                       if (isValid) {
                         Map<String, dynamic>? formData =
                             widget.fbKey.currentState?.value;
+                        print("On submission: $formData");
                         if (formData != null) {
                           widget.onSubmit(formData);
                         }
@@ -441,30 +442,30 @@ class _RepeatableSectionState extends State<RepeatableSection> {
   }
 
   // Function for removing the latest section that was added
-  void _removeSection(String key) {
-    print(widget.fbKey.currentState?.value);
-    if (sectionIdentifiers.isNotEmpty && repeatableFields.isNotEmpty) {
-      setState(() {
-        final currentState =
-            widget.fbKey.currentState; // Get the current state of the form
-        for (var question in widget.section['questions']) {
-          // Loop through the fields of the form and remove them
-          String controlName = question['control']['meta_data']['control_name'];
-          String identifier = sectionIdentifiers.last;
-          String fullName = "$controlName $identifier"; // The name of the field
-          print(currentState?.fields.keys);
-          print(fullName);
-          if (currentState?.fields.containsKey(fullName) ?? false) {
-            currentState?.fields.remove(fullName);
-          }
-        }
-        repeatableSections.remove(key); // Remove the section from the map
-        sectionIdentifiers.removeLast(); // Remove the field identifiers
-        repeatableFields.removeLast();
-      });
-    }
-    print(widget.fbKey.currentState?.value);
-  }
+  // void _removeSection(String key) {
+  //   if (sectionIdentifiers.length > 1 && repeatableFields.length > 1) {
+  //     Future.delayed(Duration(milliseconds: 100), () {
+  //       for (var question in widget.section['questions']) {
+  //         // Loop through the fields of the form and remove them
+  //         String controlName = question['control']['meta_data']['control_name'];
+  //         String identifier = sectionIdentifiers
+  //             .last; // The latest identifier since that is what will be removed.
+  //         String fullName =
+  //             "$controlName $identifier"; // Control name and identifier together is the name of the field
+  //         if (widget.fbKey.currentState?.fields.containsKey(fullName) ??
+  //             false) {
+  //           // print("\n");
+  //           widget.fbKey.currentState?.fields.remove(fullName);
+  //         }
+  //       }
+  //       print(
+  //           "Fields after being removed: ${widget.fbKey.currentState?.fields}");
+  //     });
+  //     repeatableSections.remove(key); // Remove the section from the map
+  //     sectionIdentifiers.removeLast(); // Remove the field identifier
+  //     repeatableFields.removeLast(); // Remove the latest section from the list
+  //   }
+  // } DOESN"T FUCKING WORK, ABANDON ALL YE WHO TRY TO FIX THIS
 
   // This function belongs to the widget and is required for regenerating sections if desired
   List<Widget> _generateRepeatableFields(
@@ -595,13 +596,15 @@ class _RepeatableSectionState extends State<RepeatableSection> {
               },
               child: Icon(Icons.add),
             ),
-            SizedBox(width: 10), // Space between buttons
-            ElevatedButton(
-              onPressed: () {
-                _removeSection(widget.uniqueKey);
-              },
-              child: Icon(Icons.remove),
-            ),
+            // SizedBox(width: 10), // Space between buttons
+            // ElevatedButton(
+            //   onPressed: () {
+            //     setState(() {
+            //       _removeSection(widget.uniqueKey);
+            //     });
+            //   },
+            //   child: Icon(Icons.remove),
+            // ),
           ],
         ),
       ],
