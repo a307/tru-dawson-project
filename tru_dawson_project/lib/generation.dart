@@ -1,5 +1,6 @@
 //RUN THESE:
 //flutter pub add form_builder_validators
+//flutter pub add signature
 // ignore_for_file: prefer_const_literals_to_create_immutables
 import 'dart:io';
 
@@ -17,6 +18,7 @@ import 'package:tru_dawson_project/sign_in.dart';
 import 'user_settings_page.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:signature/signature.dart';
 // List to hold all of the individual JSONs
 List<Map<String, dynamic>>? separatedForms =
     []; // List that contains each individual form
@@ -40,6 +42,11 @@ Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
 
   return result as Map<String, dynamic>;
 }
+//Make signature cnroller to be called later 
+SignatureController _controller = SignatureController(
+  penColor: Colors.black, //can adjust parameters in here if you like
+  penStrokeWidth: 5.0,
+);
 
 dynamic globalResult;
 
@@ -268,6 +275,22 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
                   question['control']['meta_data']['control_name'];
               //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
               formFields.add(PictureWidget(controlName: controlName));
+            }
+            case 'Signature': // If the type is signature, make signature box.
+            {
+              formFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect( //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
+                        child: Signature(
+                          height: 200, //you can make the field smaller by adjusting this
+                          controller: SignatureController(),
+                          backgroundColor: Colors.white,
+                        ),
+                      )
+                ],
+              ));
+              break;
             }
           default: // Add a blank text field for the default case
             {
