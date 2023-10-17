@@ -15,6 +15,7 @@ import 'package:tru_dawson_project/auth.dart';
 import 'package:tru_dawson_project/picture_form.dart';
 import 'package:tru_dawson_project/sign_in.dart';
 import 'user_settings_page.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 
 // List to hold all of the individual JSONs
 List<Map<String, dynamic>>? separatedForms =
@@ -168,11 +169,22 @@ List<Widget> generateForm(Map<String, dynamic>? form) {
     for (var section in page['sections']) {
       // Loop through the sections
       // Loop through the sections on each page
-      var label =
-          section['label']; // Store the label for the section in the variable
+      var label = section['label']; // Store the label for the section in the variable
       formFields.add(Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [Text(label, textScaleFactor: 1.25), SizedBox(height: 10)],
+        children: [
+          Container(
+            width: double.infinity, // Set the width to cover the entire width of the screen
+            padding: EdgeInsets.all(12.0), // Adjust padding as needed
+            color: Color(0xFF234094), // Set the background color to dark blue
+            child: Text(
+              label,
+              textScaleFactor: 1.25,
+              style: TextStyle(
+                color: Colors.white, // Set the text color to white
+              ),
+            ),
+          ), SizedBox(height: 10)],
       ));
       for (var question in section['questions']) {
         var controlName = question['control']['meta_data']['control_name'];
@@ -308,7 +320,8 @@ class FormPage extends StatefulWidget {
 
 class _FormPageState extends State<FormPage> {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
-
+  //  final SharedPreferences prefs;
+  // Map<String, dynamic> savedFormData = {};
   @override
   Widget build(BuildContext context) {
     return Scaffold(
