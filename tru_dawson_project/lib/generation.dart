@@ -372,8 +372,51 @@ class _FormPageState extends State<FormPage> {
                       if (isValid) {
                         Map<String, dynamic>? formData = _fbKey.currentState?.value;
                         if (formData != null) {
-                          widget.onSubmit(formData);
-                        }
+                         // bool isSubmitted = widget.onSubmit(formData);
+                        widget.onSubmit(formData);
+                         // if (isSubmitted) {
+                          // Form submission successful
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle,  // You can use any icon you prefer
+                                      color: Colors.green,
+                                      size: 48.0,
+                                    ),
+                                    SizedBox(height: 16.0),
+                                    Text(
+                                      'Form Submission Successful',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 12.0),
+                                    Text(
+                                      'Your form has been submitted successfully.',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(); // Close the alert dialog
+                                    },
+                                    child: Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          }
+                        //}
                       } else {
                         print('Form validation failed.');
                       }
