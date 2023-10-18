@@ -636,10 +636,9 @@ class _RepeatableSectionState extends State<RepeatableSection> {
         case 'picture':
           {
             //get control name from JSON
-            String controlName =
-                question['control']['meta_data']['control_name'];
+            String controlName = fieldName;
             //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
-            repeatableFields.add(PictureWidget(controlName: controlName));
+            repeatableFields.add(PictureWidget(controlName: fieldName));
           }
         case 'Signature': // If the type is signature, make signature box.
           {
