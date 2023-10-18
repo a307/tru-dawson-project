@@ -197,7 +197,19 @@ List<Widget> generateSection(
       section['label']; // Store the label for the section in the variable
   sectionFields.add(Column(
     crossAxisAlignment: CrossAxisAlignment.start,
-    children: [Text(label, textScaleFactor: 1.25), SizedBox(height: 10)],
+      children: [
+          Container(
+            width: double.infinity, // Set the width to cover the entire width of the screen
+            padding: EdgeInsets.all(12.0), // Adjust padding as needed
+            color: Color(0xFF234094), // Set the background color to dark blue
+            child: Text(
+              label,
+              textScaleFactor: 1.25,
+              style: TextStyle(
+                color: Colors.white, // Set the text color to white
+              ),
+            ),
+          ), SizedBox(height: 10)],
   ));
 
   // Check if sections are repeatable
