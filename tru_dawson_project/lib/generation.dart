@@ -311,14 +311,29 @@ List<Widget> generateSection(
             sectionFields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                 Text(
+                  'Please provide your signature:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
                 ClipRRect(
+                  borderRadius: BorderRadius.circular(2.0), 
+                  child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.grey,
+                       // Outline color
+                    //  width: 2.0, // Outline width
+                    ),
+                  ),
                   //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
                   child: Signature(
                     height:
                         200, //you can make the field smaller by adjusting this
                     controller: SignatureController(),
                     backgroundColor: Colors.white,
+                    
                   ),
+                )
                 )
               ],
             ));
