@@ -199,9 +199,9 @@ List<Widget> generateSection(
     crossAxisAlignment: CrossAxisAlignment.start,
       children: [
           Container(
-            width: double.infinity, // Set the width to cover the entire width of the screen
-            padding: EdgeInsets.all(12.0), // Adjust padding as needed
-            color: Color(0xFF234094), // Set the background color to dark blue
+            width: double.infinity, 
+            padding: EdgeInsets.all(12.0), 
+            color: Color(0xFF234094), // blue header in forms
             child: Text(
               label,
               textScaleFactor: 1.25,
