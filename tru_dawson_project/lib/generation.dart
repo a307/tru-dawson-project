@@ -40,7 +40,8 @@ Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
 
   return result as Map<String, dynamic>;
 }
-//Make signature cnroller to be called later 
+
+//Make signature cnroller to be called later
 SignatureController _controller = SignatureController(
   penColor: Colors.black, //can adjust parameters in here if you like
   penStrokeWidth: 5.0,
@@ -84,17 +85,17 @@ class Generator extends StatelessWidget {
               },
             ),
             IconButton(
-            icon: const Icon(Icons.settings),
-            tooltip: 'User Settings',
-            onPressed: () {
-              // Navigate to the User Settings page when the gear icon is pressed
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => UserSettingsPage(),
-                ),
-              );
-            },
-          ),
+              icon: const Icon(Icons.settings),
+              tooltip: 'User Settings',
+              onPressed: () {
+                // Navigate to the User Settings page when the gear icon is pressed
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => UserSettingsPage(),
+                  ),
+                );
+              },
+            ),
           ],
         ),
         body: ListView(
@@ -259,7 +260,6 @@ List<Widget> generateSection(
         case 'Dropdown':
           {
             var options = question['control']['meta_data']['options'];
-            var controlName = question['control']['meta_data']['control_name'];
             sectionFields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -273,43 +273,6 @@ List<Widget> generateSection(
                       borderSide: BorderSide(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
-                  SizedBox(height: 20),
-                ],
-              ));
-              break;
-            }
-          case 'picture':
-            {
-              //get control name from JSON
-              String controlName =
-                  question['control']['meta_data']['control_name'];
-              //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
-              formFields.add(PictureWidget(controlName: controlName));
-            }
-            case 'Signature': // If the type is signature, make signature box.
-            {
-              formFields.add(Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect( //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
-                        child: Signature(
-                          height: 200, //you can make the field smaller by adjusting this
-                          controller: SignatureController(),
-                          backgroundColor: Colors.white,
-                        ),
-                      )
-                ],
-              ));
-              break;
-            }
-          default: // Add a blank text field for the default case
-            {
-              formFields.add(Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FormBuilderTextField(
-                    name: 'FILL',
-                    decoration: const InputDecoration(labelText: ''),
                   ),
                   items: options.map<DropdownMenuItem<String>>((option) {
                     return DropdownMenuItem<String>(
@@ -319,6 +282,46 @@ List<Widget> generateSection(
                   }).toList(),
                 ),
                 SizedBox(height: 20),
+              ],
+            ));
+            break;
+          }
+        case 'picture':
+          {
+            //get control name from JSON
+            String controlName =
+                question['control']['meta_data']['control_name'];
+            //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
+            sectionFields.add(PictureWidget(controlName: controlName));
+          }
+        case 'Signature': // If the type is signature, make signature box.
+          {
+            sectionFields.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
+                  child: Signature(
+                    height:
+                        200, //you can make the field smaller by adjusting this
+                    controller: SignatureController(),
+                    backgroundColor: Colors.white,
+                  ),
+                )
+              ],
+            ));
+            break;
+          }
+        default: // Add a blank text field for the default case
+          {
+            sectionFields.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FormBuilderTextField(
+                  name: 'FILL',
+                  decoration: const InputDecoration(labelText: ''),
+                ),
+                SizedBox(height: 10),
               ],
             ));
             break;
@@ -393,9 +396,9 @@ class _FormPageState extends State<FormPage> {
                             widget.fbKey.currentState?.value;
                         print("On submission: $formData");
                         if (formData != null) {
-                         // bool isSubmitted = widget.onSubmit(formData);
-                        widget.onSubmit(formData);
-                         // if (isSubmitted) {
+                          // bool isSubmitted = widget.onSubmit(formData);
+                          widget.onSubmit(formData);
+                          // if (isSubmitted) {
                           // Form submission successful
                           showDialog(
                             context: context,
@@ -405,7 +408,8 @@ class _FormPageState extends State<FormPage> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(
-                                      Icons.check_circle,  // You can use any icon you prefer
+                                      Icons
+                                          .check_circle, // You can use any icon you prefer
                                       color: Colors.green,
                                       size: 48.0,
                                     ),
@@ -428,7 +432,8 @@ class _FormPageState extends State<FormPage> {
                                 actions: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop(); // Close the alert dialog
+                                      Navigator.of(context)
+                                          .pop(); // Close the alert dialog
                                     },
                                     child: Text('OK'),
                                   ),
@@ -436,7 +441,7 @@ class _FormPageState extends State<FormPage> {
                               );
                             },
                           );
-                          }
+                        }
                         //}
                       } else {
                         print('Form validation failed.');
@@ -550,7 +555,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
   // This function belongs to the widget and is required for regenerating sections if desired
   List<Widget> _generateRepeatableFields(
       Map<String, dynamic> section, String identifier) {
-    List<Widget> fields = [];
+    List<Widget> repeatableFields = [];
     for (var question in section['questions']) {
       // Same logic as the generate fields functions
       var controlName = question['control']['meta_data']['control_name'];
@@ -559,7 +564,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
       switch (question['control']['type']) {
         case 'date_field': // If the type is date_field, build a date field
           {
-            fields.add(Column(
+            repeatableFields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FormBuilderDateTimePicker(
@@ -580,7 +585,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
           }
         case 'text_field': // If the type is text_field, build a date field
           {
-            fields.add(Column(
+            repeatableFields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FormBuilderTextField(
@@ -602,7 +607,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
           {
             var options = question['control']['meta_data']['options'];
             var controlName = question['control']['meta_data']['control_name'];
-            fields.add(Column(
+            repeatableFields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(controlName),
@@ -631,14 +636,32 @@ class _RepeatableSectionState extends State<RepeatableSection> {
         case 'picture':
           {
             //get control name from JSON
-            // String controlName =
-            //     question['control']['meta_data']['control_name'];
+            String controlName =
+                question['control']['meta_data']['control_name'];
             //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
-            fields.add(PictureWidget(controlName: fieldName));
+            repeatableFields.add(PictureWidget(controlName: controlName));
+          }
+        case 'Signature': // If the type is signature, make signature box.
+          {
+            repeatableFields.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
+                  child: Signature(
+                    height:
+                        200, //you can make the field smaller by adjusting this
+                    controller: SignatureController(),
+                    backgroundColor: Colors.white,
+                  ),
+                )
+              ],
+            ));
+            break;
           }
         default: // Add a blank text field for the default case
           {
-            fields.add(Column(
+            repeatableFields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FormBuilderTextField(
@@ -652,7 +675,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
           }
       }
     }
-    return fields;
+    return repeatableFields;
   }
 
   @override
@@ -691,5 +714,3 @@ class _RepeatableSectionState extends State<RepeatableSection> {
     );
   }
 }
-                
-
