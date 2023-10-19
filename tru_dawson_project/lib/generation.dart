@@ -410,26 +410,26 @@ class FormPage extends StatefulWidget {
   _FormPageState createState() => _FormPageState();
 }
 
-String photoUrl = "";
-Future<String> photoUpload() async {
-  String url = "";
-  final ref =
-      FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
-  if (Platform.isAndroid || Platform.isIOS) {
-    await ref.putFile(selectedFile!);
-    photoUrl = await ref.getDownloadURL();
-  } else {
-    await ref.putFile(File(selectedImageString!));
-    photoUrl = await ref.getDownloadURL();
-  }
-  //returns the download url
-  return url;
-}
-
 class _FormPageState extends State<FormPage> {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
   //  final SharedPreferences prefs;
   // Map<String, dynamic> savedFormData = {};
+  String strUrl = "";
+  Future<String> photoUpload() async {
+    String url = "";
+    final ref =
+        FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
+    if (Platform.isAndroid || Platform.isIOS) {
+      UploadTask task = ref.putFile(selectedFile!);
+      await task;
+      return await ref.getDownloadURL();
+    } else {
+      UploadTask task = ref.putFile(File(selectedImageString!));
+      await task;
+      return await ref.getDownloadURL();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -461,8 +461,12 @@ class _FormPageState extends State<FormPage> {
                         print("On submission: $formData");
                         if (formData != null) {
                           formData = Map<String, dynamic>.from(formData);
-                          photoUpload();
-                          formData.putIfAbsent("image", () => photoUrl);
+                          photoUpload().then((String result) {
+                            setState(() {
+                              strUrl = result;
+                            });
+                          });
+                          formData.putIfAbsent("image", () => strUrl);
                           // bool isSubmitted = widget.onSubmit(formData);
                           widget.onSubmit(formData);
                           // if (isSubmitted) {
@@ -809,6 +813,7 @@ class _PictureWidgetState extends State<PictureWidget> {
             MaterialButton(
               onPressed: () {
                 _pickImageFromGallery();
+                //photoUpload();
               },
               color: Color(0xFF6F768A),
               textColor: Colors.white,
