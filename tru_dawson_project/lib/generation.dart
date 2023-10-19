@@ -2,10 +2,12 @@
 //flutter pub add form_builder_validators
 //flutter pub add signature
 // ignore_for_file: prefer_const_literals_to_create_immutables
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -57,6 +59,21 @@ class Generator extends StatelessWidget {
   AuthService auth;
   Generator(this.list, this.separatedForms, this.result, this.auth) {
     globalResult = result;
+  }
+  Map<String?, dynamic> convertMap(Map<Object?, Object?> originalMap) {
+    final convertedMap = <String?, dynamic>{};
+
+    originalMap.forEach((key, value) {
+      if (key is String) {
+        convertedMap[key.toString()] = value;
+      } else if (key == null) {
+        convertedMap[null] = value;
+      } else {
+        throw ArgumentError('Key is not a String or null');
+      }
+    });
+
+    return convertedMap;
   }
 
   @override
@@ -139,9 +156,11 @@ class Generator extends StatelessWidget {
                                   submitFormToFirebase(formData, collection);
                                 },
                               );
-                            } catch (e) {
+                            } catch (e, stacktrace) {
                               print('$e Something Went wrong');
+                              print('Stacktrace: ' + stacktrace.toString());
                               return FormPage(
+                                formFields: [],
                                 formName: '',
                                 fbKey: GlobalKey<FormBuilderState>(),
                                 onSubmit: (formData) {
@@ -175,10 +194,12 @@ List<Widget> generateForm(
     Map<String, dynamic>? form, GlobalKey<FormBuilderState> fbKey) {
   List<Widget> formFields = [];
 
+  print(form);
+
   for (var page in form?['pages']) {
     // Loop through the pages in the form
     for (var section in page['sections']) {
-      formFields.addAll(generateSection(section, fbKey));
+      formFields.addAll(generateSection(convertToMap(section), fbKey));
       // Loop through the sections on each page
     }
   }
@@ -197,19 +218,21 @@ List<Widget> generateSection(
       section['label']; // Store the label for the section in the variable
   sectionFields.add(Column(
     crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-          Container(
-            width: double.infinity, 
-            padding: EdgeInsets.all(12.0), 
-            color: Color(0xFF234094), // blue header in forms
-            child: Text(
-              label,
-              textScaleFactor: 1.25,
-              style: TextStyle(
-                color: Colors.white, // Set the text color to white
-              ),
-            ),
-          ), SizedBox(height: 10)],
+    children: [
+      Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(12.0),
+        color: Color(0xFF234094), // blue header in forms
+        child: Text(
+          label,
+          textScaleFactor: 1.25,
+          style: TextStyle(
+            color: Colors.white, // Set the text color to white
+          ),
+        ),
+      ),
+      SizedBox(height: 10)
+    ],
   ));
 
   // Check if sections are repeatable
@@ -311,30 +334,28 @@ List<Widget> generateSection(
             sectionFields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 Text(
+                Text(
                   'Please provide your signature:',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(2.0), 
-                  child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.grey,
-                       // Outline color
-                    //  width: 2.0, // Outline width
-                    ),
-                  ),
-                  //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
-                  child: Signature(
-                    height:
-                        200, //you can make the field smaller by adjusting this
-                    controller: SignatureController(),
-                    backgroundColor: Colors.white,
-                    
-                  ),
-                )
-                )
+                    borderRadius: BorderRadius.circular(2.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          // Outline color
+                          //  width: 2.0, // Outline width
+                        ),
+                      ),
+                      //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
+                      child: Signature(
+                        height:
+                            200, //you can make the field smaller by adjusting this
+                        controller: SignatureController(),
+                        backgroundColor: Colors.white,
+                      ),
+                    ))
               ],
             ));
             break;
@@ -371,7 +392,7 @@ void submitFormToFirebase(
 }
 
 class FormPage extends StatefulWidget {
-  final List<Widget> formFields;
+  List<Widget> formFields;
   final String formName;
   final GlobalKey<FormBuilderState> fbKey;
   //create onsubmit function so when we create a FormPage later in Generator we can use an onsubmit function to send the data to firebase
@@ -379,7 +400,7 @@ class FormPage extends StatefulWidget {
 
   FormPage({
     Key? key,
-    this.formFields = const [],
+    required this.formFields,
     required this.formName,
     required this.onSubmit,
     required this.fbKey,
@@ -387,6 +408,22 @@ class FormPage extends StatefulWidget {
 
   @override
   _FormPageState createState() => _FormPageState();
+}
+
+String photoUrl = "";
+Future<String> photoUpload() async {
+  String url = "";
+  final ref =
+      FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
+  if (Platform.isAndroid || Platform.isIOS) {
+    await ref.putFile(selectedFile!);
+    photoUrl = await ref.getDownloadURL();
+  } else {
+    await ref.putFile(File(selectedImageString!));
+    photoUrl = await ref.getDownloadURL();
+  }
+  //returns the download url
+  return url;
 }
 
 class _FormPageState extends State<FormPage> {
@@ -420,9 +457,12 @@ class _FormPageState extends State<FormPage> {
 
                       if (isValid) {
                         Map<String, dynamic>? formData =
-                            widget.fbKey.currentState?.value;
+                            widget.fbKey.currentState?.value ?? {};
                         print("On submission: $formData");
                         if (formData != null) {
+                          formData = Map<String, dynamic>.from(formData);
+                          photoUpload();
+                          formData.putIfAbsent("image", () => photoUrl);
                           // bool isSubmitted = widget.onSubmit(formData);
                           widget.onSubmit(formData);
                           // if (isSubmitted) {
@@ -431,7 +471,7 @@ class _FormPageState extends State<FormPage> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                content: Column(
+                                content: const Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(
@@ -738,5 +778,128 @@ class _RepeatableSectionState extends State<RepeatableSection> {
         ),
       ],
     );
+  }
+}
+
+class PictureWidget extends StatefulWidget {
+  final String? controlName;
+  const PictureWidget({
+    super.key,
+    required this.controlName,
+  });
+  @override
+  State<PictureWidget> createState() => _PictureWidgetState();
+}
+
+String? selectedImageString;
+File? selectedFile;
+
+class _PictureWidgetState extends State<PictureWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.controlName ?? "",
+          textScaleFactor: 1.25,
+        ),
+        Row(
+          children: [
+            MaterialButton(
+              onPressed: () {
+                _pickImageFromGallery();
+              },
+              color: Color(0xFF6F768A),
+              textColor: Colors.white,
+              child: const Text('Gallery'),
+            ),
+            SizedBox(
+              width: 10,
+              height: 10,
+            ),
+            MaterialButton(
+                onPressed: () {
+                  _pickImageFromCamera();
+                },
+                color: Color(0xFF6F768A),
+                textColor: Colors.white,
+                child: const Text('Camera')),
+            SizedBox(width: 10, height: 10),
+            MaterialButton(
+                onPressed: () {
+                  setState(() {
+                    selectedImageString = null;
+                    selectedFile = null;
+                  });
+                },
+                color: Color(0xFF6F768A),
+                textColor: Colors.white,
+                child: const Text('Remove Image')),
+          ],
+        ),
+        //if the slected image string (chrome) isnt null and platform is web, get image using Image.Network, otherwise display empty sizedbox
+        selectedImageString != null && kIsWeb
+            ? Image.network(
+                selectedImageString!,
+                fit: BoxFit.contain,
+                //Make photo only 100x100
+                width: 100.0,
+                height: 100.0,
+              )
+            : SizedBox(height: 0),
+        //if selected file (ios and android) isnt null and platform is android or ios, get image using Image.file, otherwise display empty sizedbox
+        selectedFile != null &&
+                    defaultTargetPlatform == TargetPlatform.android ||
+                defaultTargetPlatform == TargetPlatform.iOS
+            ? Image.file(
+                selectedFile!,
+                fit: BoxFit.contain,
+                //Make photo only 100x100
+                width: 100.0,
+                height: 100.0,
+              )
+            : SizedBox(height: 0),
+        SizedBox(height: 20)
+      ],
+    );
+  }
+
+  Future _pickImageFromGallery() async {
+    //get image from gallery or file system
+    final returnedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    //make sure return image isnt null or else if we dont select a photo it will just crash
+    if (returnedImage != null) {
+      setState(() {
+        if (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS) {
+          //get selected file when on ios or android
+          selectedFile = File(returnedImage!.path);
+        } else {
+          //just get the path when on chrome
+          selectedImageString = returnedImage!.path;
+        }
+      });
+    }
+  }
+
+  Future _pickImageFromCamera() async {
+    //get image from camera (on chrome it just opens another filesystem)
+    final returnedImage =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    //make sure return image isnt null or else if we dont select a photo it will just crash
+    if (returnedImage != null) {
+      setState(() {
+        if (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS) {
+          //get selected file when on ios or android
+          selectedFile = File(returnedImage!.path);
+        } else {
+          //just get the path when on chrome
+          selectedImageString = returnedImage!.path;
+        }
+      });
+    }
   }
 }
