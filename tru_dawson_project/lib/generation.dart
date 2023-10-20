@@ -440,87 +440,50 @@ class _FormPageState extends State<FormPage> {
                           formData = Map<String, dynamic>.from(formData);
                           formData.putIfAbsent("image", () => strUrl);
                           // bool isSubmitted = widget.onSubmit(formData);
-                          if (imageConfirm) {
-                            widget.onSubmit(formData);
-                            // if (isSubmitted) {
-                            // Form submission successful
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  content: const Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons
-                                            .check_circle, // You can use any icon you prefer
-                                        color: Colors.green,
-                                        size: 48.0,
+                          widget.onSubmit(formData);
+                          // if (isSubmitted) {
+                          // Form submission successful
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: const Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons
+                                          .check_circle, // You can use any icon you prefer
+                                      color: Colors.green,
+                                      size: 48.0,
+                                    ),
+                                    SizedBox(height: 16.0),
+                                    Text(
+                                      'Form Submission Successful',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      SizedBox(height: 16.0),
-                                      Text(
-                                        'Form Submission Successful',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 12.0),
-                                      Text(
-                                        'Your form has been submitted successfully.',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context)
-                                            .pop(); // Close the alert dialog
-                                      },
-                                      child: Text('OK'),
+                                    ),
+                                    SizedBox(height: 12.0),
+                                    Text(
+                                      'Your form has been submitted successfully.',
+                                      textAlign: TextAlign.center,
                                     ),
                                   ],
-                                );
-                              },
-                            );
-                          } else {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  content: const Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'Please select \"Confirm Image\"',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 12.0),
-                                      Text(
-                                        'This step is required to submit.',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Close the alert dialog
+                                    },
+                                    child: Text('OK'),
                                   ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context)
-                                            .pop(); // Close the alert dialog
-                                      },
-                                      child: Text('OK'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          }
+                                ],
+                              );
+                            },
+                          );
                         }
                         //}
                       } else {
