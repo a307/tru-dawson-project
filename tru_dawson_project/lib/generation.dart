@@ -769,20 +769,25 @@ class PictureWidget extends StatefulWidget {
 
 String? selectedImageString;
 File? selectedFile;
-
+File? selectedFileChrome;
 String strUrl = "monkey";
 Future<String> photoUpload() async {
   String url = "";
   final ref =
       FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
-  if ((Platform.isAndroid || Platform.isIOS) && selectedFile != null) {
+  if (!kIsWeb && selectedFile != null) {
     TaskSnapshot task = await ref.putFile(selectedFile!);
     await task;
     return await ref.getDownloadURL();
-  } else if (kIsWeb && selectedImageString != null) {
-    TaskSnapshot task = await ref.putFile(File(selectedImageString!));
-    await task;
-    return await ref.getDownloadURL();
+  } else if (kIsWeb && selectedFileChrome != null) {
+    try {
+      TaskSnapshot task =
+          await ref.putData(await XFile(selectedImageString!).readAsBytes());
+      return await task.ref.getDownloadURL();
+    } catch (error) {
+      print("Error uploading image: $error");
+      return "";
+    }
   } else {
     return "";
   }
@@ -845,9 +850,7 @@ class _PictureWidgetState extends State<PictureWidget> {
               )
             : SizedBox(height: 0),
         //if selected file (ios and android) isnt null and platform is android or ios, get image using Image.file, otherwise display empty sizedbox
-        selectedFile != null &&
-                    defaultTargetPlatform == TargetPlatform.android ||
-                defaultTargetPlatform == TargetPlatform.iOS
+        selectedFile != null && !kIsWeb
             ? Image.file(
                 selectedFile!,
                 fit: BoxFit.contain,
@@ -881,12 +884,12 @@ class _PictureWidgetState extends State<PictureWidget> {
     //make sure return image isnt null or else if we dont select a photo it will just crash
     if (returnedImage != null) {
       setState(() {
-        if (defaultTargetPlatform == TargetPlatform.android ||
-            defaultTargetPlatform == TargetPlatform.iOS) {
+        if (!kIsWeb) {
           //get selected file when on ios or android
           selectedFile = File(returnedImage!.path);
-        } else {
+        } else if (kIsWeb) {
           //just get the path when on chrome
+          selectedFileChrome = File(returnedImage!.path);
           selectedImageString = returnedImage!.path;
         }
       });
@@ -899,12 +902,11 @@ class _PictureWidgetState extends State<PictureWidget> {
         await ImagePicker().pickImage(source: ImageSource.camera);
     //make sure return image isnt null or else if we dont select a photo it will just crash
     if (returnedImage != null) {
-      setState(() {
-        if (defaultTargetPlatform == TargetPlatform.android ||
-            defaultTargetPlatform == TargetPlatform.iOS) {
+      setState(() async {
+        if (!kIsWeb) {
           //get selected file when on ios or android
           selectedFile = File(returnedImage!.path);
-        } else {
+        } else if (kIsWeb) {
           //just get the path when on chrome
           selectedImageString = returnedImage!.path;
         }
