@@ -376,7 +376,6 @@ void submitFormToFirebase(
 ) async {
   // Initialize the Firebase database reference
   final databaseReference = FirebaseDatabase.instance.ref();
-  imageConfirm = false;
   //send data to the database with UID and formdata
   return collection
       .doc(globalEmail + "--" + DateTime.now().toString())
@@ -438,9 +437,14 @@ class _FormPageState extends State<FormPage> {
                         print("On submission: $formData");
                         if (formData != null) {
                           formData = Map<String, dynamic>.from(formData);
-                          formData.putIfAbsent("image", () => strUrl);
+                          for (var element in strUrlList) {
+                            formData.putIfAbsent(
+                                element['name']!, () => element['url']);
+                          }
+                          // formData.putIfAbsent("image", () => strUrl);
                           // bool isSubmitted = widget.onSubmit(formData);
                           widget.onSubmit(formData);
+                          strUrlList = [];
                           // if (isSubmitted) {
                           // Form submission successful
                           showDialog(
@@ -770,7 +774,8 @@ class PictureWidget extends StatefulWidget {
 String? selectedImageString;
 File? selectedFile;
 File? selectedFileChrome;
-String strUrl = "monkey";
+// String strUrl = "monkey";
+List<Map<String, String>> strUrlList = [];
 Future<String> photoUpload() async {
   String url = "";
   final ref =
@@ -792,8 +797,6 @@ Future<String> photoUpload() async {
     return "";
   }
 }
-
-bool imageConfirm = false;
 
 class _PictureWidgetState extends State<PictureWidget> {
   @override
@@ -864,8 +867,8 @@ class _PictureWidgetState extends State<PictureWidget> {
             onPressed: () {
               photoUpload().then((String result) {
                 setState(() {
-                  strUrl = result;
-                  imageConfirm = true;
+                  // strUrl = result;
+                  strUrlList.add({"name": widget.controlName!, "url": result});
                 });
               });
             },
