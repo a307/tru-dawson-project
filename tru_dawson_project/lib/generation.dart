@@ -511,6 +511,7 @@ class _FormPageState extends State<FormPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
+                      strUrlList = [];
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Color(0xFF6F768A),
