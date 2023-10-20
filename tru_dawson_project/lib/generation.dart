@@ -50,6 +50,7 @@ SignatureController _controller = SignatureController(
 );
 
 dynamic globalResult;
+String globalEmail = "";
 
 // dynamically create form list based on # of JSON forms pulled
 class Generator extends StatelessWidget {
@@ -57,23 +58,11 @@ class Generator extends StatelessWidget {
   List<Map<String, dynamic>>? separatedForms;
   dynamic result;
   AuthService auth;
-  Generator(this.list, this.separatedForms, this.result, this.auth) {
+  String email;
+  Generator(
+      this.list, this.separatedForms, this.result, this.auth, this.email) {
     globalResult = result;
-  }
-  Map<String?, dynamic> convertMap(Map<Object?, Object?> originalMap) {
-    final convertedMap = <String?, dynamic>{};
-
-    originalMap.forEach((key, value) {
-      if (key is String) {
-        convertedMap[key.toString()] = value;
-      } else if (key == null) {
-        convertedMap[null] = value;
-      } else {
-        throw ArgumentError('Key is not a String or null');
-      }
-    });
-
-    return convertedMap;
+    globalEmail = email;
   }
 
   @override
@@ -158,7 +147,7 @@ class Generator extends StatelessWidget {
                               );
                             } catch (e, stacktrace) {
                               print('$e Something Went wrong');
-                              print('Stacktrace: ' + stacktrace.toString());
+                              //print('Stacktrace: ' + stacktrace.toString());
                               return FormPage(
                                 formFields: [],
                                 formName: '',
@@ -194,7 +183,7 @@ List<Widget> generateForm(
     Map<String, dynamic>? form, GlobalKey<FormBuilderState> fbKey) {
   List<Widget> formFields = [];
 
-  print(form);
+  //print(form);
 
   for (var page in form?['pages']) {
     // Loop through the pages in the form
@@ -387,8 +376,11 @@ void submitFormToFirebase(
 ) async {
   // Initialize the Firebase database reference
   final databaseReference = FirebaseDatabase.instance.ref();
+  imageConfirm = false;
   //send data to the database with UID and formdata
-  return await collection.doc(globalResult.uid).set(formData);
+  return collection
+      .doc(globalEmail + "--" + DateTime.now().toString())
+      .set(formData);
 }
 
 class FormPage extends StatefulWidget {
@@ -414,21 +406,6 @@ class _FormPageState extends State<FormPage> {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
   //  final SharedPreferences prefs;
   // Map<String, dynamic> savedFormData = {};
-  String strUrl = "";
-  Future<String> photoUpload() async {
-    String url = "";
-    final ref =
-        FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
-    if (Platform.isAndroid || Platform.isIOS) {
-      UploadTask task = ref.putFile(selectedFile!);
-      await task;
-      return await ref.getDownloadURL();
-    } else {
-      UploadTask task = ref.putFile(File(selectedImageString!));
-      await task;
-      return await ref.getDownloadURL();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -461,57 +438,89 @@ class _FormPageState extends State<FormPage> {
                         print("On submission: $formData");
                         if (formData != null) {
                           formData = Map<String, dynamic>.from(formData);
-                          photoUpload().then((String result) {
-                            setState(() {
-                              strUrl = result;
-                            });
-                          });
                           formData.putIfAbsent("image", () => strUrl);
                           // bool isSubmitted = widget.onSubmit(formData);
-                          widget.onSubmit(formData);
-                          // if (isSubmitted) {
-                          // Form submission successful
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                content: const Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons
-                                          .check_circle, // You can use any icon you prefer
-                                      color: Colors.green,
-                                      size: 48.0,
-                                    ),
-                                    SizedBox(height: 16.0),
-                                    Text(
-                                      'Form Submission Successful',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.bold,
+                          if (imageConfirm) {
+                            widget.onSubmit(formData);
+                            // if (isSubmitted) {
+                            // Form submission successful
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  content: const Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons
+                                            .check_circle, // You can use any icon you prefer
+                                        color: Colors.green,
+                                        size: 48.0,
                                       ),
-                                    ),
-                                    SizedBox(height: 12.0),
-                                    Text(
-                                      'Your form has been submitted successfully.',
-                                      textAlign: TextAlign.center,
+                                      SizedBox(height: 16.0),
+                                      Text(
+                                        'Form Submission Successful',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 12.0),
+                                      Text(
+                                        'Your form has been submitted successfully.',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pop(); // Close the alert dialog
+                                      },
+                                      child: Text('OK'),
                                     ),
                                   ],
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                          .pop(); // Close the alert dialog
-                                    },
-                                    child: Text('OK'),
+                                );
+                              },
+                            );
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  content: const Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'Please select \"Confirm Image\"',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 12.0),
+                                      Text(
+                                        'This step is required to submit.',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              );
-                            },
-                          );
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pop(); // Close the alert dialog
+                                      },
+                                      child: Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
                         }
                         //}
                       } else {
@@ -798,6 +807,26 @@ class PictureWidget extends StatefulWidget {
 String? selectedImageString;
 File? selectedFile;
 
+String strUrl = "monkey";
+Future<String> photoUpload() async {
+  String url = "";
+  final ref =
+      FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
+  if ((Platform.isAndroid || Platform.isIOS) && selectedFile != null) {
+    TaskSnapshot task = await ref.putFile(selectedFile!);
+    await task;
+    return await ref.getDownloadURL();
+  } else if (kIsWeb && selectedImageString != null) {
+    TaskSnapshot task = await ref.putFile(File(selectedImageString!));
+    await task;
+    return await ref.getDownloadURL();
+  } else {
+    return "";
+  }
+}
+
+bool imageConfirm = false;
+
 class _PictureWidgetState extends State<PictureWidget> {
   @override
   Widget build(BuildContext context) {
@@ -813,7 +842,6 @@ class _PictureWidgetState extends State<PictureWidget> {
             MaterialButton(
               onPressed: () {
                 _pickImageFromGallery();
-                //photoUpload();
               },
               color: Color(0xFF6F768A),
               textColor: Colors.white,
@@ -840,7 +868,7 @@ class _PictureWidgetState extends State<PictureWidget> {
                 },
                 color: Color(0xFF6F768A),
                 textColor: Colors.white,
-                child: const Text('Remove Image')),
+                child: const Text('Remove')),
           ],
         ),
         //if the slected image string (chrome) isnt null and platform is web, get image using Image.Network, otherwise display empty sizedbox
@@ -865,6 +893,19 @@ class _PictureWidgetState extends State<PictureWidget> {
                 height: 100.0,
               )
             : SizedBox(height: 0),
+        SizedBox(width: 10, height: 10),
+        MaterialButton(
+            onPressed: () {
+              photoUpload().then((String result) {
+                setState(() {
+                  strUrl = result;
+                  imageConfirm = true;
+                });
+              });
+            },
+            color: Color(0xFF6F768A),
+            textColor: Colors.white,
+            child: const Text('Confirm Image')),
         SizedBox(height: 20)
       ],
     );
