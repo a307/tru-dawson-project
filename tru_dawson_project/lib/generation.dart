@@ -830,6 +830,8 @@ class _PictureWidgetState extends State<PictureWidget> {
                 textColor: Colors.white,
                 child: const Text('Camera')),
             SizedBox(width: 10, height: 10),
+            //BUG clicking remove button removes photo from all upload fields
+            //BUG remove does not remove from strUrlList
             MaterialButton(
                 onPressed: () {
                   setState(() {
@@ -911,6 +913,7 @@ class _PictureWidgetState extends State<PictureWidget> {
           selectedFile = File(returnedImage!.path);
         } else if (kIsWeb) {
           //just get the path when on chrome
+          selectedFileChrome = File(returnedImage!.path);
           selectedImageString = returnedImage!.path;
         }
       });
