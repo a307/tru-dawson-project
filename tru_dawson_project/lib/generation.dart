@@ -300,6 +300,73 @@ List<Widget> generateSection(
             ));
             break;
           }
+        case 'multiselect':
+          {
+            var options = question['control']['meta_data']['options']
+                as List<dynamic>; // Cast options to List<dynamic>
+            List<String> optionsList = [];
+            if (options.length == 1) {
+              // If there is only one element in the list (i.e. one string that contains all the options)
+              // If options in the JSON is represented as one string, then it will need to be split
+              optionsList = (options[0] as String)
+                  .split(', '); // Cast options[0] to String
+              var controlName =
+                  question['control']['meta_data']['control_name'];
+              sectionFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(controlName),
+                  SizedBox(height: 10),
+                  FormBuilderCheckboxGroup(
+                    name: controlName,
+                    options: optionsList
+                        .map((option) => FormBuilderFieldOption(
+                            value: option as String, // Cast option to String
+                            child: Text(
+                                option as String))) // Cast option to String
+                        .toList(),
+                    decoration: InputDecoration(
+                      labelText: controlName,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ));
+            } else {
+              // If there are multiple elements in options
+              var controlName =
+                  question['control']['meta_data']['control_name'];
+              sectionFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(controlName),
+                  SizedBox(height: 10),
+                  FormBuilderCheckboxGroup(
+                    name: controlName,
+                    options: optionsList
+                        .map((option) => FormBuilderFieldOption(
+                            value: option as String, // Cast option to String
+                            child: Text(
+                                option as String))) // Cast option to String
+                        .toList(),
+                    decoration: InputDecoration(
+                      labelText: controlName,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ));
+            }
+            break;
+          }
         case 'picture':
           {
             //get control name from JSON
@@ -632,7 +699,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
   //     sectionIdentifiers.removeLast(); // Remove the field identifier
   //     repeatableFields.removeLast(); // Remove the latest section from the list
   //   }
-  // } DOESN"T FUCKING WORK, ABANDON ALL YE WHO TRY TO FIX THIS
+  // } DOESN"T FUCKING WORK, ABANDON ALL HOPE YE WHO TRY TO FIX THIS
 
   // This function belongs to the widget and is required for regenerating sections if desired
   List<Widget> _generateRepeatableFields(
@@ -713,6 +780,73 @@ class _RepeatableSectionState extends State<RepeatableSection> {
                 SizedBox(height: 20),
               ],
             ));
+            break;
+          }
+        case 'multiselect':
+          {
+            var options = question['control']['meta_data']['options']
+                as List<dynamic>; // Cast options to List<dynamic>
+            List<String> optionsList = [];
+            if (options.length == 1) {
+              // If there is only one element in the list (i.e. one string that contains all the options)
+              // If options in the JSON is represented as one string, then it will need to be split
+              optionsList = (options[0] as String)
+                  .split(', '); // Cast options[0] to String
+              var controlName =
+                  question['control']['meta_data']['control_name'];
+              repeatableFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(controlName),
+                  SizedBox(height: 10),
+                  FormBuilderCheckboxGroup(
+                    name: fieldName,
+                    options: optionsList
+                        .map((option) => FormBuilderFieldOption(
+                            value: option as String, // Cast option to String
+                            child: Text(
+                                option as String))) // Cast option to String
+                        .toList(),
+                    decoration: InputDecoration(
+                      labelText: controlName,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ));
+            } else {
+              // If there are multiple elements in options
+              var controlName =
+                  question['control']['meta_data']['control_name'];
+              repeatableFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(controlName),
+                  SizedBox(height: 10),
+                  FormBuilderCheckboxGroup(
+                    name: fieldName,
+                    options: optionsList
+                        .map((option) => FormBuilderFieldOption(
+                            value: option as String, // Cast option to String
+                            child: Text(
+                                option as String))) // Cast option to String
+                        .toList(),
+                    decoration: InputDecoration(
+                      labelText: controlName,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ));
+            }
             break;
           }
         case 'picture':
