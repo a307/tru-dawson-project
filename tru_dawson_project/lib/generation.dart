@@ -197,19 +197,21 @@ List<Widget> generateSection(
       section['label']; // Store the label for the section in the variable
   sectionFields.add(Column(
     crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-          Container(
-            width: double.infinity, 
-            padding: EdgeInsets.all(12.0), 
-            color: Color(0xFF234094), // blue header in forms
-            child: Text(
-              label,
-              textScaleFactor: 1.25,
-              style: TextStyle(
-                color: Colors.white, // Set the text color to white
-              ),
-            ),
-          ), SizedBox(height: 10)],
+    children: [
+      Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(12.0),
+        color: Color(0xFF234094), // blue header in forms
+        child: Text(
+          label,
+          textScaleFactor: 1.25,
+          style: TextStyle(
+            color: Colors.white, // Set the text color to white
+          ),
+        ),
+      ),
+      SizedBox(height: 10)
+    ],
   ));
 
   // Check if sections are repeatable
@@ -311,32 +313,85 @@ List<Widget> generateSection(
             sectionFields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 Text(
+                Text(
                   'Please provide your signature:',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(2.0), 
-                  child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.grey,
-                       // Outline color
-                    //  width: 2.0, // Outline width
-                    ),
-                  ),
-                  //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
-                  child: Signature(
-                    height:
-                        200, //you can make the field smaller by adjusting this
-                    controller: SignatureController(),
-                    backgroundColor: Colors.white,
-                    
-                  ),
-                )
-                )
+                    borderRadius: BorderRadius.circular(2.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          // Outline color
+                          //  width: 2.0, // Outline width
+                        ),
+                      ),
+                      //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
+                      child: Signature(
+                        height:
+                            200, //you can make the field smaller by adjusting this
+                        controller: SignatureController(),
+                        backgroundColor: Colors.white,
+                      ),
+                    ))
               ],
             ));
+            break;
+          }
+        case 'label': // If the type is a label, display some text.
+          {
+            var labelName;
+            var labelType;
+            var labelText;
+            if (question['control']['meta_data'].containsKey('meta_data')) {
+              // In the label section of fuel_inspection.json, there is a nested field with two metadata keys. This may be a mistake, but I will account for it here in case it pops up again in other forms
+              labelName =
+                  question['control']['meta_data']['meta_data']['control_name'];
+              labelType =
+                  question['control']['meta_data']['meta_data']['label_type'];
+              labelText =
+                  question['control']['meta_data']['meta_data']['control_text'];
+            } else {
+              labelName = controlName;
+              labelType = question['control']['meta_data']['label_type'];
+              labelText = question['control']['meta_data']['control_text'];
+            }
+            switch (labelType) {
+              // The text would be presented differently depending on the label type, more cases will need to be added if new styles show up in different forms
+              case "bold": // Text will be bold
+                {
+                  sectionFields.add(Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        labelName,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        labelText,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ));
+                  break;
+                }
+              default: // Default case no styling
+                {
+                  sectionFields.add(Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        labelName,
+                      ),
+                      Text(
+                        labelText,
+                      ),
+                    ],
+                  ));
+                  break;
+                }
+            }
             break;
           }
         default: // Add a blank text field for the default case
@@ -683,6 +738,61 @@ class _RepeatableSectionState extends State<RepeatableSection> {
                 )
               ],
             ));
+            break;
+          }
+        case 'label': // If the type is a label, display some text.
+          {
+            var labelName;
+            var labelType;
+            var labelText;
+            if (question['control']['meta_data'].containsKey('meta_data')) {
+              // In the label section of fuel_inspection.json, there is a nested field with two metadata keys. This may be a mistake, but I will account for it here in case it pops up again in other forms
+              labelName =
+                  question['control']['meta_data']['meta_data']['control_name'];
+              labelType =
+                  question['control']['meta_data']['meta_data']['label_type'];
+              labelText =
+                  question['control']['meta_data']['meta_data']['control_text'];
+            } else {
+              labelName = controlName;
+              labelType = question['control']['meta_data']['label_type'];
+              labelText = question['control']['meta_data']['control_text'];
+            }
+            switch (labelType) {
+              // The text would be presented differently depending on the label type, more cases will need to be added if new styles show up in different forms
+              case "bold": // Text will be bold
+                {
+                  repeatableFields.add(Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        labelName,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        labelText,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ));
+                  break;
+                }
+              default: // Default case no styling
+                {
+                  repeatableFields.add(Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        labelName,
+                      ),
+                      Text(
+                        labelText,
+                      ),
+                    ],
+                  ));
+                  break;
+                }
+            }
             break;
           }
         default: // Add a blank text field for the default case
