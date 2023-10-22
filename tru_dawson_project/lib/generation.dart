@@ -402,10 +402,30 @@ List<Widget> generateSection(
                       child: Signature(
                         height:
                             200, //you can make the field smaller by adjusting this
-                        controller: SignatureController(),
+                        controller: _controller,
                         backgroundColor: Colors.white,
                       ),
-                    ))
+                    )),
+                Row(
+                  children: [
+                    IconButton(
+                        tooltip: "Confirm your signature",
+                        onPressed: () async {
+                          if (_controller.isNotEmpty) {
+                            final signature = await exportSignature();
+                          }
+                        },
+                        icon: Icon(Icons.check),
+                        color: Colors.green),
+                    IconButton(
+                        tooltip: "Clear your signature",
+                        onPressed: () {
+                          _controller.clear();
+                        },
+                        icon: Icon(Icons.clear),
+                        color: Colors.red),
+                  ],
+                )
               ],
             ));
             break;
@@ -543,6 +563,27 @@ List<Widget> generateSection(
   return sectionFields;
 }
 
+List<Map<String, String>> signatureURL = [];
+Future<void> exportSignature() async {
+  int len = signatureURL.length;
+  signatureURL.add(
+      {"name": "signature$len", "url": await signatureUpload(_controller)});
+}
+
+Future<String> signatureUpload(SignatureController signature) async {
+  String url = "";
+  final ref =
+      FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
+
+  try {
+    TaskSnapshot task = await ref.putData((await signature.toPngBytes())!);
+    return await task.ref.getDownloadURL();
+  } catch (error) {
+    print("Error uploading image: $error");
+    return "";
+  }
+}
+
 void submitFormToFirebase(
   Map<String, dynamic> formData,
   CollectionReference collection,
@@ -611,6 +652,10 @@ class _FormPageState extends State<FormPage> {
                         if (formData != null) {
                           formData = Map<String, dynamic>.from(formData);
                           for (var element in strUrlList) {
+                            formData.putIfAbsent(
+                                element['name']!, () => element['url']);
+                          }
+                          for (var element in signatureURL) {
                             formData.putIfAbsent(
                                 element['name']!, () => element['url']);
                           }
