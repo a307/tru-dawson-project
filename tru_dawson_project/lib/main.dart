@@ -22,6 +22,7 @@ void main() async {
     projectId: "tru-dawson-project-2023",
     //Must be used to connect to Firebase Realtime database
     databaseURL: 'https://tru-dawson-project-2023-default-rtdb.firebaseio.com/',
+    storageBucket: "gs://tru-dawson-project-2023.appspot.com",
   ));
   //Run Application starting with Generator as home
   // runApp(MaterialApp(home: Generator(list, separatedForms) //class
