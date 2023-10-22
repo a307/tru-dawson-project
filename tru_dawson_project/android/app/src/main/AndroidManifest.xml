@@ -3,6 +3,7 @@
         android:label="tru_dawson_project"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDod9CWYa_L8tc8hRXQoPMUMW1WxhWayyU"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
