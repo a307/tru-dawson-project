@@ -421,6 +421,8 @@ List<Widget> generateSection(
                         tooltip: "Clear your signature",
                         onPressed: () {
                           _controller.clear();
+                          //TODO: fix removing all signatures
+                          signatureURL = [];
                         },
                         icon: Icon(Icons.clear),
                         color: Colors.red),
@@ -454,11 +456,11 @@ List<Widget> generateSection(
                   ),
                 ),
                 SizedBox(height: 20),
-                 ],
+              ],
             ));
             break;
           }
-        case 'gps_location': // gps location! how exciting. 
+        case 'gps_location': // gps location! how exciting.
           {
             sectionFields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -612,7 +614,6 @@ class FormPage extends StatefulWidget {
 
   @override
   _FormPageState createState() => _FormPageState();
-  
 }
 
 class _FormPageState extends State<FormPage> {
@@ -663,6 +664,7 @@ class _FormPageState extends State<FormPage> {
                           // bool isSubmitted = widget.onSubmit(formData);
                           widget.onSubmit(formData);
                           strUrlList = [];
+                          signatureURL = [];
                           // if (isSubmitted) {
                           // Form submission successful
                           showDialog(
@@ -1009,11 +1011,11 @@ class _RepeatableSectionState extends State<RepeatableSection> {
                   ),
                 ),
                 SizedBox(height: 20),
-                 ],
+              ],
             ));
             break;
           }
-        case 'gps_location': // gps location! how exciting. 
+        case 'gps_location': // gps location! how exciting.
           {
             repeatableFields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
