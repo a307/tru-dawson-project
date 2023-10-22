@@ -27,6 +27,6 @@ void main() async {
   //Run Application starting with Generator as home
   // runApp(MaterialApp(home: Generator(list, separatedForms) //class
   //     ));
-  runApp(MaterialApp(home: SignIn() //class
+  runApp(MaterialApp(home: SignIn()//class
       ));
 }
