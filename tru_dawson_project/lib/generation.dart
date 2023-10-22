@@ -288,7 +288,6 @@ List<Widget> generateSection(
             sectionFields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(controlName),
                 SizedBox(height: 10),
                 FormBuilderDropdown(
                   name: controlName,
@@ -309,6 +308,67 @@ List<Widget> generateSection(
                 SizedBox(height: 20),
               ],
             ));
+            break;
+          }
+        case 'multiselect':
+          {
+            var options = question['control']['meta_data']['options']
+                as List<dynamic>; // Cast options to List<dynamic>
+            List<String> optionsList = [];
+            if (options.length == 1) {
+              // If there is only one element in the list (i.e. one string that contains all the options)
+              // If options in the JSON is represented as one string, then it will need to be split
+              optionsList = (options[0] as String)
+                  .split(', '); // Cast options[0] to String
+              sectionFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 10),
+                  FormBuilderCheckboxGroup(
+                    name: controlName,
+                    options: optionsList
+                        .map((option) => FormBuilderFieldOption(
+                            value: option as String, // Cast option to String
+                            child: Text(
+                                option as String))) // Cast option to String
+                        .toList(),
+                    decoration: InputDecoration(
+                      labelText: controlName,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ));
+            } else {
+              // If there are multiple elements in options
+              sectionFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 10),
+                  FormBuilderCheckboxGroup(
+                    name: controlName,
+                    options: optionsList
+                        .map((option) => FormBuilderFieldOption(
+                            value: option as String, // Cast option to String
+                            child: Text(
+                                option as String))) // Cast option to String
+                        .toList(),
+                    decoration: InputDecoration(
+                      labelText: controlName,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ));
+            }
             break;
           }
         case 'picture':
@@ -350,6 +410,34 @@ List<Widget> generateSection(
             ));
             break;
           }
+        case 'checkbox':
+          {
+            List<String> optionsList = ["True", "False"];
+            sectionFields.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 10),
+                FormBuilderRadioGroup(
+                  name: controlName,
+                  options: optionsList
+                      .map((option) => FormBuilderFieldOption(
+                            value: option as String,
+                            child: Text(option as String),
+                          ))
+                      .toList(),
+                  decoration: InputDecoration(
+                    labelText: controlName,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                 ],
+            ));
+            break;
+          }
         case 'gps_location': // gps location! how exciting. 
           {
             sectionFields.add(Column(
@@ -375,6 +463,63 @@ List<Widget> generateSection(
                     ))
               ],
             ));
+            break;
+          }
+        case 'label': // If the type is a label, display some text.
+          {
+            var labelName;
+            var labelType;
+            var labelText;
+            if (question['control']['meta_data'].containsKey('meta_data')) {
+              // In the label section of fuel_inspection.json, there is a nested field with two metadata keys. This may be a mistake, but I will account for it here in case it pops up again in other forms
+              labelName =
+                  question['control']['meta_data']['meta_data']['control_name'];
+              labelType =
+                  question['control']['meta_data']['meta_data']['label_type'];
+              labelText =
+                  question['control']['meta_data']['meta_data']['control_text'];
+            } else {
+              labelName = controlName;
+              labelType = question['control']['meta_data']['label_type'];
+              labelText = question['control']['meta_data']['control_text'];
+            }
+            switch (labelType) {
+              // The text would be presented differently depending on the label type, more cases will need to be added if new styles show up in different forms
+              case "bold": // Text will be bold
+                {
+                  sectionFields.add(Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        labelName,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 36),
+                      ),
+                      Text(
+                        labelText,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 24),
+                      ),
+                    ],
+                  ));
+                  break;
+                }
+              default: // Default case no styling
+                {
+                  sectionFields.add(Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        labelName,
+                      ),
+                      Text(
+                        labelText,
+                      ),
+                    ],
+                  ));
+                  break;
+                }
+            }
             break;
           }
         default: // Add a blank text field for the default case
@@ -626,7 +771,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
   //     sectionIdentifiers.removeLast(); // Remove the field identifier
   //     repeatableFields.removeLast(); // Remove the latest section from the list
   //   }
-  // } DOESN"T FUCKING WORK, ABANDON ALL YE WHO TRY TO FIX THIS
+  // } DOESN"T FUCKING WORK, ABANDON ALL HOPE YE WHO TRY TO FIX THIS
 
   // This function belongs to the widget and is required for regenerating sections if desired
   List<Widget> _generateRepeatableFields(
@@ -709,6 +854,67 @@ class _RepeatableSectionState extends State<RepeatableSection> {
             ));
             break;
           }
+        case 'multiselect':
+          {
+            var options = question['control']['meta_data']['options']
+                as List<dynamic>; // Cast options to List<dynamic>
+            List<String> optionsList = [];
+            if (options.length == 1) {
+              // If there is only one element in the list (i.e. one string that contains all the options)
+              // If options in the JSON is represented as one string, then it will need to be split
+              optionsList = (options[0] as String)
+                  .split(', '); // Cast options[0] to String
+              repeatableFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 10),
+                  FormBuilderCheckboxGroup(
+                    name: fieldName,
+                    options: optionsList
+                        .map((option) => FormBuilderFieldOption(
+                            value: option as String, // Cast option to String
+                            child: Text(
+                                option as String))) // Cast option to String
+                        .toList(),
+                    decoration: InputDecoration(
+                      labelText: controlName,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ));
+            } else {
+              // If there are multiple elements in options
+              repeatableFields.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 10),
+                  FormBuilderCheckboxGroup(
+                    name: fieldName,
+                    options: optionsList
+                        .map((option) => FormBuilderFieldOption(
+                            value: option as String, // Cast option to String
+                            child: Text(
+                                option as String))) // Cast option to String
+                        .toList(),
+                    decoration: InputDecoration(
+                      labelText: controlName,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ));
+            }
+            break;
+          }
         case 'picture':
           {
             //get control name from JSON
@@ -731,6 +937,34 @@ class _RepeatableSectionState extends State<RepeatableSection> {
                   ),
                 )
               ],
+            ));
+            break;
+          }
+        case 'checkbox':
+          {
+            List<String> optionsList = ["True", "False"];
+            repeatableFields.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 10),
+                FormBuilderRadioGroup(
+                  name: fieldName,
+                  options: optionsList
+                      .map((option) => FormBuilderFieldOption(
+                            value: option as String,
+                            child: Text(option as String),
+                          ))
+                      .toList(),
+                  decoration: InputDecoration(
+                    labelText: controlName,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                 ],
             ));
             break;
           }
@@ -759,6 +993,63 @@ class _RepeatableSectionState extends State<RepeatableSection> {
                     ))
               ],
             ));
+            break;
+          }
+        case 'label': // If the type is a label, display some text.
+          {
+            var labelName;
+            var labelType;
+            var labelText;
+            if (question['control']['meta_data'].containsKey('meta_data')) {
+              // In the label section of fuel_inspection.json, there is a nested field with two metadata keys. This may be a mistake, but I will account for it here in case it pops up again in other forms
+              labelName =
+                  question['control']['meta_data']['meta_data']['control_name'];
+              labelType =
+                  question['control']['meta_data']['meta_data']['label_type'];
+              labelText =
+                  question['control']['meta_data']['meta_data']['control_text'];
+            } else {
+              labelName = controlName;
+              labelType = question['control']['meta_data']['label_type'];
+              labelText = question['control']['meta_data']['control_text'];
+            }
+            switch (labelType) {
+              // The text would be presented differently depending on the label type, more cases will need to be added if new styles show up in different forms
+              case "bold": // Text will be bold
+                {
+                  repeatableFields.add(Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        labelName,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 36),
+                      ),
+                      Text(
+                        labelText,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 24),
+                      ),
+                    ],
+                  ));
+                  break;
+                }
+              default: // Default case no styling
+                {
+                  repeatableFields.add(Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        labelName,
+                      ),
+                      Text(
+                        labelText,
+                      ),
+                    ],
+                  ));
+                  break;
+                }
+            }
             break;
           }
         default: // Add a blank text field for the default case
