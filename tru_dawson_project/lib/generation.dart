@@ -277,7 +277,6 @@ List<Widget> generateSection(
             sectionFields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(controlName),
                 SizedBox(height: 10),
                 FormBuilderDropdown(
                   name: controlName,
@@ -310,12 +309,9 @@ List<Widget> generateSection(
               // If options in the JSON is represented as one string, then it will need to be split
               optionsList = (options[0] as String)
                   .split(', '); // Cast options[0] to String
-              var controlName =
-                  question['control']['meta_data']['control_name'];
               sectionFields.add(Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(controlName),
                   SizedBox(height: 10),
                   FormBuilderCheckboxGroup(
                     name: controlName,
@@ -338,12 +334,9 @@ List<Widget> generateSection(
               ));
             } else {
               // If there are multiple elements in options
-              var controlName =
-                  question['control']['meta_data']['control_name'];
               sectionFields.add(Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(controlName),
                   SizedBox(height: 10),
                   FormBuilderCheckboxGroup(
                     name: controlName,
@@ -406,6 +399,34 @@ List<Widget> generateSection(
             ));
             break;
           }
+        case 'checkbox':
+          {
+            List<String> optionsList = ["True", "False"];
+            sectionFields.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 10),
+                FormBuilderRadioGroup(
+                  name: controlName,
+                  options: optionsList
+                      .map((option) => FormBuilderFieldOption(
+                            value: option as String,
+                            child: Text(option as String),
+                          ))
+                      .toList(),
+                  decoration: InputDecoration(
+                    labelText: controlName,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+              ],
+            ));
+            break;
+          }
         case 'label': // If the type is a label, display some text.
           {
             var labelName;
@@ -433,11 +454,13 @@ List<Widget> generateSection(
                     children: [
                       Text(
                         labelName,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 36),
                       ),
                       Text(
                         labelText,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 24),
                       ),
                     ],
                   ));
@@ -792,12 +815,9 @@ class _RepeatableSectionState extends State<RepeatableSection> {
               // If options in the JSON is represented as one string, then it will need to be split
               optionsList = (options[0] as String)
                   .split(', '); // Cast options[0] to String
-              var controlName =
-                  question['control']['meta_data']['control_name'];
               repeatableFields.add(Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(controlName),
                   SizedBox(height: 10),
                   FormBuilderCheckboxGroup(
                     name: fieldName,
@@ -820,12 +840,9 @@ class _RepeatableSectionState extends State<RepeatableSection> {
               ));
             } else {
               // If there are multiple elements in options
-              var controlName =
-                  question['control']['meta_data']['control_name'];
               repeatableFields.add(Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(controlName),
                   SizedBox(height: 10),
                   FormBuilderCheckboxGroup(
                     name: fieldName,
@@ -874,6 +891,34 @@ class _RepeatableSectionState extends State<RepeatableSection> {
             ));
             break;
           }
+        case 'checkbox':
+          {
+            List<String> optionsList = ["True", "False"];
+            repeatableFields.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 10),
+                FormBuilderRadioGroup(
+                  name: fieldName,
+                  options: optionsList
+                      .map((option) => FormBuilderFieldOption(
+                            value: option as String,
+                            child: Text(option as String),
+                          ))
+                      .toList(),
+                  decoration: InputDecoration(
+                    labelText: controlName,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+              ],
+            ));
+            break;
+          }
         case 'label': // If the type is a label, display some text.
           {
             var labelName;
@@ -901,11 +946,13 @@ class _RepeatableSectionState extends State<RepeatableSection> {
                     children: [
                       Text(
                         labelName,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 36),
                       ),
                       Text(
                         labelText,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 24),
                       ),
                     ],
                   ));
