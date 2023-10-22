@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'google_map.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-
-class MapScreen extends StatefulWidget{
+class MapField extends StatefulWidget{
   // This class represents the main screen of the app where the Google Map is displayed.
-  const MapScreen({super.key});
+  const MapField({super.key});
 
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  State<MapField> createState() => _MapFieldState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _MapFieldState extends State<MapField> {
   // A Future to load the user's current coordinates from the view model. 
   // This Future is used to fetch location information asynchronously.
   late final Future<LatLng> _mapLoadedFuture;
@@ -63,21 +62,7 @@ class _MapScreenState extends State<MapScreen> {
                 );
               },
             ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'You are located in beanville',
-                  style: TextStyle(fontSize: 24),
-                ),
-                SizedBox(height: 16),
-                // Additional UI elements can be added here.
-              ],
-            ),
-          ),
+          )
         ],
       ),
     );

@@ -15,6 +15,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tru_dawson_project/auth.dart';
+import 'package:tru_dawson_project/google_map_field.dart';
 import 'package:tru_dawson_project/picture_form.dart';
 import 'package:tru_dawson_project/sign_in.dart';
 import 'user_settings_page.dart';
@@ -349,6 +350,33 @@ List<Widget> generateSection(
             ));
             break;
           }
+        case 'gps_location': // gps location! how exciting. 
+          {
+            sectionFields.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Please use the map to enter coordinates.',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                ClipRRect(
+                    borderRadius: BorderRadius.circular(2.0),
+                    child: Container(
+                      height: 200,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          // Outline color
+                          //  width: 2.0, // Outline width
+                        ),
+                      ),
+                      //map :O
+                      child: MapField(),
+                    ))
+              ],
+            ));
+            break;
+          }
         default: // Add a blank text field for the default case
           {
             sectionFields.add(Column(
@@ -388,7 +416,6 @@ class FormPage extends StatefulWidget {
   final GlobalKey<FormBuilderState> fbKey;
   //create onsubmit function so when we create a FormPage later in Generator we can use an onsubmit function to send the data to firebase
   final Function(Map<String, dynamic>) onSubmit;
-
   FormPage({
     Key? key,
     required this.formFields,
@@ -399,6 +426,7 @@ class FormPage extends StatefulWidget {
 
   @override
   _FormPageState createState() => _FormPageState();
+  
 }
 
 class _FormPageState extends State<FormPage> {
@@ -702,6 +730,33 @@ class _RepeatableSectionState extends State<RepeatableSection> {
                     backgroundColor: Colors.white,
                   ),
                 )
+              ],
+            ));
+            break;
+          }
+        case 'gps_location': // gps location! how exciting. 
+          {
+            repeatableFields.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Please use the map to enter coordinates.',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                ClipRRect(
+                    borderRadius: BorderRadius.circular(2.0),
+                    child: Container(
+                      height: 200,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          // Outline color
+                          //  width: 2.0, // Outline width
+                        ),
+                      ),
+                      //map :O
+                      child: MapField(),
+                    ))
               ],
             ));
             break;
