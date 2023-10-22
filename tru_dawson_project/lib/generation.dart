@@ -2,10 +2,12 @@
 //flutter pub add form_builder_validators
 //flutter pub add signature
 // ignore_for_file: prefer_const_literals_to_create_immutables
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -13,6 +15,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tru_dawson_project/auth.dart';
+import 'package:tru_dawson_project/google_map_field.dart';
 import 'package:tru_dawson_project/picture_form.dart';
 import 'package:tru_dawson_project/sign_in.dart';
 import 'user_settings_page.dart';
@@ -48,6 +51,7 @@ SignatureController _controller = SignatureController(
 );
 
 dynamic globalResult;
+String globalEmail = "";
 
 // dynamically create form list based on # of JSON forms pulled
 class Generator extends StatelessWidget {
@@ -55,8 +59,11 @@ class Generator extends StatelessWidget {
   List<Map<String, dynamic>>? separatedForms;
   dynamic result;
   AuthService auth;
-  Generator(this.list, this.separatedForms, this.result, this.auth) {
+  String email;
+  Generator(
+      this.list, this.separatedForms, this.result, this.auth, this.email) {
     globalResult = result;
+    globalEmail = email;
   }
 
   @override
@@ -139,9 +146,11 @@ class Generator extends StatelessWidget {
                                   submitFormToFirebase(formData, collection);
                                 },
                               );
-                            } catch (e) {
+                            } catch (e, stacktrace) {
                               print('$e Something Went wrong');
+                              //print('Stacktrace: ' + stacktrace.toString());
                               return FormPage(
+                                formFields: [],
                                 formName: '',
                                 fbKey: GlobalKey<FormBuilderState>(),
                                 onSubmit: (formData) {
@@ -175,10 +184,12 @@ List<Widget> generateForm(
     Map<String, dynamic>? form, GlobalKey<FormBuilderState> fbKey) {
   List<Widget> formFields = [];
 
+  //print(form);
+
   for (var page in form?['pages']) {
     // Loop through the pages in the form
     for (var section in page['sections']) {
-      formFields.addAll(generateSection(section, fbKey));
+      formFields.addAll(generateSection(convertToMap(section), fbKey));
       // Loop through the sections on each page
     }
   }
@@ -423,6 +434,33 @@ List<Widget> generateSection(
                   ),
                 ),
                 SizedBox(height: 20),
+                 ],
+            ));
+            break;
+          }
+        case 'gps_location': // gps location! how exciting. 
+          {
+            sectionFields.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Pin is on your current location. Drag pin to edit.',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                ClipRRect(
+                    borderRadius: BorderRadius.circular(2.0),
+                    child: Container(
+                      height: 200,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          // Outline color
+                          //  width: 2.0, // Outline width
+                        ),
+                      ),
+                      //map :O
+                      child: MapField(),
+                    ))
               ],
             ));
             break;
@@ -512,19 +550,20 @@ void submitFormToFirebase(
   // Initialize the Firebase database reference
   final databaseReference = FirebaseDatabase.instance.ref();
   //send data to the database with UID and formdata
-  return await collection.doc(globalResult.uid).set(formData);
+  return collection
+      .doc(globalEmail + "--" + DateTime.now().toString())
+      .set(formData);
 }
 
 class FormPage extends StatefulWidget {
-  final List<Widget> formFields;
+  List<Widget> formFields;
   final String formName;
   final GlobalKey<FormBuilderState> fbKey;
   //create onsubmit function so when we create a FormPage later in Generator we can use an onsubmit function to send the data to firebase
   final Function(Map<String, dynamic>) onSubmit;
-
   FormPage({
     Key? key,
-    this.formFields = const [],
+    required this.formFields,
     required this.formName,
     required this.onSubmit,
     required this.fbKey,
@@ -532,12 +571,14 @@ class FormPage extends StatefulWidget {
 
   @override
   _FormPageState createState() => _FormPageState();
+  
 }
 
 class _FormPageState extends State<FormPage> {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
   //  final SharedPreferences prefs;
   // Map<String, dynamic> savedFormData = {};
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -565,18 +606,25 @@ class _FormPageState extends State<FormPage> {
 
                       if (isValid) {
                         Map<String, dynamic>? formData =
-                            widget.fbKey.currentState?.value;
+                            widget.fbKey.currentState?.value ?? {};
                         print("On submission: $formData");
                         if (formData != null) {
+                          formData = Map<String, dynamic>.from(formData);
+                          for (var element in strUrlList) {
+                            formData.putIfAbsent(
+                                element['name']!, () => element['url']);
+                          }
+                          // formData.putIfAbsent("image", () => strUrl);
                           // bool isSubmitted = widget.onSubmit(formData);
                           widget.onSubmit(formData);
+                          strUrlList = [];
                           // if (isSubmitted) {
                           // Form submission successful
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                content: Column(
+                                content: const Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(
@@ -636,6 +684,7 @@ class _FormPageState extends State<FormPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
+                      strUrlList = [];
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Color(0xFF6F768A),
@@ -915,6 +964,33 @@ class _RepeatableSectionState extends State<RepeatableSection> {
                   ),
                 ),
                 SizedBox(height: 20),
+                 ],
+            ));
+            break;
+          }
+        case 'gps_location': // gps location! how exciting. 
+          {
+            repeatableFields.add(Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Pin is on your current location. Drag pin to edit.',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                ClipRRect(
+                    borderRadius: BorderRadius.circular(2.0),
+                    child: Container(
+                      height: 200,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          // Outline color
+                          //  width: 2.0, // Outline width
+                        ),
+                      ),
+                      //map :O
+                      child: MapField(),
+                    ))
               ],
             ));
             break;
@@ -1029,5 +1105,166 @@ class _RepeatableSectionState extends State<RepeatableSection> {
         ),
       ],
     );
+  }
+}
+
+class PictureWidget extends StatefulWidget {
+  final String? controlName;
+  const PictureWidget({
+    super.key,
+    required this.controlName,
+  });
+  @override
+  State<PictureWidget> createState() => _PictureWidgetState();
+}
+
+String? selectedImageString;
+File? selectedFile;
+File? selectedFileChrome;
+// String strUrl = "monkey";
+List<Map<String, String>> strUrlList = [];
+Future<String> photoUpload() async {
+  String url = "";
+  final ref =
+      FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
+  if (!kIsWeb && selectedFile != null) {
+    TaskSnapshot task = await ref.putFile(selectedFile!);
+    await task;
+    return await ref.getDownloadURL();
+  } else if (kIsWeb && selectedFileChrome != null) {
+    try {
+      TaskSnapshot task =
+          await ref.putData(await XFile(selectedImageString!).readAsBytes());
+      return await task.ref.getDownloadURL();
+    } catch (error) {
+      print("Error uploading image: $error");
+      return "";
+    }
+  } else {
+    return "";
+  }
+}
+
+class _PictureWidgetState extends State<PictureWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.controlName ?? "",
+          textScaleFactor: 1.25,
+        ),
+        Row(
+          children: [
+            MaterialButton(
+              onPressed: () {
+                _pickImageFromGallery();
+              },
+              color: Color(0xFF6F768A),
+              textColor: Colors.white,
+              child: const Text('Gallery'),
+            ),
+            SizedBox(
+              width: 10,
+              height: 10,
+            ),
+            MaterialButton(
+                onPressed: () {
+                  _pickImageFromCamera();
+                },
+                color: Color(0xFF6F768A),
+                textColor: Colors.white,
+                child: const Text('Camera')),
+            SizedBox(width: 10, height: 10),
+            //TODO clicking remove button removes photo from all upload fields
+            //TODO remove does not remove from strUrlList
+            MaterialButton(
+                onPressed: () {
+                  setState(() {
+                    selectedImageString = null;
+                    selectedFile = null;
+                    strUrlList = [];
+                  });
+                },
+                color: Color(0xFF6F768A),
+                textColor: Colors.white,
+                child: const Text('Remove')),
+          ],
+        ),
+        //if the slected image string (chrome) isnt null and platform is web, get image using Image.Network, otherwise display empty sizedbox
+        selectedImageString != null && kIsWeb
+            ? Image.network(
+                selectedImageString!,
+                fit: BoxFit.contain,
+                //Make photo only 100x100
+                width: 100.0,
+                height: 100.0,
+              )
+            : SizedBox(height: 0),
+        //if selected file (ios and android) isnt null and platform is android or ios, get image using Image.file, otherwise display empty sizedbox
+        selectedFile != null && !kIsWeb
+            ? Image.file(
+                selectedFile!,
+                fit: BoxFit.contain,
+                //Make photo only 100x100
+                width: 100.0,
+                height: 100.0,
+              )
+            : SizedBox(height: 0),
+        SizedBox(width: 10, height: 10),
+        MaterialButton(
+            onPressed: () {
+              photoUpload().then((String result) {
+                setState(() {
+                  // strUrl = result;
+                  strUrlList.add({"name": widget.controlName!, "url": result});
+                });
+              });
+            },
+            color: Color(0xFF6F768A),
+            textColor: Colors.white,
+            child: const Text('Confirm Image')),
+        SizedBox(height: 20)
+      ],
+    );
+  }
+
+  Future _pickImageFromGallery() async {
+    //get image from gallery or file system
+    final returnedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    //make sure return image isnt null or else if we dont select a photo it will just crash
+    if (returnedImage != null) {
+      setState(() {
+        if (!kIsWeb) {
+          //get selected file when on ios or android
+          selectedFile = File(returnedImage!.path);
+        } else if (kIsWeb) {
+          //just get the path when on chrome
+          selectedFileChrome = File(returnedImage!.path);
+          selectedImageString = returnedImage!.path;
+        }
+      });
+    }
+  }
+
+  Future _pickImageFromCamera() async {
+    //get image from camera (on chrome it just opens another filesystem)
+    final returnedImage =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    //make sure return image isnt null or else if we dont select a photo it will just crash
+    if (returnedImage != null) {
+      setState(() async {
+        if (!kIsWeb) {
+          //get selected file when on ios or android
+          selectedFile = File(returnedImage!.path);
+        } else if (kIsWeb) {
+          //just get the path when on chrome
+          selectedFileChrome = File(returnedImage!.path);
+          selectedImageString = returnedImage!.path;
+        }
+      });
+    }
   }
 }

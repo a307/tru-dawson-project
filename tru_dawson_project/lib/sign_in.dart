@@ -94,8 +94,8 @@ class _SignInState extends State<SignIn> {
                             MaterialPageRoute(
                               builder: (context) {
                                 return Material(
-                                    child: Generator(
-                                        list, separatedForms, result, auth));
+                                    child: Generator(list, separatedForms,
+                                        result, auth, emailTEC.text));
                               },
                             ),
                           );
