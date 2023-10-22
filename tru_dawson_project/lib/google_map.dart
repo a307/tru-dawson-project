@@ -79,4 +79,5 @@ class GoogleMapViewModel {
       throw Exception('Unable to determine location permissions. Retry a few seconds later.');
     }
   }
+  
 }

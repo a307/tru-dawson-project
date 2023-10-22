@@ -356,7 +356,7 @@ List<Widget> generateSection(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Please use the map to enter coordinates.',
+                  'Pin is on your current location. Drag pin to edit.',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 ClipRRect(
@@ -740,7 +740,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Please use the map to enter coordinates.',
+                  'Pin is on your current location. Drag pin to edit.',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 ClipRRect(

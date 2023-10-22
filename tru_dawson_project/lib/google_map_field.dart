@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'google_map.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -69,9 +70,9 @@ class _MapFieldState extends State<MapField> {
   }
 }
 
-class GoogleMapWidget extends StatelessWidget {
+class GoogleMapWidget extends StatefulWidget {
   // This class represents the widget responsible for displaying the Google Map.
-  const GoogleMapWidget({
+  GoogleMapWidget({
     required this.onMapCreated,
     required this.currentUserLocation,
     super.key,
@@ -81,40 +82,64 @@ class GoogleMapWidget extends StatelessWidget {
   final void Function(GoogleMapController) onMapCreated;
   
   // The user's current location on the map.
-  final LatLng currentUserLocation;
+  LatLng currentUserLocation;
 
   @override
+  State<GoogleMapWidget> createState() => _GoogleMapWidgetState();
+}
+
+class _GoogleMapWidgetState extends State<GoogleMapWidget> {
+  @override
   Widget build(BuildContext context) {
-    return GoogleMap(
-      mapType: MapType.normal,
-      initialCameraPosition: CameraPosition(
-        // Set the initial camera position to focus on the user's current location.
-        target: currentUserLocation,
-        zoom: 18, // Zoom level for initial map view.
-      ),
-      onMapCreated: onMapCreated,
-      markers: {
-        Marker(
-          // Create a marker to represent the user's current location on the map.
-          markerId: const MarkerId('current_location'),
-          position: currentUserLocation,
+    Set<Marker> mapMarker = {Marker(
+          markerId: MarkerId('current_location'),
+          position: widget.currentUserLocation,
+          draggable:true,
+          onDragEnd: (LatLng newLatLng){
+              widget.currentUserLocation = newLatLng;
+          },
           onTap: () {
             // Show a dialog with the latitude and longitude when the marker is tapped.
             showDialog(
               context: context,
               builder: (_) => MarkerCoordinatesDialog(
-                latitude: currentUserLocation.latitude,
-                longitude: currentUserLocation.longitude,
+                latitude: widget.currentUserLocation.latitude,
+                longitude: widget.currentUserLocation.longitude,
               ),
-            );
+            );},)};
+    return GoogleMap(
+      mapType: MapType.normal,
+      initialCameraPosition: CameraPosition(
+        // Set the initial camera position to focus on the user's current location.
+        target: widget.currentUserLocation,
+        zoom: 18, // Zoom level for initial map view.
+      ),
+      onMapCreated: widget.onMapCreated,
+      markers: mapMarker,
+      onTap: (LatLng latLng){
+        setState(() {
+          mapMarker.clear();
+          mapMarker.add(Marker(
+          markerId: MarkerId('current_location'),
+          position: latLng,
+          onDragEnd: (LatLng newLatLng){
+              widget.currentUserLocation = newLatLng;
           },
-        ),
-      },
+          onTap: () {
+            // Show a dialog with the latitude and longitude when the marker is tapped.
+            showDialog(
+              context: context,
+              builder: (_) => MarkerCoordinatesDialog(
+                latitude: widget.currentUserLocation.latitude,
+                longitude: widget.currentUserLocation.longitude,
+              ),
+            );},));
+      });}
     );
   }
 }
 
-class MarkerCoordinatesDialog extends StatelessWidget {
+class MarkerCoordinatesDialog extends StatefulWidget {
   // This class represents a dialog that displays the latitude and longitude of a marker.
   const MarkerCoordinatesDialog({
     super.key,
@@ -126,12 +151,17 @@ class MarkerCoordinatesDialog extends StatelessWidget {
   final double latitude, longitude;
 
   @override
+  State<MarkerCoordinatesDialog> createState() => _MarkerCoordinatesDialogState();
+}
+
+class _MarkerCoordinatesDialogState extends State<MarkerCoordinatesDialog> {
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("User's Current Location"),
+      title: const Text("Pin Location: "),
       content: Text(
         // Display the latitude and longitude in the content of the dialog.
-        'Latitude: $latitude, Longitude: $longitude',
+        'Latitude: ${widget.latitude}, Longitude: ${widget.longitude}',
       ),
       actions: [
         TextButton(
