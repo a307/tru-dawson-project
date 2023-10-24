@@ -1199,7 +1199,7 @@ class _PictureWidgetState extends State<PictureWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          widget.controlName ?? "",
+          "Pictures", // Changed the name here to "Pictures" as it would display the appended identifier in repeatable sections
           textScaleFactor: 1.25,
         ),
         Row(
