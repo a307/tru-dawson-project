@@ -1130,15 +1130,21 @@ class _RepeatableSectionState extends State<RepeatableSection> {
         Row(
           mainAxisAlignment:
               MainAxisAlignment.center, // Optional: Align buttons to center
-          children: [
-            ElevatedButton(
+          children: [            
+             Container(
+            padding: EdgeInsets.all(16.0), // Add space around the button
+            child: ElevatedButton(
               onPressed: () {
                 setState(() {
                   _addSection();
                 });
               },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Color(0xFF6F768A)), // Make the button grey
+              ),
               child: Icon(Icons.add),
             ),
+          ),
             // SizedBox(width: 10), // Space between buttons
             // ElevatedButton(
             //   onPressed: () {
