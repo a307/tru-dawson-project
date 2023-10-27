@@ -3,6 +3,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:tru_dawson_project/sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -27,6 +28,8 @@ void main() async {
   //Run Application starting with Generator as home
   // runApp(MaterialApp(home: Generator(list, separatedForms) //class
   //     ));
+  LocationPermission permission;
+  permission = await Geolocator.requestPermission();
   runApp(MaterialApp(
     home: SignIn(), //class
     debugShowCheckedModeBanner: false,

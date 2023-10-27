@@ -33,7 +33,8 @@ class GoogleMapViewModel {
 
     if (position == null) {
       // If the position is still null, it indicates a failed location capture.
-      throw Exception('Location capture failed. You might need to enable internet.');
+      throw Exception(
+          'Location capture failed. You might need to enable internet.');
     }
 
     // Return the user's coordinates as a LatLng object.
@@ -76,8 +77,8 @@ class GoogleMapViewModel {
 
     if (permission == LocationPermission.unableToDetermine) {
       // Handle cases where location permissions are unable to be determined.
-      throw Exception('Unable to determine location permissions. Retry a few seconds later.');
+      throw Exception(
+          'Unable to determine location permissions. Retry a few seconds later.');
     }
   }
-  
 }
