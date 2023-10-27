@@ -28,6 +28,8 @@ void main() async {
   //Run Application starting with Generator as home
   // runApp(MaterialApp(home: Generator(list, separatedForms) //class
   //     ));
+  LocationPermission permission;
+  permission = await Geolocator.requestPermission();
   runApp(MaterialApp(
     home: SignIn(), //class
     debugShowCheckedModeBanner: false,
