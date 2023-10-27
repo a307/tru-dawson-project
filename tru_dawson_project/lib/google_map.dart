@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -33,7 +35,7 @@ class GoogleMapViewModel {
 
     if (position == null) {
       // If the position is still null, it indicates a failed location capture.
-      throw Exception('Location capture failed. You might need to enable internet.');
+      throw Exception(e);
     }
 
     // Return the user's coordinates as a LatLng object.
@@ -47,6 +49,8 @@ class GoogleMapViewModel {
     // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
+      LocationPermission permission;
+      permission = await Geolocator.requestPermission();
       // Location services are not enabled; prompt the user to enable them.
       final locationOpened = await Geolocator.openLocationSettings();
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -76,8 +80,8 @@ class GoogleMapViewModel {
 
     if (permission == LocationPermission.unableToDetermine) {
       // Handle cases where location permissions are unable to be determined.
-      throw Exception('Unable to determine location permissions. Retry a few seconds later.');
+      throw Exception(
+          'Unable to determine location permissions. Retry a few seconds later.');
     }
   }
-  
 }
