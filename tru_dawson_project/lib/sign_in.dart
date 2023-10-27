@@ -92,7 +92,7 @@ class _SignInState extends State<SignIn> {
                         if (result == null) {
                           print('error signing in');
                           showAlertDialog(context, "User Not Found!",
-                              "Email or password may be incorrect. \nDid you Sign Up?");
+                              "Email or password may be incorrect. \nDid you Sign Up?", false);
                         } else {
                           print('user has signed in');
                           Navigator.of(context).push(
@@ -135,11 +135,11 @@ class _SignInState extends State<SignIn> {
                       if (result == null) {
                         print('error signing up');
                         showAlertDialog(
-                            context, "Error Signing Up", "Please try again.");
+                            context, "Error Signing Up", "Please try again.", false);
                       } else {
                         print('user has signed up');
                         showAlertDialog(context, 'Successful Sign Up!',
-                            "Please press Sign In.");
+                            "Please press Sign In.", true);
                         print(result.uid);
                       }
                       print("");
@@ -169,8 +169,14 @@ class _SignInState extends State<SignIn> {
   }
 }
 
-showAlertDialog(BuildContext context, String title, String content) {
-  // set up the buttons
+// alert dialogs handling
+showAlertDialog(BuildContext context, String title, String content, bool isGood) {
+  // Set up the icon based on isGood
+  Icon icon = isGood
+      ? Icon(Icons.check, color: Colors.green, size: 48) // Green checkmark
+      : Icon(Icons.close, color: Colors.red, size: 48); // Red X symbol
+
+  // Set up the buttons
   Widget continueButton = TextButton(
     child: const Text("Continue"),
     onPressed: () {
@@ -178,16 +184,24 @@ showAlertDialog(BuildContext context, String title, String content) {
     },
   );
 
-  // set up the AlertDialog
+  // Set up the AlertDialog
   AlertDialog alert = AlertDialog(
-    title: Text(title),
-    content: Text(content),
-    actions: [
-      continueButton,
-    ],
+    content: Container( // Wrap the content in a Container
+      constraints: BoxConstraints(maxHeight: 200), // Adjust the maxHeight as needed
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          icon, // Display the icon
+          SizedBox(height: 16), // Add spacing
+          Text(title),
+          Text(content),
+        ],
+      ),
+    ),
+    actions: [continueButton],
   );
 
-  // show the dialog
+  // Show the dialog
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -195,6 +209,8 @@ showAlertDialog(BuildContext context, String title, String content) {
     },
   );
 }
+
+
 
 List<Map<String, dynamic>>? separatedForms = [];
 List<String> list = [];

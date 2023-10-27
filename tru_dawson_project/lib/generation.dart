@@ -674,9 +674,9 @@ class _FormPageState extends State<FormPage> {
                                 content: const Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(
+                                    Icon( // green check icon
                                       Icons
-                                          .check_circle, // You can use any icon you prefer
+                                          .check_circle,
                                       color: Colors.green,
                                       size: 48.0,
                                     ),
