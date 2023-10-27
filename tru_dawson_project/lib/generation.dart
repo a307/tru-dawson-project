@@ -80,7 +80,7 @@ class Generator extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(
           backgroundColor:
-              Color(0xFF234094), // Set the background color to #234094
+              Color(0xFFC00205), // Set the background color to #234094
           title: const Text('Dawson Forms'),
           actions: [
             IconButton(
@@ -212,7 +212,17 @@ List<Widget> generateSection(
       Container(
         width: double.infinity,
         padding: EdgeInsets.all(12.0),
-        color: Color(0xFF234094), // blue header in forms
+        decoration: BoxDecoration(
+          color: Color(0xFFC00205), // Red header in forms
+          borderRadius: BorderRadius.circular(12.0), // Adjust the radius for rounding
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey, // Shadow color
+              offset: Offset(0, 2), // Shadow offset
+              blurRadius: 4, // Shadow blur radius
+            ),
+          ],
+        ),
         child: Text(
           label,
           textScaleFactor: 1.25,
@@ -626,7 +636,7 @@ class _FormPageState extends State<FormPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor:
-            Color(0xFF234094), // Set the background color to #234094
+            Color(0xFFC00205), // Set the background color to #234094
         title: Text(widget.formName),
       ),
       body: FormBuilder(
@@ -715,7 +725,11 @@ class _FormPageState extends State<FormPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Color(0xFF6F768A),
+                        primary: Color(0xFFC00205),
+                        minimumSize: Size(250, 40),
+                        shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24), // Adjust the radius for roundness
+                      ),
                     ),
                     child: Text('Submit'),
                   ),
@@ -734,7 +748,11 @@ class _FormPageState extends State<FormPage> {
                       strUrlList = [];
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Color(0xFF6F768A),
+                       primary: Color(0xFFC00205),
+                        minimumSize: Size(250, 40),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        )
                     ),
                     child: Text('Go Back'),
                   ),
@@ -1208,6 +1226,7 @@ class _PictureWidgetState extends State<PictureWidget> {
           "Pictures", // Changed the name here to "Pictures" as it would display the appended identifier in repeatable sections
           textScaleFactor: 1.25,
         ),
+        SizedBox(height:10),
         Row(
           children: [
             MaterialButton(

@@ -46,6 +46,7 @@ class _SignInState extends State<SignIn> {
                 width: 500, 
               ),
               //Text("Emaill"),
+              SizedBox(height: 10.0),
               Container(
                 width: 300,
                 child: FormBuilderTextField(

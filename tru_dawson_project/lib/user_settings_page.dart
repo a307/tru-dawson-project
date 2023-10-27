@@ -7,7 +7,7 @@ class UserSettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF234094), // Set the background color to #234094
+        backgroundColor: Color(0xFFC00205), // Set the background color to #234094
         title: Text('User Settings'),
       ),
       body: Center(
