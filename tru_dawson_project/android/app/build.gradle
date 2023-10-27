@@ -12,7 +12,9 @@ if (localPropertiesFile.exists()) {
         localProperties.load(reader)
     }
 }
-
+secrets {
+    propertiesFileName = "secrets.properties"
+}
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
 if (flutterVersionCode == null) {
     flutterVersionCode = '1'
@@ -51,6 +53,7 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
+        minSdkVersion 20 
     }
 
     buildTypes {
