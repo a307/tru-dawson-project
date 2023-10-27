@@ -41,6 +41,10 @@ class _SignInState extends State<SignIn> {
         child: Column(
           children: [
             SizedBox(height: 20.0),
+            Image.asset(
+              'lib/assets/dawson_logo.jpg', //  dawson group logo image
+              width: 500, 
+            ),
             Text("Email"),
             Container(
               width: 300,
