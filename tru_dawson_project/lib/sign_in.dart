@@ -30,11 +30,11 @@ class _SignInState extends State<SignIn> {
     final TextEditingController emailTEC = TextEditingController();
     final TextEditingController passwordTEC = TextEditingController();
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor:
-            Color(0xFF234094), // Set the background color to #234094,
-        title: Text("Sign In"),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor:
+      //       Color(0xFFC00205), // Set the background color to #234094,
+      //   title: Text("Sign In"),
+      // ),
       
       body: FormBuilder(
         key: _formKey,
@@ -45,7 +45,7 @@ class _SignInState extends State<SignIn> {
               'lib/assets/dawson_logo.jpg', //  dawson group logo image
               width: 500, 
             ),
-            Text("Email"),
+            //Text("Emaill"),
             Container(
               width: 300,
               child: FormBuilderTextField(
@@ -61,7 +61,7 @@ class _SignInState extends State<SignIn> {
               ),
             ),
             SizedBox(height: 20.0),
-            Text("Password"),
+            //Text("Password"),
             Container(
               width: 300,
               child: FormBuilderTextField(
@@ -82,72 +82,83 @@ class _SignInState extends State<SignIn> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                    onPressed: () async {
-                      //Validate that forms are valid with the formkey
-                      if (_formKey.currentState!.saveAndValidate() == true) {
-                        //attempt to sign in anonymously and get back result containing Uid
-                        dynamic result = await auth.SignInEmailPass(
-                            emailTEC.text.trim(), passwordTEC.text.trim());
-                        //If theres data print out the Uid
-                        if (result == null) {
-                          print('error signing in');
-                          showAlertDialog(context, "User Not Found!",
-                              "Email or password may be incorrect. \nDid you Sign Up?");
-                        } else {
-                          print('user has signed in');
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return Material(
-                                    child: Generator(list, separatedForms,
-                                        result, auth, emailTEC.text));
-                              },
-                            ),
-                          );
-                          print(result.uid);
-                        }
-                        print("");
+                  onPressed: () async {
+                    //Validate that forms are valid with the formkey
+                    if (_formKey.currentState!.saveAndValidate() == true) {
+                      //attempt to sign in anonymously and get back result containing Uid
+                      dynamic result = await auth.SignInEmailPass(
+                          emailTEC.text.trim(), passwordTEC.text.trim());
+                      //If theres data print out the Uid
+                      if (result == null) {
+                        print('error signing in');
+                        showAlertDialog(context, "User Not Found!",
+                            "Email or password may be incorrect. \nDid you Sign Up?");
+                      } else {
+                        print('user has signed in');
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return Material(
+                                  child: Generator(list, separatedForms,
+                                      result, auth, emailTEC.text));
+                            },
+                          ),
+                        );
+                        print(result.uid);
                       }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFF6F768A),
-                      minimumSize: Size(72, 36),
+                      print("");
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Color(0xFFC00205),
+                    minimumSize: Size(300, 45),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24), // Adjust the radius for roundness
                     ),
-                    child: const Text("Sign In")),
-                const SizedBox(width: 20),
+                  ),
+                  child: const Text("Login")),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row (
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 ElevatedButton(
-                    onPressed: () async {
-                      //Validate that forms are valid with the formkey
-                      if (_formKey.currentState!.saveAndValidate() == true) {
-                        //attempt to sign in anonymously and get back result containing Uid
-                        dynamic result = await auth.SignUp(
-                            emailTEC.text.trim(), passwordTEC.text.trim());
+                onPressed: () async {
+                  //Validate that forms are valid with the formkey
+                  if (_formKey.currentState!.saveAndValidate() == true) {
+                    //attempt to sign in anonymously and get back result containing Uid
+                    dynamic result = await auth.SignUp(
+                        emailTEC.text.trim(), passwordTEC.text.trim());
 
-                        //If theres data print out the Uid
-                        if (result == null) {
-                          print('error signing up');
-                          showAlertDialog(
-                              context, "Error Signing Up", "Please try again.");
-                        } else {
-                          print('user has signed up');
-                          showAlertDialog(context, 'Successful Sign Up!',
-                              "Please press Sign In.");
-                          print(result.uid);
-                        }
-                        print("");
-                        //print out data in form
-                        debugPrint(
-                            _formKey.currentState?.instantValue.toString() ??
-                                '');
+                    //If theres data print out the Uid
+                    if (result == null) {
+                      print('error signing up');
+                      showAlertDialog(
+                          context, "Error Signing Up", "Please try again.");
+                    } else {
+                      print('user has signed up');
+                      showAlertDialog(context, 'Successful Sign Up!',
+                          "Please press Sign In.");
+                      print(result.uid);
+                    }
+                    print("");
+                    //print out data in form
+                    debugPrint(
+                        _formKey.currentState?.instantValue.toString() ??
+                            '');
 
-                        //Login to firebase
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFF6F768A),
-                      minimumSize: Size(72, 36),
-                    ),
-                    child: const Text("Sign up"))
+                    //Login to firebase
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: Color(0xFFC00205),
+                  minimumSize: Size(300, 45),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24), // Adjust the radius for roundness
+                  ),
+                ),
+                child: const Text("Sign up"))
               ],
             )
           ],
