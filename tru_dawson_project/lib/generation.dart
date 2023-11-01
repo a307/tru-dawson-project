@@ -19,6 +19,7 @@ import 'package:tru_dawson_project/google_map_field.dart';
 import 'package:tru_dawson_project/picture_form.dart';
 import 'package:tru_dawson_project/sign_in.dart';
 import 'user_settings_page.dart';
+import 'picture_widget.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:signature/signature.dart';
@@ -124,16 +125,16 @@ class Generator extends StatelessWidget {
                                   separatedForms?.firstWhere((formMap) {
                                 return formMap['metadata']['formName'] == item;
                               });
-                              final GlobalKey<FormBuilderState> _fbKey = GlobalKey<
-                                  FormBuilderState>(); // Had to move this here in order to allow removal functionality to repeatableSections
+                              final GlobalKey<FormBuilderState> fbKey =
+                                  GlobalKey<FormBuilderState>();
 
                               List<Widget> formFields =
-                                  generateForm(targetForm, _fbKey);
+                                  generateForm(targetForm, fbKey);
 
                               return FormPage(
                                 formName: item,
                                 formFields: formFields,
-                                fbKey: _fbKey,
+                                fbKey: fbKey,
                                 //onsubmit function mentioned in FormPage, allows us to pass the data from the form into a a firebase submission function
                                 onSubmit: (formData) {
                                   print('Form Data: $formData');
@@ -214,7 +215,8 @@ List<Widget> generateSection(
         padding: EdgeInsets.all(12.0),
         decoration: BoxDecoration(
           color: Color(0xFFC00205), // Red header in forms
-          borderRadius: BorderRadius.circular(12.0), // Adjust the radius for rounding
+          borderRadius:
+              BorderRadius.circular(12.0), // Adjust the radius for rounding
           boxShadow: [
             BoxShadow(
               color: Colors.grey, // Shadow color
@@ -234,12 +236,11 @@ List<Widget> generateSection(
       SizedBox(height: 10)
     ],
   ));
-
+  String uniqueKey = DateTime.now()
+      .millisecondsSinceEpoch
+      .toString(); // Generate a unique key for acquiring for the section
   // Check if sections are repeatable
   if (section['type'] == "Repeatable") {
-    String uniqueKey = DateTime.now()
-        .millisecondsSinceEpoch
-        .toString(); // Generate a unique key for acquiring for the section
     repeatableSections[uniqueKey] = RepeatableSection(
         section: section,
         uniqueKey: uniqueKey,
@@ -249,6 +250,7 @@ List<Widget> generateSection(
   } else {
     for (var question in section['questions']) {
       var controlName = question['control']['meta_data']['control_name'];
+      var fieldName = controlName + ' ' + uniqueKey;
       switch (question['control']['type']) {
         // More types may need to be added depending on the forms. I don't really know how to make this more dynamic for accepting anything other than something with a similar structure to the simple_sign_inspection.json
         case 'date_field': // If the type is date_field, build a date field
@@ -257,7 +259,7 @@ List<Widget> generateSection(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FormBuilderDateTimePicker(
-                  name: controlName,
+                  name: fieldName,
                   decoration: InputDecoration(
                     labelText: controlName,
                     border: OutlineInputBorder(
@@ -278,7 +280,7 @@ List<Widget> generateSection(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FormBuilderTextField(
-                  name: controlName,
+                  name: fieldName,
                   decoration: InputDecoration(
                     labelText: controlName,
                     border: OutlineInputBorder(
@@ -300,7 +302,7 @@ List<Widget> generateSection(
               children: [
                 SizedBox(height: 10),
                 FormBuilderDropdown(
-                  name: controlName,
+                  name: fieldName,
                   decoration: InputDecoration(
                     labelText: controlName,
                     border: OutlineInputBorder(
@@ -335,7 +337,7 @@ List<Widget> generateSection(
                 children: [
                   SizedBox(height: 10),
                   FormBuilderCheckboxGroup(
-                    name: controlName,
+                    name: fieldName,
                     options: optionsList
                         .map((option) => FormBuilderFieldOption(
                             value: option as String, // Cast option to String
@@ -360,7 +362,7 @@ List<Widget> generateSection(
                 children: [
                   SizedBox(height: 10),
                   FormBuilderCheckboxGroup(
-                    name: controlName,
+                    name: fieldName,
                     options: optionsList
                         .map((option) => FormBuilderFieldOption(
                             value: option as String, // Cast option to String
@@ -450,7 +452,7 @@ List<Widget> generateSection(
               children: [
                 SizedBox(height: 10),
                 FormBuilderRadioGroup(
-                  name: controlName,
+                  name: fieldName,
                   options: optionsList
                       .map((option) => FormBuilderFieldOption(
                             value: option as String,
@@ -627,7 +629,7 @@ class FormPage extends StatefulWidget {
 }
 
 class _FormPageState extends State<FormPage> {
-  final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
+  final GlobalKey<FormBuilderState> fbKey = GlobalKey<FormBuilderState>();
   //  final SharedPreferences prefs;
   // Map<String, dynamic> savedFormData = {};
 
@@ -684,9 +686,9 @@ class _FormPageState extends State<FormPage> {
                                 content: const Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon( // green check icon
-                                      Icons
-                                          .check_circle,
+                                    Icon(
+                                      // green check icon
+                                      Icons.check_circle,
                                       color: Colors.green,
                                       size: 48.0,
                                     ),
@@ -725,10 +727,11 @@ class _FormPageState extends State<FormPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                        primary: Color(0xFFC00205),
-                        minimumSize: Size(250, 40),
-                        shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24), // Adjust the radius for roundness
+                      primary: Color(0xFFC00205),
+                      minimumSize: Size(250, 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            24), // Adjust the radius for roundness
                       ),
                     ),
                     child: Text('Submit'),
@@ -748,12 +751,11 @@ class _FormPageState extends State<FormPage> {
                       strUrlList = [];
                     },
                     style: ElevatedButton.styleFrom(
-                       primary: Color(0xFFC00205),
+                        primary: Color(0xFFC00205),
                         minimumSize: Size(250, 40),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),
-                        )
-                    ),
+                        )),
                     child: Text('Go Back'),
                   ),
                 ),
@@ -836,7 +838,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
   //     sectionIdentifiers.removeLast(); // Remove the field identifier
   //     repeatableFields.removeLast(); // Remove the latest section from the list
   //   }
-  // } DOESN"T FUCKING WORK, ABANDON ALL HOPE YE WHO TRY TO FIX THIS
+  // } This does not function correctly
 
   // This function belongs to the widget and is required for regenerating sections if desired
   List<Widget> _generateRepeatableFields(
@@ -1148,21 +1150,22 @@ class _RepeatableSectionState extends State<RepeatableSection> {
         Row(
           mainAxisAlignment:
               MainAxisAlignment.center, // Optional: Align buttons to center
-          children: [            
-             Container(
-            padding: EdgeInsets.all(16.0), // Add space around the button
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _addSection();
-                });
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Color(0xFF6F768A)), // Make the button grey
+          children: [
+            Container(
+              padding: EdgeInsets.all(16.0), // Add space around the button
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _addSection();
+                  });
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                      Color(0xFF6F768A)), // Make the button grey
+                ),
+                child: Icon(Icons.add),
               ),
-              child: Icon(Icons.add),
             ),
-          ),
             // SizedBox(width: 10), // Space between buttons
             // ElevatedButton(
             //   onPressed: () {
@@ -1176,167 +1179,5 @@ class _RepeatableSectionState extends State<RepeatableSection> {
         ),
       ],
     );
-  }
-}
-
-class PictureWidget extends StatefulWidget {
-  final String? controlName;
-  const PictureWidget({
-    super.key,
-    required this.controlName,
-  });
-  @override
-  State<PictureWidget> createState() => _PictureWidgetState();
-}
-
-String? selectedImageString;
-File? selectedFile;
-File? selectedFileChrome;
-// String strUrl = "monkey";
-List<Map<String, String>> strUrlList = [];
-Future<String> photoUpload() async {
-  String url = "";
-  final ref =
-      FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
-  if (!kIsWeb && selectedFile != null) {
-    TaskSnapshot task = await ref.putFile(selectedFile!);
-    await task;
-    return await ref.getDownloadURL();
-  } else if (kIsWeb && selectedFileChrome != null) {
-    try {
-      TaskSnapshot task =
-          await ref.putData(await XFile(selectedImageString!).readAsBytes());
-      return await task.ref.getDownloadURL();
-    } catch (error) {
-      print("Error uploading image: $error");
-      return "";
-    }
-  } else {
-    return "";
-  }
-}
-
-class _PictureWidgetState extends State<PictureWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Pictures", // Changed the name here to "Pictures" as it would display the appended identifier in repeatable sections
-          textScaleFactor: 1.25,
-        ),
-        SizedBox(height:10),
-        Row(
-          children: [
-            MaterialButton(
-              onPressed: () {
-                _pickImageFromGallery();
-              },
-              color: Color(0xFF6F768A),
-              textColor: Colors.white,
-              child: const Text('Gallery'),
-            ),
-            SizedBox(
-              width: 10,
-              height: 10,
-            ),
-            MaterialButton(
-                onPressed: () {
-                  _pickImageFromCamera();
-                },
-                color: Color(0xFF6F768A),
-                textColor: Colors.white,
-                child: const Text('Camera')),
-            SizedBox(width: 10, height: 10),
-            //TODO clicking remove button removes photo from all upload fields
-            //TODO remove does not remove from strUrlList
-            MaterialButton(
-                onPressed: () {
-                  setState(() {
-                    selectedImageString = null;
-                    selectedFile = null;
-                    strUrlList = [];
-                  });
-                },
-                color: Color(0xFF6F768A),
-                textColor: Colors.white,
-                child: const Text('Remove')),
-          ],
-        ),
-        //if the slected image string (chrome) isnt null and platform is web, get image using Image.Network, otherwise display empty sizedbox
-        selectedImageString != null && kIsWeb
-            ? Image.network(
-                selectedImageString!,
-                fit: BoxFit.contain,
-                //Make photo only 100x100
-                width: 100.0,
-                height: 100.0,
-              )
-            : SizedBox(height: 0),
-        //if selected file (ios and android) isnt null and platform is android or ios, get image using Image.file, otherwise display empty sizedbox
-        selectedFile != null && !kIsWeb
-            ? Image.file(
-                selectedFile!,
-                fit: BoxFit.contain,
-                //Make photo only 100x100
-                width: 100.0,
-                height: 100.0,
-              )
-            : SizedBox(height: 0),
-        SizedBox(width: 10, height: 10),
-        MaterialButton(
-            onPressed: () {
-              photoUpload().then((String result) {
-                setState(() {
-                  // strUrl = result;
-                  strUrlList.add({"name": widget.controlName!, "url": result});
-                });
-              });
-            },
-            color: Color(0xFF6F768A),
-            textColor: Colors.white,
-            child: const Text('Confirm Image')),
-        SizedBox(height: 20)
-      ],
-    );
-  }
-
-  Future _pickImageFromGallery() async {
-    //get image from gallery or file system
-    final returnedImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    //make sure return image isnt null or else if we dont select a photo it will just crash
-    if (returnedImage != null) {
-      setState(() {
-        if (!kIsWeb) {
-          //get selected file when on ios or android
-          selectedFile = File(returnedImage!.path);
-        } else if (kIsWeb) {
-          //just get the path when on chrome
-          selectedFileChrome = File(returnedImage!.path);
-          selectedImageString = returnedImage!.path;
-        }
-      });
-    }
-  }
-
-  Future _pickImageFromCamera() async {
-    //get image from camera (on chrome it just opens another filesystem)
-    final returnedImage =
-        await ImagePicker().pickImage(source: ImageSource.camera);
-    //make sure return image isnt null or else if we dont select a photo it will just crash
-    if (returnedImage != null) {
-      setState(() async {
-        if (!kIsWeb) {
-          //get selected file when on ios or android
-          selectedFile = File(returnedImage!.path);
-        } else if (kIsWeb) {
-          //just get the path when on chrome
-          selectedFileChrome = File(returnedImage!.path);
-          selectedImageString = returnedImage!.path;
-        }
-      });
-    }
   }
 }
