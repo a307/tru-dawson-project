@@ -251,8 +251,11 @@ List<Widget> generateSection(
         .add(sections[uniqueKey]!); // Add the section to the ListWidget
   } else {
     // Add a normal section widget that isn't repeatable
-    sections[uniqueKey] =
-        Section(section: section, uniqueKey: uniqueKey, fbKey: fbKey);
+    sections[uniqueKey] = Section(
+        section: section,
+        uniqueKey: uniqueKey,
+        signatureController: signatureController,
+        fbKey: fbKey);
     sectionFields.add(sections[uniqueKey]!);
   }
 

@@ -20,13 +20,15 @@ class RepeatableSection extends StatefulWidget {
   _RepeatableSectionState createState() => _RepeatableSectionState();
 }
 
-class _RepeatableSectionState extends State<RepeatableSection> {
+class _RepeatableSectionState extends State<RepeatableSection>
+    with AutomaticKeepAliveClientMixin {
   List<Map<String, dynamic>> repeatableFields = [];
 
   // List to keep track of unique identifiers for each section
   List<String> sectionIdentifiers = [];
 
   @override
+  bool get wantKeepAlive => true;
   void initState() {
     super.initState();
     // Start with a default set of fields
@@ -80,6 +82,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
       var fieldName =
           "${question['control']['meta_data']['control_name']} $identifier";
       switch (question['control']['type']) {
+        // Note: Signature case is not included here as it doesn't seem likely to be included in a repeatable section
         case 'date_field': // If the type is date_field, build a date field
           {
             repeatableFields.add(Column(
@@ -220,24 +223,6 @@ class _RepeatableSectionState extends State<RepeatableSection> {
             repeatableFields.add(PictureWidget(controlName: fieldName));
             break;
           }
-        case 'Signature': // If the type is signature, make signature box.
-          {
-            repeatableFields.add(Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
-                  child: Signature(
-                    height:
-                        200, //you can make the field smaller by adjusting this
-                    controller: SignatureController(),
-                    backgroundColor: Colors.white,
-                  ),
-                )
-              ],
-            ));
-            break;
-          }
         case 'checkbox':
           {
             List<String> optionsList = ["True", "False"];
@@ -362,6 +347,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       children: [
         for (int index = 0; index < repeatableFields.length; index++)

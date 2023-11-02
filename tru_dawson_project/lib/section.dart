@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:tru_dawson_project/generation.dart';
 import 'package:tru_dawson_project/google_map_field.dart';
 import 'picture_widget.dart';
 import 'package:signature/signature.dart';
@@ -8,10 +9,12 @@ class Section extends StatefulWidget {
   final dynamic section;
   final String uniqueKey;
   final GlobalKey<FormBuilderState> fbKey;
+  final SignatureController signatureController;
 
   Section(
       {required this.section,
       required this.uniqueKey,
+      required this.signatureController,
       Key? key,
       required this.fbKey})
       : super(key: key);
@@ -20,8 +23,9 @@ class Section extends StatefulWidget {
   _SectionState createState() => _SectionState();
 }
 
-class _SectionState extends State<Section> {
+class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
   @override
+  bool get wantKeepAlive => true;
   void initState() {
     super.initState();
   }
@@ -187,14 +191,49 @@ class _SectionState extends State<Section> {
             fields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  'Please provide your signature:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
                 ClipRRect(
-                  //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
-                  child: Signature(
-                    height:
-                        200, //you can make the field smaller by adjusting this
-                    controller: SignatureController(),
-                    backgroundColor: Colors.white,
-                  ),
+                    borderRadius: BorderRadius.circular(2.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          // Outline color
+                          //  width: 2.0, // Outline width
+                        ),
+                      ),
+                      //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
+                      child: Signature(
+                        height:
+                            200, //you can make the field smaller by adjusting this
+                        controller: signatureController,
+                        backgroundColor: Colors.white,
+                      ),
+                    )),
+                Row(
+                  children: [
+                    IconButton(
+                        tooltip: "Confirm your signature",
+                        onPressed: () async {
+                          if (signatureController.isNotEmpty) {
+                            final signature = await exportSignature();
+                          }
+                        },
+                        icon: Icon(Icons.check),
+                        color: Colors.green),
+                    IconButton(
+                        tooltip: "Clear your signature",
+                        onPressed: () {
+                          signatureController.clear();
+                          //TODO: fix removing all signatures
+                          signatureURL = [];
+                        },
+                        icon: Icon(Icons.clear),
+                        color: Colors.red),
+                  ],
                 )
               ],
             ));
@@ -324,6 +363,7 @@ class _SectionState extends State<Section> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       children: [
         ..._generateFields(
