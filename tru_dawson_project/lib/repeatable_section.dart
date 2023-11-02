@@ -73,9 +73,9 @@ class _RepeatableSectionState extends State<RepeatableSection>
   // } This does not function correctly
 
   // This function belongs to the widget and is required for regenerating sections if desired
-  List<Widget> _generateRepeatableFields(Map<String, dynamic> section) {
+  List<Widget> _generateRepeatableFields(
+      Map<String, dynamic> section, String identifier) {
     List<Widget> repeatableFields = [];
-    String identifier = _generateIdentifier();
     for (var question in section['questions']) {
       // Same logic as the generate fields functions
       var controlName = question['control']['meta_data']['control_name'];
@@ -217,8 +217,6 @@ class _RepeatableSectionState extends State<RepeatableSection>
           }
         case 'picture':
           {
-            //get control name from JSON
-            String controlName = fieldName;
             //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
             repeatableFields.add(PictureWidget(controlName: fieldName));
             break;
@@ -351,8 +349,10 @@ class _RepeatableSectionState extends State<RepeatableSection>
     return Column(
       children: [
         for (int index = 0; index < repeatableFields.length; index++)
-          ..._generateRepeatableFields(repeatableFields[
-              index]), // Here the fields are added to the widget
+          ..._generateRepeatableFields(
+              repeatableFields[index],
+              sectionIdentifiers[
+                  index]), // Here the fields are added to the widget
         Row(
           mainAxisAlignment:
               MainAxisAlignment.center, // Optional: Align buttons to center

@@ -42,14 +42,17 @@ Future<String> photoUpload() async {
   }
 }
 
-class _PictureWidgetState extends State<PictureWidget> {
+class _PictureWidgetState extends State<PictureWidget>
+    with AutomaticKeepAliveClientMixin {
   @override
+  bool get wantKeepAlive => true;
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Pictures", // Changed the name here to "Pictures" as it would display the appended identifier in repeatable sections
+          "Picture", // Changed the name here to "Pictures" as it would display the appended identifier in repeatable sections
           textScaleFactor: 1.25,
         ),
         SizedBox(height: 10),

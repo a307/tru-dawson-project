@@ -9,12 +9,10 @@ class Section extends StatefulWidget {
   final dynamic section;
   final String uniqueKey;
   final GlobalKey<FormBuilderState> fbKey;
-  final SignatureController signatureController;
 
   Section(
       {required this.section,
       required this.uniqueKey,
-      required this.signatureController,
       Key? key,
       required this.fbKey})
       : super(key: key);

@@ -21,6 +21,7 @@ import 'repeatable_section.dart';
 import 'section.dart';
 import 'form_page.dart';
 import 'package:signature/signature.dart';
+
 // List to hold all of the individual JSONs
 
 //Convert DataSnapshot to JSON map
@@ -42,12 +43,6 @@ Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
 
   return result as Map<String, dynamic>;
 }
-
-//Make signature cnroller to be called later
-SignatureController signatureController = SignatureController(
-  penColor: Colors.black, //can adjust parameters in here if you like
-  penStrokeWidth: 5.0,
-);
 
 dynamic globalResult;
 String globalEmail = "";
@@ -135,6 +130,7 @@ class Generator extends StatelessWidget {
                                 fbKey: fbKey,
                                 globalEmail: globalEmail,
                                 signatureURL: signatureURL,
+                                signatureController: signatureController,
                                 //onsubmit function mentioned in FormPage, allows us to pass the data from the form into a a firebase submission function
                                 onSubmit: (formData) {
                                   print('Form Data: $formData');
@@ -155,6 +151,7 @@ class Generator extends StatelessWidget {
                                 formName: '',
                                 globalEmail: '',
                                 signatureURL: [],
+                                signatureController: SignatureController(),
                                 fbKey: GlobalKey<FormBuilderState>(),
                                 onSubmit: (formData) {
                                   print('Form Data: $formData');
@@ -252,15 +249,21 @@ List<Widget> generateSection(
   } else {
     // Add a normal section widget that isn't repeatable
     sections[uniqueKey] = Section(
-        section: section,
-        uniqueKey: uniqueKey,
-        signatureController: signatureController,
-        fbKey: fbKey);
+      section: section,
+      uniqueKey: uniqueKey,
+      fbKey: fbKey,
+    );
     sectionFields.add(sections[uniqueKey]!);
   }
 
   return sectionFields;
 }
+
+//Make signature cnroller to be called later
+SignatureController signatureController = SignatureController(
+  penColor: Colors.black, //can adjust parameters in here if you like
+  penStrokeWidth: 5.0,
+);
 
 List<Map<String, String>> signatureURL = [];
 Future<void> exportSignature() async {

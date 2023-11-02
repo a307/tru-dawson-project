@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:signature/signature.dart';
+import 'package:tru_dawson_project/generation.dart';
 import 'picture_widget.dart';
 
 class FormPage extends StatefulWidget {
@@ -7,6 +9,7 @@ class FormPage extends StatefulWidget {
   final String formName;
   final String globalEmail;
   final GlobalKey<FormBuilderState> fbKey;
+  SignatureController signatureController;
   List<Map<String, String>> signatureURL;
   //create onsubmit function so when we create a FormPage later in Generator we can use an onsubmit function to send the data to firebase
   final Function(Map<String, dynamic>) onSubmit;
@@ -18,6 +21,7 @@ class FormPage extends StatefulWidget {
     required this.onSubmit,
     required this.fbKey,
     required this.signatureURL,
+    required this.signatureController,
   }) : super(key: key);
 
   @override
@@ -29,6 +33,7 @@ class _FormPageState extends State<FormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor:
             Color(0xFFC00205), // Set the background color to #234094
         title: Text(widget.formName),
@@ -67,8 +72,9 @@ class _FormPageState extends State<FormPage> {
                           // formData.putIfAbsent("image", () => strUrl);
                           // bool isSubmitted = widget.onSubmit(formData);
                           widget.onSubmit(formData);
-                          strUrlList = [];
-                          widget.signatureURL = [];
+                          strUrlList.clear();
+                          widget.signatureURL.clear();
+                          signatureController.clear();
                           // if (isSubmitted) {
                           // Form submission successful
                           showDialog(
@@ -139,6 +145,7 @@ class _FormPageState extends State<FormPage> {
                   width: 300,
                   child: ElevatedButton(
                     onPressed: () {
+                      widget.signatureController.clear();
                       Navigator.of(context).pop();
                       strUrlList = [];
                     },
