@@ -2,6 +2,7 @@
 //flutter pub add form_builder_validators
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:tru_dawson_project/sign_in.dart';
@@ -25,6 +26,7 @@ void main() async {
     databaseURL: 'https://tru-dawson-project-2023-default-rtdb.firebaseio.com/',
     storageBucket: "gs://tru-dawson-project-2023.appspot.com",
   ));
+  FirebaseDatabase.instance.setPersistenceEnabled(true);
   //Run Application starting with Generator as home
   // runApp(MaterialApp(home: Generator(list, separatedForms) //class
   //     ));

@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tru_dawson_project/auth.dart';
 import 'package:tru_dawson_project/code_page.dart';
 import 'package:tru_dawson_project/database.dart';
@@ -13,6 +14,12 @@ class SignIn extends StatefulWidget {
 
   @override
   State<SignIn> createState() => _SignInState();
+}
+
+Future<Map<String, SharedPreferences>> getSharedPreferences() async {
+  final SharedPreferences emailPref = await SharedPreferences.getInstance();
+  final SharedPreferences passwordPref = await SharedPreferences.getInstance();
+  return {"email": emailPref, "password": passwordPref};
 }
 
 class _SignInState extends State<SignIn> {
@@ -29,13 +36,15 @@ class _SignInState extends State<SignIn> {
     //Allows text boxes data to be read later on
     final TextEditingController emailTEC = TextEditingController();
     final TextEditingController passwordTEC = TextEditingController();
+
     return Scaffold(
       // appBar: AppBar(
       //   backgroundColor:
       //       Color(0xFFC00205), // Set the background color to #234094,
       //   title: Text("Sign In"),
       // ),
-      body: SingleChildScrollView( // Wrap the content with SingleChildScrollView for scrolling when typing 
+      body: SingleChildScrollView(
+        // Wrap the content with SingleChildScrollView for scrolling when typing
         child: FormBuilder(
           key: _formKey,
           child: Column(
@@ -43,7 +52,7 @@ class _SignInState extends State<SignIn> {
               SizedBox(height: 20.0),
               Image.asset(
                 'lib/assets/dawson_logo.jpg', //  dawson group logo image
-                width: 500, 
+                width: 500,
               ),
               //Text("Emaill"),
               SizedBox(height: 10.0),
@@ -83,83 +92,152 @@ class _SignInState extends State<SignIn> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: () async {
-                      //Validate that forms are valid with the formkey
-                      if (_formKey.currentState!.saveAndValidate() == true) {
-                        //attempt to sign in anonymously and get back result containing Uid
-                        dynamic result = await auth.SignInEmailPass(
-                            emailTEC.text.trim(), passwordTEC.text.trim());
-                        //If theres data print out the Uid
-                        if (result == null) {
-                          print('error signing in');
-                          showAlertDialog(context, "User Not Found!",
-                              "Email or password may be incorrect. \nDid you Sign Up?", false);
-                        } else {
-                          print('user has signed in');
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return Material(
-                                    child: Generator(list, separatedForms,
-                                        result, auth, emailTEC.text));
-                              },
-                            ),
-                          );
-                          print(result.uid);
+                      onPressed: () async {
+                        //Validate that forms are valid with the formkey
+                        if (_formKey.currentState!.saveAndValidate() == true) {
+                          //attempt to sign in anonymously and get back result containing Uid
+                          dynamic result = await auth.SignInEmailPass(
+                              emailTEC.text.trim(), passwordTEC.text.trim());
+                          // final SharedPreferences emailPref =
+                          //     await SharedPreferences.getInstance();
+                          // final SharedPreferences passwordPref =
+                          //     await SharedPreferences.getInstance();
+                          Map<String, SharedPreferences> sharedPreferences =
+                              await getSharedPreferences();
+                          await sharedPreferences["email"]
+                              ?.setString('email', emailTEC.text);
+                          await sharedPreferences['password']
+                              ?.setString('password', passwordTEC.text);
+                          //If theres data print out the Uid
+                          if (result == null) {
+                            print('error signing in');
+                            showAlertDialog(
+                                context,
+                                "User Not Found!",
+                                "Email or password may be incorrect. \nDid you Sign Up?",
+                                false);
+                          } else {
+                            print('user has signed in');
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return Material(
+                                      child: Generator(list, separatedForms,
+                                          result, auth, emailTEC.text));
+                                },
+                              ),
+                            );
+                            print(result.uid);
+                          }
+                          print("");
                         }
-                        print("");
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFFC00205),
-                      minimumSize: Size(300, 45),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24), // Adjust the radius for roundness
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFFC00205),
+                        minimumSize: Size(300, 45),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              24), // Adjust the radius for roundness
+                        ),
                       ),
-                    ),
-                    child: const Text("Login")),
+                      child: const Text("Login")),
                 ],
               ),
               const SizedBox(height: 20),
-              Row (
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                  onPressed: () async {
-                    //Validate that forms are valid with the formkey
-                    if (_formKey.currentState!.saveAndValidate() == true) {
-                      //attempt to sign in anonymously and get back result containing Uid
-                      dynamic result = await auth.SignUp(
-                          emailTEC.text.trim(), passwordTEC.text.trim());
+                      onPressed: () async {
+                        //Validate that forms are valid with the formkey
+                        if (_formKey.currentState!.saveAndValidate() == true) {
+                          //attempt to sign in anonymously and get back result containing Uid
+                          dynamic result = await auth.SignUp(
+                              emailTEC.text.trim(), passwordTEC.text.trim());
 
-                      //If theres data print out the Uid
-                      if (result == null) {
-                        print('error signing up');
-                        showAlertDialog(
-                            context, "Error Signing Up", "Please try again.", false);
-                      } else {
-                        print('user has signed up');
-                        showAlertDialog(context, 'Successful Sign Up!',
-                            "Please press Sign In.", true);
-                        print(result.uid);
-                      }
-                      print("");
-                      //print out data in form
-                      debugPrint(
-                          _formKey.currentState?.instantValue.toString() ??
-                              '');
+                          //If theres data print out the Uid
+                          if (result == null) {
+                            print('error signing up');
+                            showAlertDialog(context, "Error Signing Up",
+                                "Please try again.", false);
+                          } else {
+                            print('user has signed up');
+                            showAlertDialog(context, 'Successful Sign Up!',
+                                "Please press Sign In.", true);
+                            print(result.uid);
+                          }
+                          print("");
+                          //print out data in form
+                          debugPrint(
+                              _formKey.currentState?.instantValue.toString() ??
+                                  '');
 
-                      //Login to firebase
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Color(0xFFC00205),
-                    minimumSize: Size(300, 45),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24), // Adjust the radius for roundness
-                    ),
-                  ),
-                  child: const Text("Sign up"))
+                          //Login to firebase
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFFC00205),
+                        minimumSize: Size(300, 45),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              24), // Adjust the radius for roundness
+                        ),
+                      ),
+                      child: const Text("Sign up"))
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      onPressed: () async {
+                        //Validate that forms are valid with the formkey
+                        if (_formKey.currentState!.saveAndValidate() == true) {
+                          //attempt to sign in anonymously and get back result containing Uid
+                          Map<String, SharedPreferences> sharedPreferences =
+                              await getSharedPreferences();
+                          dynamic result = await auth.SignInEmailPassOffline(
+                              emailTEC.text,
+                              passwordTEC.text,
+                              sharedPreferences["email"]!.getString("email")!,
+                              sharedPreferences["password"]!
+                                  .getString("password")!);
+
+                          if (result == null) {
+                            print('error signing in offline');
+                            showAlertDialog(
+                                context,
+                                "User Not Found!",
+                                "Email or password may be incorrect. \nDid you Sign Up?",
+                                false);
+                          } else {
+                            print('user has signed in offline');
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (context) {
+                              return Material(
+                                  child: Generator(list, separatedForms, result,
+                                      auth, emailTEC.text));
+                            }));
+                          }
+                          print("");
+                          //print out data in form
+                          debugPrint(
+                              _formKey.currentState?.instantValue.toString() ??
+                                  '');
+
+                          //Login to firebase
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFFC00205),
+                        minimumSize: Size(300, 45),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              24), // Adjust the radius for roundness
+                        ),
+                      ),
+                      child: const Text("Offline Sign In"))
                 ],
               )
             ],
@@ -171,7 +249,8 @@ class _SignInState extends State<SignIn> {
 }
 
 // alert dialogs handling
-showAlertDialog(BuildContext context, String title, String content, bool isGood) {
+showAlertDialog(
+    BuildContext context, String title, String content, bool isGood) {
   // Set up the icon based on isGood
   Icon icon = isGood
       ? Icon(Icons.check, color: Colors.green, size: 48) // Green checkmark
@@ -187,8 +266,10 @@ showAlertDialog(BuildContext context, String title, String content, bool isGood)
 
   // Set up the AlertDialog
   AlertDialog alert = AlertDialog(
-    content: Container( // Wrap the content in a Container
-      constraints: BoxConstraints(maxHeight: 200), // Adjust the maxHeight as needed
+    content: Container(
+      // Wrap the content in a Container
+      constraints:
+          BoxConstraints(maxHeight: 200), // Adjust the maxHeight as needed
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -210,8 +291,6 @@ showAlertDialog(BuildContext context, String title, String content, bool isGood)
     },
   );
 }
-
-
 
 List<Map<String, dynamic>>? separatedForms = [];
 List<String> list = [];
