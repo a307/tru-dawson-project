@@ -8,7 +8,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -19,8 +18,7 @@ import 'package:tru_dawson_project/sign_in.dart';
 import 'user_settings_page.dart';
 import 'picture_widget.dart';
 import 'repeatable_section.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
-
+import 'form_page.dart';
 import 'package:signature/signature.dart';
 // List to hold all of the individual JSONs
 
@@ -45,7 +43,7 @@ Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
 }
 
 //Make signature cnroller to be called later
-SignatureController _controller = SignatureController(
+SignatureController signatureController = SignatureController(
   penColor: Colors.black, //can adjust parameters in here if you like
   penStrokeWidth: 5.0,
 );
@@ -136,6 +134,8 @@ class Generator extends StatelessWidget {
                                 formName: item,
                                 formFields: formFields,
                                 fbKey: fbKey,
+                                globalEmail: globalEmail,
+                                signatureURL: signatureURL,
                                 //onsubmit function mentioned in FormPage, allows us to pass the data from the form into a a firebase submission function
                                 onSubmit: (formData) {
                                   print('Form Data: $formData');
@@ -154,6 +154,8 @@ class Generator extends StatelessWidget {
                               return FormPage(
                                 formFields: [],
                                 formName: '',
+                                globalEmail: '',
+                                signatureURL: [],
                                 fbKey: GlobalKey<FormBuilderState>(),
                                 onSubmit: (formData) {
                                   print('Form Data: $formData');
@@ -415,7 +417,7 @@ List<Widget> generateSection(
                       child: Signature(
                         height:
                             200, //you can make the field smaller by adjusting this
-                        controller: _controller,
+                        controller: signatureController,
                         backgroundColor: Colors.white,
                       ),
                     )),
@@ -424,7 +426,7 @@ List<Widget> generateSection(
                     IconButton(
                         tooltip: "Confirm your signature",
                         onPressed: () async {
-                          if (_controller.isNotEmpty) {
+                          if (signatureController.isNotEmpty) {
                             final signature = await exportSignature();
                           }
                         },
@@ -433,7 +435,7 @@ List<Widget> generateSection(
                     IconButton(
                         tooltip: "Clear your signature",
                         onPressed: () {
-                          _controller.clear();
+                          signatureController.clear();
                           //TODO: fix removing all signatures
                           signatureURL = [];
                         },
@@ -581,8 +583,10 @@ List<Widget> generateSection(
 List<Map<String, String>> signatureURL = [];
 Future<void> exportSignature() async {
   int len = signatureURL.length;
-  signatureURL.add(
-      {"name": "signature$len", "url": await signatureUpload(_controller)});
+  signatureURL.add({
+    "name": "signature$len",
+    "url": await signatureUpload(signatureController)
+  });
 }
 
 Future<String> signatureUpload(SignatureController signature) async {
@@ -609,167 +613,4 @@ void submitFormToFirebase(
   return collection
       .doc(globalEmail + "--" + DateTime.now().toString())
       .set(formData);
-}
-
-class FormPage extends StatefulWidget {
-  List<Widget> formFields;
-  final String formName;
-  final GlobalKey<FormBuilderState> fbKey;
-  //create onsubmit function so when we create a FormPage later in Generator we can use an onsubmit function to send the data to firebase
-  final Function(Map<String, dynamic>) onSubmit;
-  FormPage({
-    Key? key,
-    required this.formFields,
-    required this.formName,
-    required this.onSubmit,
-    required this.fbKey,
-  }) : super(key: key);
-
-  @override
-  _FormPageState createState() => _FormPageState();
-}
-
-class _FormPageState extends State<FormPage> {
-  final GlobalKey<FormBuilderState> fbKey = GlobalKey<FormBuilderState>();
-  //  final SharedPreferences prefs;
-  // Map<String, dynamic> savedFormData = {};
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor:
-            Color(0xFFC00205), // Set the background color to #234094
-        title: Text(widget.formName),
-      ),
-      body: FormBuilder(
-        key: widget.fbKey,
-        child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-          children: [
-            ...widget.formFields,
-            SizedBox(height: 20.0),
-            SizedBox(
-              child: Align(
-                alignment: Alignment.center,
-                child: Container(
-                  width: 300,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      bool isValid =
-                          widget.fbKey.currentState?.saveAndValidate() ?? false;
-
-                      if (isValid) {
-                        Map<String, dynamic>? formData =
-                            widget.fbKey.currentState?.value ?? {};
-                        print("On submission: $formData");
-                        if (formData != null) {
-                          formData = Map<String, dynamic>.from(formData);
-                          for (var element in strUrlList) {
-                            formData.putIfAbsent(
-                                element['name']!, () => element['url']);
-                          }
-                          for (var element in signatureURL) {
-                            formData.putIfAbsent(
-                                element['name']!, () => element['url']);
-                          }
-                          // formData.putIfAbsent("image", () => strUrl);
-                          // bool isSubmitted = widget.onSubmit(formData);
-                          widget.onSubmit(formData);
-                          strUrlList = [];
-                          signatureURL = [];
-                          // if (isSubmitted) {
-                          // Form submission successful
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                content: const Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      // green check icon
-                                      Icons.check_circle,
-                                      color: Colors.green,
-                                      size: 48.0,
-                                    ),
-                                    SizedBox(height: 16.0),
-                                    Text(
-                                      'Form Submission Successful',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(height: 12.0),
-                                    Text(
-                                      'Your form has been submitted successfully.',
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                          .pop(); // Close the alert dialog
-                                    },
-                                    child: Text('OK'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
-                        //}
-                      } else {
-                        print('Form validation failed.');
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFFC00205),
-                      minimumSize: Size(250, 40),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            24), // Adjust the radius for roundness
-                      ),
-                    ),
-                    child: Text('Submit'),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 12.0),
-            SizedBox(
-              child: Align(
-                alignment: Alignment.center,
-                child: Container(
-                  width: 300,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      strUrlList = [];
-                    },
-                    style: ElevatedButton.styleFrom(
-                        primary: Color(0xFFC00205),
-                        minimumSize: Size(250, 40),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        )),
-                    child: Text('Go Back'),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Function used to find whether a key exists. This is needed for repeatableSection removal
-bool keyExists(String key, Map<String, dynamic> map) {
-  return map.containsKey(key);
 }

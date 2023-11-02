@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'picture_widget.dart';
 import 'package:tru_dawson_project/google_map_field.dart';
+import 'picture_widget.dart';
 import 'package:signature/signature.dart';
 
 class RepeatableSection extends StatefulWidget {
@@ -86,6 +86,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FormBuilderDateTimePicker(
+                  key: widget.fbKey,
                   name: fieldName,
                   decoration: InputDecoration(
                     labelText: controlName,
@@ -107,6 +108,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FormBuilderTextField(
+                  key: widget.fbKey,
                   name: fieldName,
                   decoration: InputDecoration(
                     labelText: controlName,
@@ -131,6 +133,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
                 Text(controlName),
                 SizedBox(height: 10),
                 FormBuilderDropdown(
+                  key: widget.fbKey,
                   name: fieldName,
                   decoration: InputDecoration(
                     labelText: controlName,
@@ -166,6 +169,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
                 children: [
                   SizedBox(height: 10),
                   FormBuilderCheckboxGroup(
+                    key: widget.fbKey,
                     name: fieldName,
                     options: optionsList
                         .map((option) => FormBuilderFieldOption(
@@ -191,6 +195,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
                 children: [
                   SizedBox(height: 10),
                   FormBuilderCheckboxGroup(
+                    key: widget.fbKey,
                     name: fieldName,
                     options: optionsList
                         .map((option) => FormBuilderFieldOption(
@@ -245,6 +250,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
               children: [
                 SizedBox(height: 10),
                 FormBuilderRadioGroup(
+                  key: widget.fbKey,
                   name: fieldName,
                   options: optionsList
                       .map((option) => FormBuilderFieldOption(
