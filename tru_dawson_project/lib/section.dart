@@ -4,12 +4,12 @@ import 'package:tru_dawson_project/google_map_field.dart';
 import 'picture_widget.dart';
 import 'package:signature/signature.dart';
 
-class RepeatableSection extends StatefulWidget {
+class Section extends StatefulWidget {
   final dynamic section;
   final String uniqueKey;
   final GlobalKey<FormBuilderState> fbKey;
 
-  RepeatableSection(
+  Section(
       {required this.section,
       required this.uniqueKey,
       Key? key,
@@ -17,20 +17,13 @@ class RepeatableSection extends StatefulWidget {
       : super(key: key);
 
   @override
-  _RepeatableSectionState createState() => _RepeatableSectionState();
+  _SectionState createState() => _SectionState();
 }
 
-class _RepeatableSectionState extends State<RepeatableSection> {
-  List<Map<String, dynamic>> repeatableFields = [];
-
-  // List to keep track of unique identifiers for each section
-  List<String> sectionIdentifiers = [];
-
+class _SectionState extends State<Section> {
   @override
   void initState() {
     super.initState();
-    // Start with a default set of fields
-    _addSection();
   }
 
   // Identifier will be a time string. This will ensure uniqueness everytime
@@ -38,51 +31,20 @@ class _RepeatableSectionState extends State<RepeatableSection> {
     return DateTime.now().millisecondsSinceEpoch.toString();
   }
 
-  // Function for adding a repeatable section
-  void _addSection() {
-    sectionIdentifiers.add(_generateIdentifier());
-    repeatableFields.add(widget.section);
-  }
-
-  // Function for removing the latest section that was added
-  // void _removeSection(String key) {
-  //   if (sectionIdentifiers.length > 1 && repeatableFields.length > 1) {
-  //     Future.delayed(Duration(milliseconds: 100), () {
-  //       for (var question in widget.section['questions']) {
-  //         // Loop through the fields of the form and remove them
-  //         String controlName = question['control']['meta_data']['control_name'];
-  //         String identifier = sectionIdentifiers
-  //             .last; // The latest identifier since that is what will be removed.
-  //         String fullName =
-  //             "$controlName $identifier"; // Control name and identifier together is the name of the field
-  //         if (widget.fbKey.currentState?.fields.containsKey(fullName) ??
-  //             false) {
-  //           // print("\n");
-  //           widget.fbKey.currentState?.fields.remove(fullName);
-  //         }
-  //       }
-  //       print(
-  //           "Fields after being removed: ${widget.fbKey.currentState?.fields}");
-  //     });
-  //     repeatableSections.remove(key); // Remove the section from the map
-  //     sectionIdentifiers.removeLast(); // Remove the field identifier
-  //     repeatableFields.removeLast(); // Remove the latest section from the list
-  //   }
-  // } This does not function correctly
-
   // This function belongs to the widget and is required for regenerating sections if desired
-  List<Widget> _generateRepeatableFields(Map<String, dynamic> section) {
-    List<Widget> repeatableFields = [];
-    String identifier = _generateIdentifier();
+  List<Widget> _generateFields(Map<String, dynamic> section) {
+    List<Widget> fields = [];
+
     for (var question in section['questions']) {
       // Same logic as the generate fields functions
       var controlName = question['control']['meta_data']['control_name'];
+      String identifier = _generateIdentifier();
       var fieldName =
           "${question['control']['meta_data']['control_name']} $identifier";
       switch (question['control']['type']) {
         case 'date_field': // If the type is date_field, build a date field
           {
-            repeatableFields.add(Column(
+            fields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FormBuilderDateTimePicker(
@@ -103,7 +65,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
           }
         case 'text_field': // If the type is text_field, build a date field
           {
-            repeatableFields.add(Column(
+            fields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FormBuilderTextField(
@@ -125,7 +87,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
           {
             var options = question['control']['meta_data']['options'];
             var controlName = question['control']['meta_data']['control_name'];
-            repeatableFields.add(Column(
+            fields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(controlName),
@@ -161,7 +123,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
               // If options in the JSON is represented as one string, then it will need to be split
               optionsList = (options[0] as String)
                   .split(', '); // Cast options[0] to String
-              repeatableFields.add(Column(
+              fields.add(Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 10),
@@ -186,7 +148,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
               ));
             } else {
               // If there are multiple elements in options
-              repeatableFields.add(Column(
+              fields.add(Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 10),
@@ -217,12 +179,12 @@ class _RepeatableSectionState extends State<RepeatableSection> {
             //get control name from JSON
             String controlName = fieldName;
             //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
-            repeatableFields.add(PictureWidget(controlName: fieldName));
+            fields.add(PictureWidget(controlName: fieldName));
             break;
           }
         case 'Signature': // If the type is signature, make signature box.
           {
-            repeatableFields.add(Column(
+            fields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
@@ -241,7 +203,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
         case 'checkbox':
           {
             List<String> optionsList = ["True", "False"];
-            repeatableFields.add(Column(
+            fields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 10),
@@ -268,7 +230,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
           }
         case 'gps_location': // gps location! how exciting.
           {
-            repeatableFields.add(Column(
+            fields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -315,7 +277,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
               // The text would be presented differently depending on the label type, more cases will need to be added if new styles show up in different forms
               case "bold": // Text will be bold
                 {
-                  repeatableFields.add(Column(
+                  fields.add(Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -334,7 +296,7 @@ class _RepeatableSectionState extends State<RepeatableSection> {
                 }
               default: // Default case no styling
                 {
-                  repeatableFields.add(Column(
+                  fields.add(Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -357,46 +319,15 @@ class _RepeatableSectionState extends State<RepeatableSection> {
           }
       }
     }
-    return repeatableFields;
+    return fields;
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        for (int index = 0; index < repeatableFields.length; index++)
-          ..._generateRepeatableFields(repeatableFields[
-              index]), // Here the fields are added to the widget
-        Row(
-          mainAxisAlignment:
-              MainAxisAlignment.center, // Optional: Align buttons to center
-          children: [
-            Container(
-              padding: EdgeInsets.all(16.0), // Add space around the button
-              child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _addSection();
-                  });
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                      Color(0xFF6F768A)), // Make the button grey
-                ),
-                child: Icon(Icons.add),
-              ),
-            ),
-            // SizedBox(width: 10), // Space between buttons
-            // ElevatedButton(
-            //   onPressed: () {
-            //     setState(() {
-            //       _removeSection(widget.uniqueKey);
-            //     });
-            //   },
-            //   child: Icon(Icons.remove),
-            // ),
-          ],
-        ),
+        ..._generateFields(
+            widget.section), // Here the fields are added to the widget
       ],
     );
   }
