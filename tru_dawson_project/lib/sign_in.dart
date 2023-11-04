@@ -1,3 +1,4 @@
+import 'package:crypt/crypt.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -98,16 +99,13 @@ class _SignInState extends State<SignIn> {
                           //attempt to sign in anonymously and get back result containing Uid
                           dynamic result = await auth.SignInEmailPass(
                               emailTEC.text.trim(), passwordTEC.text.trim());
-                          // final SharedPreferences emailPref =
-                          //     await SharedPreferences.getInstance();
-                          // final SharedPreferences passwordPref =
-                          //     await SharedPreferences.getInstance();
                           Map<String, SharedPreferences> sharedPreferences =
                               await getSharedPreferences();
                           await sharedPreferences["email"]
                               ?.setString('email', emailTEC.text);
-                          await sharedPreferences['password']
-                              ?.setString('password', passwordTEC.text);
+                          await sharedPreferences['password']?.setString(
+                              'password',
+                              Crypt.sha256(passwordTEC.text).toString());
                           //If theres data print out the Uid
                           if (result == null) {
                             print('error signing in');

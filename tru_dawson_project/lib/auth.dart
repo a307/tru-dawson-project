@@ -1,3 +1,4 @@
+import 'package:crypt/crypt.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tru_dawson_project/user.dart';
 
@@ -58,7 +59,7 @@ class AuthService {
       // User? user = result.user;
       // //Call function to get DawsonUser from FirebaseUser
       // return _userFromFirebaseUser(user);
-      if (email == spEmail && password == spPassword) {
+      if (email == spEmail && Crypt(spPassword).match(password)) {
         return email;
       } else {
         return false;
