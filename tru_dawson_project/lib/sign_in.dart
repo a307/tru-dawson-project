@@ -204,7 +204,7 @@ class _SignInState extends State<SignIn> {
                               sharedPreferences["password"]!
                                   .getString("password")!);
 
-                          if (result == null) {
+                          if (result == false) {
                             print('error signing in offline');
                             showAlertDialog(
                                 context,
@@ -222,9 +222,13 @@ class _SignInState extends State<SignIn> {
                           }
                           print("");
                           //print out data in form
-                          debugPrint(
-                              _formKey.currentState?.instantValue.toString() ??
-                                  '');
+                          // debugPrint(
+                          //     _formKey.currentState?.instantValue.toString() ??
+                          //         '');
+                          // print(
+                          //     sharedPreferences["email"]!.getString("email")!);
+                          // print(sharedPreferences["password"]!
+                          //     .getString("password")!);
 
                           //Login to firebase
                         }
