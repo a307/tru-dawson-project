@@ -15,6 +15,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:tru_dawson_project/auth.dart';
 import 'package:tru_dawson_project/google_map_field.dart';
 import 'package:tru_dawson_project/sign_in.dart';
+import 'package:tru_dawson_project/sources/view_past_forms.dart';
 import 'user_settings_page.dart';
 import 'picture_widget.dart';
 import 'repeatable_section.dart';
@@ -85,7 +86,7 @@ class Generator extends StatelessWidget {
                 auth.SignOut();
               },
             ),
-            IconButton(
+            IconButton( // user setting icon
               icon: const Icon(Icons.settings),
               tooltip: 'User Settings',
               onPressed: () {
@@ -93,6 +94,18 @@ class Generator extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => UserSettingsPage(),
+                  ),
+                );
+              },
+            ),
+             IconButton( // view past forms icon
+              icon: const Icon(Icons.access_time),
+              tooltip: 'View Past Forms',
+              onPressed: () {
+                // Navigate to the User Settings page when the gear icon is pressed
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ViewPastForms(),
                   ),
                 );
               },

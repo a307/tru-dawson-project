@@ -26,7 +26,7 @@ void main() async {
     databaseURL: 'https://tru-dawson-project-2023-default-rtdb.firebaseio.com/',
     storageBucket: "gs://tru-dawson-project-2023.appspot.com",
   ));
-  FirebaseDatabase.instance.setPersistenceEnabled(true);
+ // FirebaseDatabase.instance.setPersistenceEnabled(true); // commented this out as chrome says it does not support it?
   //Run Application starting with Generator as home
   // runApp(MaterialApp(home: Generator(list, separatedForms) //class
   //     ));
