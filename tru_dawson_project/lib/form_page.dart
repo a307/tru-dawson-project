@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:signature/signature.dart';
 import 'package:tru_dawson_project/generation.dart';
+import 'package:tru_dawson_project/google_map_field.dart';
 import 'picture_widget.dart';
 
 class FormPage extends StatefulWidget {
@@ -69,6 +70,12 @@ class _FormPageState extends State<FormPage> {
                             formData.putIfAbsent(
                                 element['name']!, () => element['url']);
                           }
+                          formData.putIfAbsent(
+                              "Current Location",
+                              () =>
+                                  currentLoc.latitude.toString() +
+                                  ", " +
+                                  currentLoc.longitude.toString());
                           // formData.putIfAbsent("image", () => strUrl);
                           // bool isSubmitted = widget.onSubmit(formData);
                           widget.onSubmit(formData);

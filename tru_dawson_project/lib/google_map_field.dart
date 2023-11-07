@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'google_map.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class MapField extends StatefulWidget{
+class MapField extends StatefulWidget {
   // This class represents the main screen of the app where the Google Map is displayed.
   const MapField({super.key});
 
@@ -11,8 +11,10 @@ class MapField extends StatefulWidget{
   State<MapField> createState() => _MapFieldState();
 }
 
+LatLng currentLoc = const LatLng(0, 0);
+
 class _MapFieldState extends State<MapField> {
-  // A Future to load the user's current coordinates from the view model. 
+  // A Future to load the user's current coordinates from the view model.
   // This Future is used to fetch location information asynchronously.
   late final Future<LatLng> _mapLoadedFuture;
 
@@ -59,6 +61,7 @@ class _MapFieldState extends State<MapField> {
                   currentUserLocation: snapshot.data as LatLng,
                   onMapCreated: (controller) {
                     viewModel.controller.complete(controller);
+                    currentLoc = snapshot.data as LatLng;
                   },
                 );
               },
@@ -80,7 +83,7 @@ class GoogleMapWidget extends StatefulWidget {
 
   // Callback function to handle when the map is created.
   final void Function(GoogleMapController) onMapCreated;
-  
+
   // The user's current location on the map.
   LatLng currentUserLocation;
 
@@ -91,51 +94,57 @@ class GoogleMapWidget extends StatefulWidget {
 class _GoogleMapWidgetState extends State<GoogleMapWidget> {
   @override
   Widget build(BuildContext context) {
-    Set<Marker> mapMarker = {Marker(
-          markerId: MarkerId('current_location'),
-          position: widget.currentUserLocation,
-          draggable:true,
-          onDragEnd: (LatLng newLatLng){
-              widget.currentUserLocation = newLatLng;
-          },
-          onTap: () {
-            // Show a dialog with the latitude and longitude when the marker is tapped.
-            showDialog(
-              context: context,
-              builder: (_) => MarkerCoordinatesDialog(
-                latitude: widget.currentUserLocation.latitude,
-                longitude: widget.currentUserLocation.longitude,
-              ),
-            );},)};
+    Set<Marker> mapMarker = {
+      Marker(
+        markerId: MarkerId('current_location'),
+        position: widget.currentUserLocation,
+        draggable: true,
+        onDragEnd: (LatLng newLatLng) {
+          widget.currentUserLocation = newLatLng;
+        },
+        onTap: () {
+          // Show a dialog with the latitude and longitude when the marker is tapped.
+          showDialog(
+            context: context,
+            builder: (_) => MarkerCoordinatesDialog(
+              latitude: widget.currentUserLocation.latitude,
+              longitude: widget.currentUserLocation.longitude,
+            ),
+          );
+        },
+      )
+    };
     return GoogleMap(
-      mapType: MapType.normal,
-      initialCameraPosition: CameraPosition(
-        // Set the initial camera position to focus on the user's current location.
-        target: widget.currentUserLocation,
-        zoom: 18, // Zoom level for initial map view.
-      ),
-      onMapCreated: widget.onMapCreated,
-      markers: mapMarker,
-      onTap: (LatLng latLng){
-        setState(() {
-          mapMarker.clear();
-          mapMarker.add(Marker(
-          markerId: MarkerId('current_location'),
-          position: latLng,
-          onDragEnd: (LatLng newLatLng){
-              widget.currentUserLocation = newLatLng;
-          },
-          onTap: () {
-            // Show a dialog with the latitude and longitude when the marker is tapped.
-            showDialog(
-              context: context,
-              builder: (_) => MarkerCoordinatesDialog(
-                latitude: widget.currentUserLocation.latitude,
-                longitude: widget.currentUserLocation.longitude,
-              ),
-            );},));
-      });}
-    );
+        mapType: MapType.normal,
+        initialCameraPosition: CameraPosition(
+          // Set the initial camera position to focus on the user's current location.
+          target: widget.currentUserLocation,
+          zoom: 18, // Zoom level for initial map view.
+        ),
+        onMapCreated: widget.onMapCreated,
+        markers: mapMarker,
+        onTap: (LatLng latLng) {
+          setState(() {
+            mapMarker.clear();
+            mapMarker.add(Marker(
+              markerId: MarkerId('current_location'),
+              position: latLng,
+              onDragEnd: (LatLng newLatLng) {
+                widget.currentUserLocation = newLatLng;
+              },
+              onTap: () {
+                // Show a dialog with the latitude and longitude when the marker is tapped.
+                showDialog(
+                  context: context,
+                  builder: (_) => MarkerCoordinatesDialog(
+                    latitude: widget.currentUserLocation.latitude,
+                    longitude: widget.currentUserLocation.longitude,
+                  ),
+                );
+              },
+            ));
+          });
+        });
   }
 }
 
@@ -151,7 +160,8 @@ class MarkerCoordinatesDialog extends StatefulWidget {
   final double latitude, longitude;
 
   @override
-  State<MarkerCoordinatesDialog> createState() => _MarkerCoordinatesDialogState();
+  State<MarkerCoordinatesDialog> createState() =>
+      _MarkerCoordinatesDialogState();
 }
 
 class _MarkerCoordinatesDialogState extends State<MarkerCoordinatesDialog> {
