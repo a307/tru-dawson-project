@@ -103,7 +103,7 @@ class Generator extends StatelessWidget {
               tooltip: 'View Past Forms',
               onPressed: () {
                 ViewPastForms vpf = ViewPastForms();
-                vpf.getFormData('Equipment Inspection');
+                //vpf.getFormData('Equipment Inspection');
                 // Navigate to the User Settings page when the gear icon is pressed
                 Navigator.of(context).push(
                   MaterialPageRoute(
