@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:signature/signature.dart';
 import 'package:tru_dawson_project/generation.dart';
 import 'package:tru_dawson_project/google_map_field.dart';
@@ -70,18 +71,22 @@ class _FormPageState extends State<FormPage> {
                             formData.putIfAbsent(
                                 element['name']!, () => element['url']);
                           }
-                          formData.putIfAbsent(
-                              "Current Location",
-                              () =>
-                                  currentLoc.latitude.toString() +
-                                  ", " +
-                                  currentLoc.longitude.toString());
+                          LatLng loc = LatLng(0, 0);
+                          if (currentLoc != loc) {
+                            formData.putIfAbsent(
+                                "Current Location",
+                                () =>
+                                    currentLoc.latitude.toString() +
+                                    ", " +
+                                    currentLoc.longitude.toString());
+                          }
                           // formData.putIfAbsent("image", () => strUrl);
                           // bool isSubmitted = widget.onSubmit(formData);
                           widget.onSubmit(formData);
                           strUrlList.clear();
                           widget.signatureURL.clear();
                           signatureController.clear();
+                          currentLoc = LatLng(0, 0);
                           // if (isSubmitted) {
                           // Form submission successful
                           showDialog(
@@ -154,7 +159,10 @@ class _FormPageState extends State<FormPage> {
                     onPressed: () {
                       widget.signatureController.clear();
                       Navigator.of(context).pop();
-                      strUrlList = [];
+                      strUrlList.clear();
+                      widget.signatureURL.clear();
+                      signatureController.clear();
+                      currentLoc = LatLng(0, 0);
                     },
                     style: ElevatedButton.styleFrom(
                         primary: Color(0xFFC00205),
