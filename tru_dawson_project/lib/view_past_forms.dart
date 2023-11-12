@@ -10,14 +10,14 @@ class ViewPastForms extends StatelessWidget {
         title: Text('Past Submitted Forms'),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: getFormData('Equipment Inspection'),
+        future: getFormData('Sign Inspection'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator(); // Display a loading indicator while waiting for data.
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-           Map<String, dynamic> data = (snapshot.data as Map<String, dynamic>);
+            Map<String, dynamic> data = (snapshot.data as Map<String, dynamic>);
             return Text(data.toString());
           }
         },
