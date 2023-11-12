@@ -18,7 +18,9 @@ class ViewPastForms extends StatelessWidget {
             return Text('Error: ${snapshot.error}');
           } else {
             Map<String, dynamic> data = (snapshot.data as Map<String, dynamic>);
-            return Text(data.toString());
+            String content = '';
+            data.forEach((key, value) => content += '$key: $value\n');
+            return Text(content);
           }
         },
       ),
