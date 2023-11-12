@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'form_field.dart';
 
 class ViewPastForms extends StatelessWidget {
   @override
@@ -22,7 +23,8 @@ class ViewPastForms extends StatelessWidget {
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                var form = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                var form =
+                    snapshot.data!.docs[index].data() as Map<String, dynamic>;
                 var dateSubmitted = form['dateSubmitted'] ?? 'N/A';
 
                 return ListTile(
@@ -82,7 +84,7 @@ class FormDetailsPage extends StatelessWidget {
   List<Widget> _buildFormDataWidgets(Map<String, dynamic> formData) {
     List<Widget> widgets = [];
     formData.forEach((key, value) {
-      widgets.add(Text('$key: $value'));
+      widgets.add(FormFieldWidget(name: key, value: value));
     });
     return widgets;
   }
