@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypt/crypt.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -11,7 +10,8 @@ import 'package:tru_dawson_project/code_page.dart';
 import 'package:tru_dawson_project/database.dart';
 import 'package:tru_dawson_project/generation.dart';
 import 'package:tru_dawson_project/main.dart';
-
+import 'dart:io';
+import 'dart:convert';
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
 
@@ -302,54 +302,80 @@ List<String> list = [];
 // Map for holding section counts for each individual form. Each form name represents a key that leads to map containing the labels of each section and their respective counts if they are "Repeatable"
 // Map<String, Map<String, int>> formSectionCounts = {};
 
+Future<Map<String, SharedPreferences>> getSharedPreferencesSnap() async {
+  final SharedPreferences separatedPref = await SharedPreferences.getInstance();
+  final SharedPreferences listPref = await SharedPreferences.getInstance();
+  return {"separatedForms": separatedPref, "list": listPref};
+}
+
 getJSON() async {
-  //Connect to Firebase Real time database
-  final ref = FirebaseDatabase.instance.ref();
-  //get instance of json
-  final snapshot = await ref.get();
-  //Convert DataSnapshot to JSON map (string of JSON form content)
-  Map<String, dynamic>? jsonMap = dataSnapshotToMap(snapshot);
-  Map<String, dynamic> convertedMap = {};
+  Map<String, SharedPreferences> sharedPreferences =
+                              await getSharedPreferencesSnap();
+  try {
+    
+    final result = await InternetAddress.lookup('example.com');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      print('connected');
+      //Connect to Firebase Real time database
+      final ref = FirebaseDatabase.instance.ref();
+      //get instance of json
+      final snapshot = await ref.get();
+      //Convert DataSnapshot to JSON map (string of JSON form content)
+      Map<String, dynamic>? jsonMap = dataSnapshotToMap(snapshot);
+      Map<String, dynamic> convertedMap = {};
 // Initialize an empty map with the desired type
 
-  jsonMap?.forEach((key, value) {
-    if (value is Map<Object?, Object?>) {
-      // If the value is another map, recursively convert it
-      Map<String, dynamic> convertedValue = convertToMap(value);
-      convertedMap[key.toString()] = convertedValue;
-    } else {
-      // Otherwise, add the value as is
-      convertedMap[key.toString()] = value as dynamic;
+      jsonMap?.forEach((key, value) {
+        if (value is Map<Object?, Object?>) {
+          // If the value is another map, recursively convert it
+          Map<String, dynamic> convertedValue = convertToMap(value);
+          convertedMap[key.toString()] = convertedValue;
+        } else {
+          // Otherwise, add the value as is
+          convertedMap[key.toString()] = value as dynamic;
+        }
+      });
+
+      // Since the Data snapshot grabs a giant block of data, it needs to be separated into separate forms
+      convertedMap.forEach((key, value) {
+        // For each form in the original map, create a new map and add it to the list
+        separatedForms?.add(value);
+      });
+
+      //Print data out if there is any
+      if (snapshot.exists) {
+        //print whole file structure
+        //print(snapshot.value);
+
+        //print just form 0
+        //print(snapshot.child('form0').value);
+
+        //Loop through forms
+        for (int i = 0; i < snapshot.children.length; i++) {
+          //print out form names from metadata, two ways, through snapshot or through map
+          list.add(snapshot.child('form$i/metadata/formName').value.toString());
+          //list.add(jsonMap?['form$i']['metadata']['formName']);
+
+          //print(snapshot.child('form$i/metadata/formName').value);
+          //print(jsonMap?['form$i']['metadata']['formName']);
+        }
+        
+                              sharedPreferences["separatedForms"]!.setString("separatedForms", json.encode(separatedForms));
+                              print(separatedForms.toString());
+                              sharedPreferences["list"]!.setStringList("list", list);
+      } else {
+        print('No data available.');
+      }
     }
-  });
-
-  // Since the Data snapshot grabs a giant block of data, it needs to be separated into separate forms
-  convertedMap.forEach((key, value) {
-    // For each form in the original map, create a new map and add it to the list
-    separatedForms?.add(value);
-  });
-
-  //Print data out if there is any
-  if (snapshot.exists) {
-    //print whole file structure
-    //print(snapshot.value);
-
-    //print just form 0
-    //print(snapshot.child('form0').value);
-
-    //Loop through forms
-    for (int i = 0; i < snapshot.children.length; i++) {
-      //print out form names from metadata, two ways, through snapshot or through map
-      list.add(snapshot.child('form$i/metadata/formName').value.toString());
-      //list.add(jsonMap?['form$i']['metadata']['formName']);
-
-      //print(snapshot.child('form$i/metadata/formName').value);
-      //print(jsonMap?['form$i']['metadata']['formName']);
-    }
-  } else {
-    print('No data available.');
+  } on SocketException catch (_) {
+    print('not connected');
+    //print(sharedPreferences["separatedForms"]!.getString("separatedForms")!);
+    separatedForms = jsonDecode(sharedPreferences["separatedForms"]!.getString("separatedForms")!).cast<Map<String, dynamic>>().toList();
+    print(separatedForms);
+    list = sharedPreferences["list"]!.getStringList("list")!;
   }
 }
+
 
 Map<String, dynamic> convertToMap(Map<Object?, Object?> original) {
   Map<String, dynamic> converted = {};
