@@ -376,13 +376,6 @@ getJSON() async {
   }
 }
 
-List<Map<String, dynamic>> convertStringtoSnap(String inputString){
-  // Convert the JSON string to a List<Map<String, dynamic>>
-  List<Map<String, dynamic>> data = json.decode(inputString);
-
-  return data;
-}
-
 
 Map<String, dynamic> convertToMap(Map<Object?, Object?> original) {
   Map<String, dynamic> converted = {};
