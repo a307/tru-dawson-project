@@ -366,7 +366,7 @@ getJSON() async {
 
           sharedPreferences["separatedForms"]!
               .setString("separatedForms", json.encode(separatedForms));
-          print(separatedForms.toString());
+          // print(separatedForms.toString());
           sharedPreferences["list"]!.setStringList("list", list);
         } else {
           print('No data available.');
@@ -421,7 +421,7 @@ getJSON() async {
 
         sharedPreferences["separatedForms"]!
             .setString("separatedForms", json.encode(separatedForms));
-        print(separatedForms.toString());
+        // print(separatedForms.toString());
         sharedPreferences["list"]!.setStringList("list", list);
       } else {
         print('No data available.');
