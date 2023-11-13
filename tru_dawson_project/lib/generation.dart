@@ -47,6 +47,7 @@ Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
 
 dynamic globalResult;
 String globalEmail = "";
+List<String> globallist = []; 
 
 // dynamically create form list based on # of JSON forms pulled
 class Generator extends StatelessWidget {
@@ -59,6 +60,7 @@ class Generator extends StatelessWidget {
       this.list, this.separatedForms, this.result, this.auth, this.email) {
     globalResult = result;
     globalEmail = email;
+    globallist = list;
   }
 
   @override

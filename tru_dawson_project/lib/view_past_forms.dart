@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'form_field.dart';
+import 'generation.dart';
 
 class ViewPastForms extends StatefulWidget {
   final String globalEmail;
@@ -12,9 +13,8 @@ class ViewPastForms extends StatefulWidget {
 }
 
 class _ViewPastFormsState extends State<ViewPastForms> {
-  // List of form types (replace these with your actual collection names)
-  final List<String> formTypes = ['Sign Inspection', 'Fuel Usage', 'Truck Inspection', 'Equipment Inspection'];
-
+  
+  final List<String> formTypes = globallist; // pulling actual list of forms from from generation.dart
   // State variable to control form filtering
   bool showAllForms = false;
 
