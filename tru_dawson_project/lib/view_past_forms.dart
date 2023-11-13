@@ -2,13 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'form_field.dart';
 
-class ViewPastForms extends StatelessWidget {
+class ViewPastForms extends StatefulWidget {
   final String globalEmail;
 
   ViewPastForms({required this.globalEmail});
 
+  @override
+  _ViewPastFormsState createState() => _ViewPastFormsState();
+}
+
+class _ViewPastFormsState extends State<ViewPastForms> {
   // List of form types (replace these with your actual collection names)
   final List<String> formTypes = ['Sign Inspection', 'Fuel Usage', 'Truck Inspection', 'Equipment Inspection'];
+
+  // State variable to control form filtering
+  bool showAllForms = false;
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +24,17 @@ class ViewPastForms extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color(0xFFC00205),
         title: Text('Past Submitted Forms'),
+        actions: [
+          // Toggle switch to show all forms or only user-submitted forms
+          Switch(
+            value: showAllForms,
+            onChanged: (value) {
+              setState(() {
+                showAllForms = value;
+              });
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<List<QuerySnapshot>>(
         // Fetch data for all form types concurrently
@@ -33,9 +52,11 @@ class ViewPastForms extends StatelessWidget {
             var allDocs = snapshot.data!.expand((docs) => docs.docs).toList();
 
             // Filter the documents based on the globalEmail
-            var filteredDocs = allDocs
-                .where((doc) => extractEmailFromFormId(doc.id) == globalEmail)
-                .toList();
+            var filteredDocs = showAllForms
+                ? allDocs
+                : allDocs
+                    .where((doc) => extractEmailFromFormId(doc.id) == widget.globalEmail)
+                    .toList();
 
             return ListView.builder(
               itemCount: filteredDocs.length,
