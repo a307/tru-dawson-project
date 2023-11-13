@@ -58,9 +58,20 @@ class _FormPageState extends State<FormPage> {
                       if (isValid) {
                         Map<String, dynamic>? formData =
                             widget.fbKey.currentState?.value ?? {};
-                        print("On submission: $formData");
-                        if (formData != null) {
-                          formData = Map<String, dynamic>.from(formData);
+                        Map<String, dynamic>? formDataWithUniqueIds = {};
+
+                        int extraIdentifier = 0;
+                        formData.forEach((key, value) {
+                          // Append an extra identifier to each field in order to display the fields in the proper order in view past forms
+                          formDataWithUniqueIds['$key $extraIdentifier'] =
+                              value;
+                          extraIdentifier++;
+                        });
+
+                        print("On submission: $formDataWithUniqueIds");
+                        if (formDataWithUniqueIds != null) {
+                          formData =
+                              Map<String, dynamic>.from(formDataWithUniqueIds);
                           for (var element in strUrlList) {
                             formData.putIfAbsent(
                                 element['name']!, () => element['url']);
@@ -165,4 +176,9 @@ class _FormPageState extends State<FormPage> {
       ),
     );
   }
+}
+
+// Identifier will be a time string. This will ensure uniqueness everytime
+String _generateIdentifier() {
+  return DateTime.now().millisecondsSinceEpoch.toString();
 }
