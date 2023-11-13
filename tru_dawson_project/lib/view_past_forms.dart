@@ -169,9 +169,16 @@ formData.forEach((key, value) {
           value = value.toDate();
           value = DateFormat('yyyy-MM-dd HH:mm:ss').format(value);
         }
-      if(value is List<dynamic>){ //if a picture url, fetch the pic from firebase and display it.
-        value = value.first.toString();
-      }
+       else if (value is List<dynamic>) {
+        // If a picture URL, fetch the pic from Firebase and display it.
+        if (value.isNotEmpty) {
+          value = value.first.toString();
+        } else {
+          value = 'No image'; // Handle the case where the list is empty
+        }
+      } else if (value == null) {
+        value = 'Field left blank.';
+      } 
       formFields.add(Tuple3(name, shortNumber, value));
   } else {
       // Handle cases where the regex doesn't match
