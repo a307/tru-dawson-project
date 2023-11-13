@@ -35,7 +35,7 @@ class _FormPageState extends State<FormPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor:
-            Color(0xFFC00205), // Set the background color to #234094
+            Color.fromRGBO(192, 2, 5, 1), // Set the background color to #234094
         title: Text(widget.formName),
       ),
       body: FormBuilder(
@@ -136,7 +136,7 @@ class _FormPageState extends State<FormPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Color(0xFFC00205),
+                      primary: Color.fromRGBO(192, 2, 5, 1),
                       minimumSize: Size(250, 40),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
@@ -161,7 +161,7 @@ class _FormPageState extends State<FormPage> {
                       strUrlList = [];
                     },
                     style: ElevatedButton.styleFrom(
-                        primary: Color(0xFFC00205),
+                        primary: Color.fromRGBO(192, 2, 5, 1),
                         minimumSize: Size(250, 40),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),

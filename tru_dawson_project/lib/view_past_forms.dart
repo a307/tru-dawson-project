@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'form_field.dart';
 import 'generation.dart';
 import 'package:intl/intl.dart'; // to turn the timestamp object back into a date
 import 'package:tuple/tuple.dart'; //to make tuples, for ordering "Inspector Name 5734892754893 1" -> tuple
-import 'package:image/image.dart'; // to load the images of previous forms from firebase to display
+//this image package also has an instance of Color, which messes with everything. :/
+//import 'package:image/image.dart'; // to load the images of previous forms from firebase to display
+import 'picture_widget.dart';
+
 
 class ViewPastForms extends StatefulWidget {
   final String globalEmail;
@@ -25,7 +29,7 @@ class _ViewPastFormsState extends State<ViewPastForms> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        //backgroundColor: Color(0xFFC00205),
+        backgroundColor: Color.fromRGBO(192, 2, 5, 1),
         title: Text('Past Submitted Forms'),
         actions: [
           // Toggle switch to show all forms or only user-submitted forms
@@ -60,7 +64,6 @@ class _ViewPastFormsState extends State<ViewPastForms> {
                 : allDocs
                     .where((doc) => extractEmailFromFormId(doc.id) == widget.globalEmail)
                     .toList();
-
             return ListView.builder(
               itemCount: filteredDocs.length,
               itemBuilder: (context, index) {
@@ -127,7 +130,7 @@ class FormDetailsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        //backgroundColor: Color(0xFFC00205),
+        backgroundColor: Color.fromRGBO(192, 2, 5, 1),
         title: Text('Form Details - $formType'), // Use the dynamic form type here
       ),
       body: Padding(
@@ -194,9 +197,41 @@ formFields.sort((a, b) {
 });
 
 // Generate widgets based on the sorted form fields
-return formFields.map((field) {
-  return Text('${field.item1}: ${field.item3}');
+// return formFields.map((field) {
+//   return Text('${field.item1}: ${field.item3}');
+// }).toList();
+
+// Create styled widgets
+List<Widget> styledWidgets = formFields.map((field) {
+  return Row(
+    children: [
+      Container(
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(192, 2, 5, 1), // Set the background color for item1
+        ),
+        child: Text(
+          '${field.item1}:',
+          style: TextStyle(
+            color: Colors.white, // Set the text color for item1
+            fontSize: 16,
+          ),
+        ),
+      ),
+      SizedBox(width: 8), // Add some spacing between the two parts
+      Text(
+        field.item3,
+        style: TextStyle(
+          color: Colors.black, // Set the text color for item3
+          fontSize: 16,
+        ),
+      ),
+    ],
+  );
 }).toList();
+
+return styledWidgets;
+
 }
 
   String? extractDateFromFormId(String formId) {
