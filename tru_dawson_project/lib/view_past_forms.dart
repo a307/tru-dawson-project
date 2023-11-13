@@ -139,13 +139,13 @@ class FormDetailsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(formType),
+              Text(formType, style: TextStyle(fontSize: 20,color: Colors.black),),
               SizedBox(height: 8),
               Text('Date Submitted: ${extractDateFromFormId(formDocument.id) ?? 'N/A'}'),
               SizedBox(height: 8),
               Text('Submitted by: ${extractEmailFromFormId(formDocument.id) ?? 'N/A'}'),
               SizedBox(height: 16),
-              Text('Form Data:'),
+              Text('Form Data:', style: TextStyle(fontSize: 20,color: Colors.black)),
               SizedBox(height: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,31 +206,44 @@ formFields.sort((a, b) {
 
 // Create styled widgets
 List<Widget> styledWidgets = formFields.map((field) {
-  return Row(
-    children: [
-      Container(
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(192, 2, 5, 1), // Set the background color for item1
+  return Column(
+  children: [
+    Row(
+      children: [
+        Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Color.fromRGBO(192, 2, 5, 1),
+            borderRadius: BorderRadius.circular(9),
+            boxShadow: [
+            BoxShadow(
+              color: Colors.grey, 
+              offset: Offset(0, 2), 
+              blurRadius: 4,
+            ),
+          ], 
+          ),
+          child: Text(
+            '${field.item1}:',
+            style: TextStyle(
+              color: Colors.white, // Set the text color for item1
+              fontSize: 16,
+            ),
+          ),
         ),
-        child: Text(
-          '${field.item1}:',
+        SizedBox(width: 8), // Add some spacing between the two parts
+        Text(
+          field.item3,
           style: TextStyle(
-            color: Colors.white, // Set the text color for item1
+            color: Colors.black, // Set the text color for item3
             fontSize: 16,
           ),
         ),
-      ),
-      SizedBox(width: 8), // Add some spacing between the two parts
-      Text(
-        field.item3,
-        style: TextStyle(
-          color: Colors.black, // Set the text color for item3
-          fontSize: 16,
-        ),
-      ),
-    ],
-  );
+      ],
+    ),
+    SizedBox(height: 8), // Add some vertical spacing as a spacer
+  ],
+);;
 }).toList();
 
 return styledWidgets;
