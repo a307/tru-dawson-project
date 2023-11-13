@@ -64,7 +64,7 @@ class Generator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter FormBuilder Demo',
+      title: 'Dawson Group Reporting App', //made name not demo text haha
       debugShowCheckedModeBanner: false,
       localizationsDelegates: [
         FormBuilderLocalizations.delegate,
