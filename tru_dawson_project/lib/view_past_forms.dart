@@ -131,30 +131,33 @@ class FormDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(192, 2, 5, 1),
-        title: Text('Form Details - $formType'), // Use the dynamic form type here
+        title: Text('Form Details - $formType'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(formType), // Use the dynamic form type here
-            SizedBox(height: 8),
-            Text('Date Submitted: ${extractDateFromFormId(formDocument.id) ?? 'N/A'}'),
-            SizedBox(height: 8),
-            Text('Submitted by: ${extractEmailFromFormId(formDocument.id) ?? 'N/A'}'),
-            SizedBox(height: 16),
-            Text('Form Data:'),
-            SizedBox(height: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: _buildFormDataWidgets(formData),
-            ),
-          ],
+        child: SingleChildScrollView( // Wrap the Column with SingleChildScrollView
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(formType),
+              SizedBox(height: 8),
+              Text('Date Submitted: ${extractDateFromFormId(formDocument.id) ?? 'N/A'}'),
+              SizedBox(height: 8),
+              Text('Submitted by: ${extractEmailFromFormId(formDocument.id) ?? 'N/A'}'),
+              SizedBox(height: 16),
+              Text('Form Data:'),
+              SizedBox(height: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _buildFormDataWidgets(formData),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
 
 List<Widget> _buildFormDataWidgets(Map<String, dynamic> formData) {
 List<Tuple3<String, String, String>> formFields = [];
