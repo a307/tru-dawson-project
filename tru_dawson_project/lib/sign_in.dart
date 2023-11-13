@@ -59,198 +59,206 @@ class _SignInState extends State<SignIn> {
                 children: [
                   Positioned(
                     top: 50.0, // Adjust the top position as needed
-                    child: Container(
-                      width: boxWidth,
-                      padding: EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            'lib/assets/dawson_updated_logo.png',
-                            width: 500,
+                    child: GestureDetector(
+                      onTap: () {
+                        // Handle tap to dismiss the keyboard
+                        FocusScope.of(context).unfocus();
+                      },
+                      child: SingleChildScrollView(
+                        child: Container(
+                          width: boxWidth,
+                          padding: EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
-                          SizedBox(height: 20.0),
-                          FormBuilder(
-                            key: _formKey,
-                            child: Column(
-                              children: [
-                                FormBuilderTextField(
-                                  name: "email",
-                                  controller: emailTEC,
-                                  decoration: InputDecoration(
-                                    labelText: "Email",
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 20.0),
-                                FormBuilderTextField(
-                                  name: "password",
-                                  obscureText: true,
-                                  controller: passwordTEC,
-                                  decoration: InputDecoration(
-                                    labelText: "Password",
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 20.0),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                'lib/assets/dawson_updated_logo.png',
+                                width: 500,
+                              ),
+                              SizedBox(height: 20.0),
+                              FormBuilder(
+                                key: _formKey,
+                                child: Column(
                                   children: [
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        // Placeholder for login logic
-                                        dynamic result = await auth.SignInEmailPass(
-                                          emailTEC.text.trim(),
-                                          passwordTEC.text.trim(),
-                                        );
+                                    FormBuilderTextField(
+                                      name: "email",
+                                      controller: emailTEC,
+                                      decoration: InputDecoration(
+                                        labelText: "Email",
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.grey),
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 20.0),
+                                    FormBuilderTextField(
+                                      name: "password",
+                                      obscureText: true,
+                                      controller: passwordTEC,
+                                      decoration: InputDecoration(
+                                        labelText: "Password",
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.grey),
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 20.0),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            // Placeholder for login logic
+                                            dynamic result = await auth.SignInEmailPass(
+                                              emailTEC.text.trim(),
+                                              passwordTEC.text.trim(),
+                                            );
 
-                                        if (result == null) {
-                                          print('error signing in');
-                                          showAlertDialog(
-                                            context,
-                                            "User Not Found!",
-                                            "Email or password may be incorrect. \nDid you Sign Up?",
-                                            false,
-                                          );
-                                        } else {
-                                          print('user has signed in');
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) {
+                                            if (result == null) {
+                                              print('error signing in');
+                                              showAlertDialog(
+                                                context,
+                                                "User Not Found!",
+                                                "Email or password may be incorrect. \nDid you Sign Up?",
+                                                false,
+                                              );
+                                            } else {
+                                              print('user has signed in');
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) {
+                                                    return Material(
+                                                      child: Generator(
+                                                        list,
+                                                        separatedForms,
+                                                        result,
+                                                        auth,
+                                                        emailTEC.text,
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              );
+                                              print(result.uid);
+                                            }
+                                            print("");
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            primary: Color(0xFFC00205),
+                                            minimumSize: Size(300, 45),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(24),
+                                            ),
+                                          ),
+                                          child: const Text("Login"),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 20),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            // Placeholder for sign-up logic
+                                            dynamic result = await auth.SignUp(
+                                              emailTEC.text.trim(),
+                                              passwordTEC.text.trim(),
+                                            );
+
+                                            if (result == null) {
+                                              print('error signing up');
+                                              showAlertDialog(
+                                                context,
+                                                "Error Signing Up",
+                                                "Please try again.",
+                                                false,
+                                              );
+                                            } else {
+                                              print('user has signed up');
+                                              showAlertDialog(
+                                                context,
+                                                'Successful Sign Up!',
+                                                "Please press Sign In.",
+                                                true,
+                                              );
+                                              print(result.uid);
+                                            }
+                                            print("");
+                                            debugPrint(
+                                              _formKey.currentState?.instantValue.toString() ?? '',
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            primary: Color(0xFFC00205),
+                                            minimumSize: Size(300, 45),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(24),
+                                            ),
+                                          ),
+                                          child: const Text("Sign up"),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 20),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            // Placeholder for offline sign-in logic
+                                            Map<String, SharedPreferences> sharedPreferences =
+                                                await getSharedPreferences();
+                                            dynamic result = await auth.SignInEmailPassOffline(
+                                              emailTEC.text,
+                                              passwordTEC.text,
+                                              sharedPreferences["email"]!.getString("email")!,
+                                              sharedPreferences["password"]!
+                                                  .getString("password")!,
+                                            );
+
+                                            if (result == false) {
+                                              print('error signing in offline');
+                                              showAlertDialog(
+                                                context,
+                                                "User Not Found!",
+                                                "Email or password may be incorrect. \nDid you Sign Up?",
+                                                false,
+                                              );
+                                            } else {
+                                              print('user has signed in offline');
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(builder: (context) {
                                                 return Material(
                                                   child: Generator(
-                                                    list,
-                                                    separatedForms,
-                                                    result,
-                                                    auth,
-                                                    emailTEC.text,
-                                                  ),
+                                                    list, separatedForms, result, auth, emailTEC.text),
                                                 );
-                                              },
+                                              }));
+                                            }
+                                            print("");
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            primary: Color(0xFFC00205),
+                                            minimumSize: Size(300, 45),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(24),
                                             ),
-                                          );
-                                          print(result.uid);
-                                        }
-                                        print("");
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        primary: Color(0xFFC00205),
-                                        minimumSize: Size(300, 45),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(24),
+                                          ),
+                                          child: const Text("Offline Sign In"),
                                         ),
-                                      ),
-                                      child: const Text("Login"),
-                                    ),
+                                      ],
+                                    )
                                   ],
                                 ),
-                                const SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        // Placeholder for sign-up logic
-                                        dynamic result = await auth.SignUp(
-                                          emailTEC.text.trim(),
-                                          passwordTEC.text.trim(),
-                                        );
-
-                                        if (result == null) {
-                                          print('error signing up');
-                                          showAlertDialog(
-                                            context,
-                                            "Error Signing Up",
-                                            "Please try again.",
-                                            false,
-                                          );
-                                        } else {
-                                          print('user has signed up');
-                                          showAlertDialog(
-                                            context,
-                                            'Successful Sign Up!',
-                                            "Please press Sign In.",
-                                            true,
-                                          );
-                                          print(result.uid);
-                                        }
-                                        print("");
-                                        debugPrint(
-                                          _formKey.currentState?.instantValue.toString() ?? '',
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        primary: Color(0xFFC00205),
-                                        minimumSize: Size(300, 45),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(24),
-                                        ),
-                                      ),
-                                      child: const Text("Sign up"),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        // Placeholder for offline sign-in logic
-                                        Map<String, SharedPreferences> sharedPreferences =
-                                            await getSharedPreferences();
-                                        dynamic result = await auth.SignInEmailPassOffline(
-                                          emailTEC.text,
-                                          passwordTEC.text,
-                                          sharedPreferences["email"]!.getString("email")!,
-                                          sharedPreferences["password"]!
-                                              .getString("password")!,
-                                        );
-
-                                        if (result == false) {
-                                          print('error signing in offline');
-                                          showAlertDialog(
-                                            context,
-                                            "User Not Found!",
-                                            "Email or password may be incorrect. \nDid you Sign Up?",
-                                            false,
-                                          );
-                                        } else {
-                                          print('user has signed in offline');
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(builder: (context) {
-                                            return Material(
-                                              child: Generator(
-                                                list, separatedForms, result, auth, emailTEC.text),
-                                            );
-                                          }));
-                                        }
-                                        print("");
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        primary: Color(0xFFC00205),
-                                        minimumSize: Size(300, 45),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(24),
-                                        ),
-                                      ),
-                                      child: const Text("Offline Sign In"),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
