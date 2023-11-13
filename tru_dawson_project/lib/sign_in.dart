@@ -84,6 +84,9 @@ class _SignInState extends State<SignIn> {
                                 child: Column(
                                   children: [
                                     FormBuilderTextField(
+                                      onTap: () {
+                                        // Prevent tapping on the text field from dismissing the keyboard
+                                      },
                                       name: "email",
                                       controller: emailTEC,
                                       decoration: InputDecoration(
@@ -96,6 +99,9 @@ class _SignInState extends State<SignIn> {
                                     ),
                                     SizedBox(height: 20.0),
                                     FormBuilderTextField(
+                                      onTap: () {
+                                        // Prevent tapping on the text field from dismissing the keyboard
+                                      },
                                       name: "password",
                                       obscureText: true,
                                       controller: passwordTEC,
