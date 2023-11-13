@@ -22,18 +22,20 @@ class ViewPastForms extends StatelessWidget {
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                var form = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                var dateSubmitted = form['dateSubmitted'] ?? 'N/A';
+                var formDocument = snapshot.data!.docs[index];
+                var formId = formDocument.id;
+                var dateSubmitted = extractDateFromFormId(formId) ?? 'N/A';
+                var email = extractEmailFromFormId(formId) ?? 'N/A';
 
                 return ListTile(
                   title: Text('Sign Inspection'),
-                  subtitle: Text('Date Submitted: $dateSubmitted'),
+                  subtitle: Text('Date Submitted: $dateSubmitted\nSubmitted by: $email'),
                   onTap: () {
                     // Navigate to a new page to display detailed form data
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => FormDetailsPage(form),
+                        builder: (context) => FormDetailsPage(formDocument),
                       ),
                     );
                   },
@@ -45,17 +47,40 @@ class ViewPastForms extends StatelessWidget {
       ),
     );
   }
+
+  String? extractDateFromFormId(String formId) {
+    // Extract the date from the form ID (assuming the format is "YYYYMMDD-email")
+    try {
+      var dashIndex = formId.indexOf('-');
+      return formId.substring(0, dashIndex); // Extract the date before the first dash
+    } catch (e) {
+      return null;
+    }
+  }
+
+  String? extractEmailFromFormId(String formId) {
+    // Extract the email from the form ID (assuming the format is "YYYYMMDD-email")
+    try {
+      var dashIndex = formId.indexOf('-');
+      return formId.substring(dashIndex + 1); // Extract the email after the first dash
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 class FormDetailsPage extends StatelessWidget {
-  final Map<String, dynamic> formData;
+  final QueryDocumentSnapshot formDocument;
 
-  FormDetailsPage(this.formData);
+  FormDetailsPage(this.formDocument);
 
   @override
   Widget build(BuildContext context) {
+    var formData = formDocument.data() as Map<String, dynamic>;
+
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFFC00205),
         title: Text('Form Details'),
       ),
       body: Padding(
@@ -65,7 +90,9 @@ class FormDetailsPage extends StatelessWidget {
           children: [
             Text('Sign Inspection'),
             SizedBox(height: 8),
-            Text('Date Submitted: ${formData['dateSubmitted'] ?? 'N/A'}'),
+            Text('Date Submitted: ${extractDateFromFormId(formDocument.id) ?? 'N/A'}'),
+            SizedBox(height: 8),
+            Text('Submitted by: ${extractEmailFromFormId(formDocument.id) ?? 'N/A'}'),
             SizedBox(height: 16),
             Text('Form Data:'),
             SizedBox(height: 8),
@@ -85,5 +112,25 @@ class FormDetailsPage extends StatelessWidget {
       widgets.add(Text('$key: $value'));
     });
     return widgets;
+  }
+
+  String? extractDateFromFormId(String formId) {
+    // Extract the date from the form ID (assuming the format is "YYYYMMDD-email")
+    try {
+      var dashIndex = formId.indexOf('-');
+      return formId.substring(0, dashIndex); // Extract the date before the first dash
+    } catch (e) {
+      return null;
+    }
+  }
+
+  String? extractEmailFromFormId(String formId) {
+    // Extract the email from the form ID (assuming the format is "YYYYMMDD-email")
+    try {
+      var dashIndex = formId.indexOf('-');
+      return formId.substring(dashIndex + 1); // Extract the email after the first dash
+    } catch (e) {
+      return null;
+    }
   }
 }
