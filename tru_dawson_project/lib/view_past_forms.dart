@@ -3,6 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'form_field.dart';
 
 class ViewPastForms extends StatelessWidget {
+  final String globalEmail;
+
+  ViewPastForms({required this.globalEmail});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,21 +24,22 @@ class ViewPastForms extends StatelessWidget {
           } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return Center(child: Text('No forms available.'));
           } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
+            var filteredDocs = snapshot.data!.docs
+                .where((doc) => extractEmailFromFormId(doc.id) == globalEmail)
+                .toList();
 
-                var formDocument = snapshot.data!.docs[index];
+            return ListView.builder(
+              itemCount: filteredDocs.length,
+              itemBuilder: (context, index) {
+                var formDocument = filteredDocs[index];
                 var formId = formDocument.id;
                 var dateSubmitted = extractDateFromFormId(formId) ?? 'N/A';
                 var email = extractEmailFromFormId(formId) ?? 'N/A';
-
 
                 return ListTile(
                   title: Text('Sign Inspection'),
                   subtitle: Text('Date Submitted: $dateSubmitted\nSubmitted by: $email'),
                   onTap: () {
-                    // Navigate to a new page to display detailed form data
                     Navigator.push(
                       context,
                       MaterialPageRoute(

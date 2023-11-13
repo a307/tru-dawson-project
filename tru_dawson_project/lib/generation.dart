@@ -109,8 +109,8 @@ class Generator extends StatelessWidget {
                 // Navigate to the User Settings page when the gear icon is pressed
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    //builder: (context) => ViewPastForms(globalEmail: globalEmail),
-                    builder: (context) => ViewPastForms(),
+                    builder: (context) => ViewPastForms(globalEmail: globalEmail),
+                    //builder: (context) => ViewPastForms(),
                   ),
                 );
               },
