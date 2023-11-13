@@ -55,7 +55,7 @@ class ViewPastForms extends StatelessWidget {
     // Extract the date from the form ID (assuming the format is "YYYYMMDD-email")
     try {
       var dashIndex = formId.indexOf('-');
-      return formId.substring(0, dashIndex); // Extract the date before the first dash
+      return formId.substring(dashIndex + 1); // Extract the date before the first dash
     } catch (e) {
       return null;
     }
@@ -65,7 +65,7 @@ class ViewPastForms extends StatelessWidget {
     // Extract the email from the form ID (assuming the format is "YYYYMMDD-email")
     try {
       var dashIndex = formId.indexOf('-');
-      return formId.substring(dashIndex + 1); // Extract the email after the first dash
+      return formId.substring(0, dashIndex); // Extract the email after the first dash
     } catch (e) {
       return null;
     }
@@ -121,7 +121,7 @@ class FormDetailsPage extends StatelessWidget {
     // Extract the date from the form ID (assuming the format is "YYYYMMDD-email")
     try {
       var dashIndex = formId.indexOf('-');
-      return formId.substring(0, dashIndex); // Extract the date before the first dash
+      return formId.substring(dashIndex + 1); // Extract the date before the first dash
     } catch (e) {
       return null;
     }
@@ -131,7 +131,7 @@ class FormDetailsPage extends StatelessWidget {
     // Extract the email from the form ID (assuming the format is "YYYYMMDD-email")
     try {
       var dashIndex = formId.indexOf('-');
-      return formId.substring(dashIndex + 1); // Extract the email after the first dash
+      return formId.substring(0, dashIndex); // Extract the email after the first dash
     } catch (e) {
       return null;
     }
