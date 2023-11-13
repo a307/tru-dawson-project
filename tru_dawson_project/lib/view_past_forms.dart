@@ -188,7 +188,7 @@ formFields.sort((a, b) {
 
 // Generate widgets based on the sorted form fields
 return formFields.map((field) {
-  return Text('${field.item1}: ${field.item2}');
+  return Text('${field.item1}: ${field.item3}');
 }).toList();
 }
 

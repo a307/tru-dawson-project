@@ -69,7 +69,7 @@ class _SignInState extends State<SignIn> {
                           width: boxWidth,
                           padding: EdgeInsets.all(16.0),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withOpacity(0.9),
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: Column(
