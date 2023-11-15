@@ -1,4 +1,4 @@
-import 'package:crypt/crypt.dart';
+ import 'package:crypt/crypt.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -23,266 +23,232 @@ Future<Map<String, SharedPreferences>> getSharedPreferences() async {
   return {"email": emailPref, "password": passwordPref};
 }
 
-
 class _SignInState extends State<SignIn> {
   dynamic variable = getJSON();
 
   @override
   Widget build(BuildContext context) {
-    // Initialize form key, used for validation later on
+    //Initialize form key, used for validation later on
     final _formKey = GlobalKey<FormBuilderState>();
-    // Keep track of the options from the dropdown
+    //keep track of the options from the dropdown
     int? option;
-    // Initialize an instance of AuthService, used to create a user with a unique user id
+    //Initilize instance of AuthService, used to create user with unique user id
     final AuthService auth = AuthService();
-    // Allows text boxes data to be read later on
+    //Allows text boxes data to be read later on
     final TextEditingController emailTEC = TextEditingController();
     final TextEditingController passwordTEC = TextEditingController();
 
     return Scaffold(
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('lib/assets/DG-Home-3-Large.jpg'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Center(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              double boxWidth = constraints.maxWidth > 600 ? 600 : constraints.maxWidth * 0.9;
-
-              return Stack(
-                alignment: Alignment.center,
-                children: [
-                  Positioned(
-                    top: 50.0, // Adjust the top position as needed
-                    child: GestureDetector(
-                      onTap: () {
-                        // Handle tap to dismiss the keyboard
-                        FocusScope.of(context).unfocus();
-                      },
-                      child: SingleChildScrollView(
-                        child: Container(
-                          width: boxWidth,
-                          padding: EdgeInsets.all(16.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Column(
-                            children: [
-                              Image.asset(
-                                'lib/assets/dawson_updated_logo.png',
-                                width: 500,
-                              ),
-                              SizedBox(height: 20.0),
-                              FormBuilder(
-                                key: _formKey,
-                                child: Column(
-                                  children: [
-                                    FormBuilderTextField(
-                                      onTap: () {
-                                        // Prevent tapping on the text field from dismissing the keyboard
-                                      },
-                                      name: "email",
-                                      controller: emailTEC,
-                                      decoration: InputDecoration(
-                                        labelText: "Email",
-                                        border: OutlineInputBorder(
-                                          borderSide: BorderSide(color: Colors.grey),
-                                          borderRadius: BorderRadius.circular(8.0),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 20.0),
-                                    FormBuilderTextField(
-                                      onTap: () {
-                                        // Prevent tapping on the text field from dismissing the keyboard
-                                      },
-                                      name: "password",
-                                      obscureText: true,
-                                      controller: passwordTEC,
-                                      decoration: InputDecoration(
-                                        labelText: "Password",
-                                        border: OutlineInputBorder(
-                                          borderSide: BorderSide(color: Colors.grey),
-                                          borderRadius: BorderRadius.circular(8.0),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 20.0),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: () async {
-                                            // Placeholder for login logic
-                                            dynamic result = await auth.SignInEmailPass(
-                                              emailTEC.text.trim(),
-                                              passwordTEC.text.trim(),
-                                            );
-
-                                            if (result == null) {
-                                              print('error signing in');
-                                              showAlertDialog(
-                                                context,
-                                                "User Not Found!",
-                                                "Email or password may be incorrect. \nDid you Sign Up?",
-                                                false,
-                                              );
-                                            } else {
-                                              print('user has signed in');
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (context) {
-                                                    return Material(
-                                                      child: Generator(
-                                                        list,
-                                                        separatedForms,
-                                                        result,
-                                                        auth,
-                                                        emailTEC.text,
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              );
-                                              print(result.uid);
-                                            }
-                                            print("");
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            primary: Color(0xFFC00205),
-                                            minimumSize: Size(300, 45),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(24),
-                                            ),
-                                          ),
-                                          child: const Text("Login"),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: () async {
-                                            // Placeholder for sign-up logic
-                                            dynamic result = await auth.SignUp(
-                                              emailTEC.text.trim(),
-                                              passwordTEC.text.trim(),
-                                            );
-
-                                            if (result == null) {
-                                              print('error signing up');
-                                              showAlertDialog(
-                                                context,
-                                                "Error Signing Up",
-                                                "Please try again.",
-                                                false,
-                                              );
-                                            } else {
-                                              print('user has signed up');
-                                              showAlertDialog(
-                                                context,
-                                                'Successful Sign Up!',
-                                                "Please press Sign In.",
-                                                true,
-                                              );
-                                              print(result.uid);
-                                            }
-                                            print("");
-                                            debugPrint(
-                                              _formKey.currentState?.instantValue.toString() ?? '',
-                                            );
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            primary: Color(0xFFC00205),
-                                            minimumSize: Size(300, 45),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(24),
-                                            ),
-                                          ),
-                                          child: const Text("Sign up"),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: () async {
-                                            // Placeholder for offline sign-in logic
-                                            Map<String, SharedPreferences> sharedPreferences =
-                                                await getSharedPreferences();
-                                            dynamic result = await auth.SignInEmailPassOffline(
-                                              emailTEC.text,
-                                              passwordTEC.text,
-                                              sharedPreferences["email"]!.getString("email")!,
-                                              sharedPreferences["password"]!
-                                                  .getString("password")!,
-                                            );
-
-                                            if (result == false) {
-                                              print('error signing in offline');
-                                              showAlertDialog(
-                                                context,
-                                                "User Not Found!",
-                                                "Email or password may be incorrect. \nDid you Sign Up?",
-                                                false,
-                                              );
-                                            } else {
-                                              print('user has signed in offline');
-                                              Navigator.of(context)
-                                                  .push(MaterialPageRoute(builder: (context) {
-                                                return Material(
-                                                  child: Generator(
-                                                    list, separatedForms, result, auth, emailTEC.text),
-                                                );
-                                              }));
-                                            }
-                                            print("");
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            primary: Color(0xFFC00205),
-                                            minimumSize: Size(300, 45),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(24),
-                                            ),
-                                          ),
-                                          child: const Text("Offline Sign In"),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+      // appBar: AppBar(
+      //   backgroundColor:
+      //       Color(0xFFC00205), // Set the background color to #234094,
+      //   title: Text("Sign In"),
+      // ),
+      body: SingleChildScrollView(
+        // Wrap the content with SingleChildScrollView for scrolling when typing
+        child: FormBuilder(
+          key: _formKey,
+          child: Column(
+            children: [
+              SizedBox(height: 20.0),
+              Image.asset(
+                'lib/assets/dawson_updated_logo.png', //  dawson group logo image
+                width: 500,
+              ),
+              //Text("Emaill"),
+              SizedBox(height: 10.0),
+              Container(
+                width: 300,
+                child: FormBuilderTextField(
+                  name: "email",
+                  controller: emailTEC,
+                  decoration: InputDecoration(
+                    labelText: "Email",
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
+                ),
+              ),
+              SizedBox(height: 20.0),
+              //Text("Password"),
+              Container(
+                width: 300,
+                child: FormBuilderTextField(
+                  name: "password",
+                  obscureText: true,
+                  controller: passwordTEC,
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      onPressed: () async {
+                        //Validate that forms are valid with the formkey
+                        if (_formKey.currentState!.saveAndValidate() == true) {
+                          //attempt to sign in anonymously and get back result containing Uid
+                          dynamic result = await auth.SignInEmailPass(
+                              emailTEC.text.trim(), passwordTEC.text.trim());
+                          Map<String, SharedPreferences> sharedPreferences =
+                              await getSharedPreferences();
+                          await sharedPreferences["email"]
+                              ?.setString('email', emailTEC.text);
+                          await sharedPreferences['password']?.setString(
+                              'password',
+                              Crypt.sha256(passwordTEC.text).toString());
+                          //If theres data print out the Uid
+                          if (result == null) {
+                            print('error signing in');
+                            showAlertDialog(
+                                context,
+                                "User Not Found!",
+                                "Email or password may be incorrect. \nDid you Sign Up?",
+                                false);
+                          } else {
+                            print('user has signed in');
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return Material(
+                                      child: Generator(list, separatedForms,
+                                          result, auth, emailTEC.text));
+                                },
+                              ),
+                            );
+                            print(result.uid);
+                          }
+                          print("");
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFFC00205),
+                        minimumSize: Size(300, 45),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              24), // Adjust the radius for roundness
+                        ),
+                      ),
+                      child: const Text("Login")),
                 ],
-              );
-            },
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      onPressed: () async {
+                        //Validate that forms are valid with the formkey
+                        if (_formKey.currentState!.saveAndValidate() == true) {
+                          //attempt to sign in anonymously and get back result containing Uid
+                          dynamic result = await auth.SignUp(
+                              emailTEC.text.trim(), passwordTEC.text.trim());
+
+                          //If theres data print out the Uid
+                          if (result == null) {
+                            print('error signing up');
+                            showAlertDialog(context, "Error Signing Up",
+                                "Please try again.", false);
+                          } else {
+                            print('user has signed up');
+                            showAlertDialog(context, 'Successful Sign Up!',
+                                "Please press Sign In.", true);
+                            print(result.uid);
+                          }
+                          print("");
+                          //print out data in form
+                          debugPrint(
+                              _formKey.currentState?.instantValue.toString() ??
+                                  '');
+
+                          //Login to firebase
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFFC00205),
+                        minimumSize: Size(300, 45),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              24), // Adjust the radius for roundness
+                        ),
+                      ),
+                      child: const Text("Sign up"))
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      onPressed: () async {
+                        //Validate that forms are valid with the formkey
+                        if (_formKey.currentState!.saveAndValidate() == true) {
+                          //attempt to sign in anonymously and get back result containing Uid
+                          Map<String, SharedPreferences> sharedPreferences =
+                              await getSharedPreferences();
+                          dynamic result = await auth.SignInEmailPassOffline(
+                              emailTEC.text,
+                              passwordTEC.text,
+                              sharedPreferences["email"]!.getString("email")!,
+                              sharedPreferences["password"]!
+                                  .getString("password")!);
+
+                          if (result == false) {
+                            print('error signing in offline');
+                            showAlertDialog(
+                                context,
+                                "User Not Found!",
+                                "Email or password may be incorrect. \nDid you Sign Up?",
+                                false);
+                          } else {
+                            print('user has signed in offline');
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (context) {
+                              return Material(
+                                  child: Generator(list, separatedForms, result,
+                                      auth, emailTEC.text));
+                            }));
+                          }
+                          print("");
+                          //print out data in form
+                          // debugPrint(
+                          //     _formKey.currentState?.instantValue.toString() ??
+                          //         '');
+                          // print(
+                          //     sharedPreferences["email"]!.getString("email")!);
+                          // print(sharedPreferences["password"]!
+                          //     .getString("password")!);
+
+                          //Login to firebase
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFFC00205),
+                        minimumSize: Size(300, 45),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              24), // Adjust the radius for roundness
+                        ),
+                      ),
+                      child: const Text("Offline Sign In"))
+                ],
+              )
+            ],
           ),
         ),
       ),
     );
   }
 }
-
-
-
-
-
-
 
 // alert dialogs handling
 showAlertDialog(
