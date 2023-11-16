@@ -80,13 +80,15 @@ class _PictureWidgetState extends State<PictureWidget>
                 child: const Text('Camera')),
             SizedBox(width: 10, height: 10),
             //TODO clicking remove button removes photo from all upload fields
-            //TODO remove does not remove from strUrlList
             MaterialButton(
                 onPressed: () {
                   setState(() {
+                    strUrlList.removeWhere(
+                        (element) => element["name"] == widget.controlName);
+                    // print(strUrlList);
+                    // print(widget.controlName);
                     selectedImageString = null;
                     selectedFile = null;
-                    strUrlList = [];
                   });
                 },
                 color: Color(0xFF6F768A),

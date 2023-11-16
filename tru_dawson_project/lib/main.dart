@@ -3,6 +3,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:tru_dawson_project/sign_in.dart';
@@ -15,18 +16,39 @@ List<Map<String, dynamic>>? separatedForms =
 void main() async {
   //Ensures flutter widgets are initialized
   WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+      apiKey: 'AIzaSyChE23oQe0lYW_Y2TAKbCCjl1ox5yTikTc',
+      appId: "1:203503274066:web:d1b68e01a632af4186378b",
+      messagingSenderId: '203503274066',
+      projectId: "tru-dawson-project-2023",
+      //Must be used to connect to Firebase Realtime database
+      databaseURL:
+          'https://tru-dawson-project-2023-default-rtdb.firebaseio.com/',
+      storageBucket: "gs://tru-dawson-project-2023.appspot.com",
+    ));
+  } else {
+    if (!(Firebase.apps.length == 0)) {
+      await Firebase.initializeApp(
+          options: const FirebaseOptions(
+        apiKey: 'AIzaSyChE23oQe0lYW_Y2TAKbCCjl1ox5yTikTc',
+        appId: "1:203503274066:web:d1b68e01a632af4186378b",
+        messagingSenderId: '203503274066',
+        projectId: "tru-dawson-project-2023",
+        //Must be used to connect to Firebase Realtime database
+        databaseURL:
+            'https://tru-dawson-project-2023-default-rtdb.firebaseio.com/',
+        storageBucket: "gs://tru-dawson-project-2023.appspot.com",
+      ));
+    } else {
+      Firebase.initializeApp(); // if already initialized, use that one
+    }
+  }
+
   //Initialize Firebase
-  await Firebase.initializeApp(
-      options: const FirebaseOptions(
-    apiKey: 'AIzaSyChE23oQe0lYW_Y2TAKbCCjl1ox5yTikTc',
-    appId: "1:203503274066:web:d1b68e01a632af4186378b",
-    messagingSenderId: '203503274066',
-    projectId: "tru-dawson-project-2023",
-    //Must be used to connect to Firebase Realtime database
-    databaseURL: 'https://tru-dawson-project-2023-default-rtdb.firebaseio.com/',
-    storageBucket: "gs://tru-dawson-project-2023.appspot.com",
-  ));
- // FirebaseDatabase.instance.setPersistenceEnabled(true); // commented this out as chrome says it does not support it?
+
+  // FirebaseDatabase.instance.setPersistenceEnabled(true); // commented this out as chrome says it does not support it?
   //Run Application starting with Generator as home
   // runApp(MaterialApp(home: Generator(list, separatedForms) //class
   //     ));
