@@ -21,6 +21,9 @@ class Section extends StatefulWidget {
   _SectionState createState() => _SectionState();
 }
 
+int extraIdentifier =
+    0; // Needed for organizing form fields for view past forms
+
 class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
@@ -29,7 +32,7 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
   }
 
   // Identifier will be a time string. This will ensure uniqueness everytime
-  String _generateIdentifier() {
+  String generateIdentifier() {
     return DateTime.now().millisecondsSinceEpoch.toString();
   }
 
@@ -40,9 +43,10 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
     for (var question in section['questions']) {
       // Same logic as the generate fields functions
       var controlName = question['control']['meta_data']['control_name'];
-      String identifier = _generateIdentifier();
+      print("Extra Identifier Value for $controlName: $extraIdentifier \n\n");
+      String identifier = generateIdentifier();
       var fieldName =
-          "${question['control']['meta_data']['control_name']} $identifier";
+          "${question['control']['meta_data']['control_name']} $identifier $extraIdentifier";
       switch (question['control']['type']) {
         case 'date_field': // If the type is date_field, build a date field
           {
@@ -178,8 +182,6 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
           }
         case 'picture':
           {
-            //get control name from JSON
-            String controlName = fieldName;
             //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
             fields.add(PictureWidget(controlName: fieldName));
             break;
@@ -355,6 +357,7 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
             break;
           }
       }
+      extraIdentifier++;
     }
     return fields;
   }

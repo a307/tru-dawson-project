@@ -3,6 +3,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:signature/signature.dart';
 import 'package:tru_dawson_project/generation.dart';
+import 'package:tru_dawson_project/repeatable_section.dart';
+import 'package:tru_dawson_project/section.dart';
 import 'package:tru_dawson_project/google_map_field.dart';
 import 'picture_widget.dart';
 
@@ -37,7 +39,7 @@ class _FormPageState extends State<FormPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor:
-            Color(0xFFC00205), // Set the background color to #234094
+            Color.fromRGBO(192, 2, 5, 1), // Set the background color to #234094
         title: Text(widget.formName),
       ),
       body: FormBuilder(
@@ -60,6 +62,16 @@ class _FormPageState extends State<FormPage> {
                       if (isValid) {
                         Map<String, dynamic>? formData =
                             widget.fbKey.currentState?.value ?? {};
+                        // Map<String, dynamic>? formDataWithUniqueIds = {};
+
+                        // int extraIdentifier = 0;
+                        // formData.forEach((key, value) {
+                        //   // Append an extra identifier to each field in order to display the fields in the proper order in view past forms
+                        //   formDataWithUniqueIds['$key $extraIdentifier'] =
+                        //       value;
+                        //   extraIdentifier++;
+                        // });
+
                         print("On submission: $formData");
                         if (formData != null) {
                           formData = Map<String, dynamic>.from(formData);
@@ -86,6 +98,9 @@ class _FormPageState extends State<FormPage> {
                           strUrlList.clear();
                           widget.signatureURL.clear();
                           signatureController.clear();
+                          // Reset Identifers after submission
+                          extraIdentifier = 0;
+                          repeatableSectionExtraIdentifier = 100;
                           currentLoc = LatLng(0, 0);
                           // if (isSubmitted) {
                           // Form submission successful
@@ -137,7 +152,7 @@ class _FormPageState extends State<FormPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Color(0xFFC00205),
+                      primary: Color.fromRGBO(192, 2, 5, 1),
                       minimumSize: Size(250, 40),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
@@ -157,6 +172,9 @@ class _FormPageState extends State<FormPage> {
                   width: 300,
                   child: ElevatedButton(
                     onPressed: () {
+                      // Reset Identifers after submission
+                      extraIdentifier = 0;
+                      repeatableSectionExtraIdentifier = 100;
                       widget.signatureController.clear();
                       Navigator.of(context).pop();
                       strUrlList.clear();
@@ -165,7 +183,7 @@ class _FormPageState extends State<FormPage> {
                       currentLoc = LatLng(0, 0);
                     },
                     style: ElevatedButton.styleFrom(
-                        primary: Color(0xFFC00205),
+                        primary: Color.fromRGBO(192, 2, 5, 1),
                         minimumSize: Size(250, 40),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),

@@ -8,9 +8,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 class PictureWidget extends StatefulWidget {
   final String? controlName;
   const PictureWidget({
-    super.key,
+    Key? key,
     required this.controlName,
-  });
+  }) : super(key: key);
+
   @override
   State<PictureWidget> createState() => _PictureWidgetState();
 }

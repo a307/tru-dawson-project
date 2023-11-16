@@ -49,6 +49,8 @@ dependencies:
   geolocator: ^10.1.0
   shared_preferences: ^2.2.2
   crypt: ^4.3.1
+  tuple: ^2.0.2
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
@@ -81,6 +83,8 @@ flutter:
   assets:
     - lib/assets/dawson_logo.jpg
     - lib/assets/dawson_updated_logo.png
+    - lib/assets/DawsonGroup_background.jpg
+    - lib/assets/DG-Home-3-Large.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
