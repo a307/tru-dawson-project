@@ -20,9 +20,13 @@ class RepeatableSection extends StatefulWidget {
   _RepeatableSectionState createState() => _RepeatableSectionState();
 }
 
+int repeatableSectionExtraIdentifier =
+    100; // Needed for organizing form fields for view past forms
+
 class _RepeatableSectionState extends State<RepeatableSection>
     with AutomaticKeepAliveClientMixin {
-  List<Map<String, dynamic>> repeatableFields = [];
+  List<Map<String, dynamic>> repeatableSections = [];
+  List<List<Widget>> repeatableSectionListWidgets = [];
 
   // List to keep track of unique identifiers for each section
   List<String> sectionIdentifiers = [];
@@ -43,7 +47,9 @@ class _RepeatableSectionState extends State<RepeatableSection>
   // Function for adding a repeatable section
   void _addSection() {
     sectionIdentifiers.add(_generateIdentifier());
-    repeatableFields.add(widget.section);
+    repeatableSections.add(widget.section);
+    repeatableSectionListWidgets.add(_generateRepeatableFields(
+        repeatableSections.last, sectionIdentifiers.last));
   }
 
   // Function for removing the latest section that was added
@@ -79,8 +85,10 @@ class _RepeatableSectionState extends State<RepeatableSection>
     for (var question in section['questions']) {
       // Same logic as the generate fields functions
       var controlName = question['control']['meta_data']['control_name'];
+      print(
+          "Repeatable Section Extra Identifier Value for $controlName: $repeatableSectionExtraIdentifier \n\n");
       var fieldName =
-          "${question['control']['meta_data']['control_name']} $identifier";
+          "${question['control']['meta_data']['control_name']} $identifier $repeatableSectionExtraIdentifier";
       switch (question['control']['type']) {
         // Note: Signature case is not included here as it doesn't seem likely to be included in a repeatable section
         case 'date_field': // If the type is date_field, build a date field
@@ -339,6 +347,7 @@ class _RepeatableSectionState extends State<RepeatableSection>
             break;
           }
       }
+      repeatableSectionExtraIdentifier += 100;
     }
     return repeatableFields;
   }
@@ -348,11 +357,9 @@ class _RepeatableSectionState extends State<RepeatableSection>
     super.build(context);
     return Column(
       children: [
-        for (int index = 0; index < repeatableFields.length; index++)
-          ..._generateRepeatableFields(
-              repeatableFields[index],
-              sectionIdentifiers[
-                  index]), // Here the fields are added to the widget
+        for (int index = 0; index < repeatableSections.length; index++)
+          ...repeatableSectionListWidgets[
+              index], // Here the fields are added to the widget
         Row(
           mainAxisAlignment:
               MainAxisAlignment.center, // Optional: Align buttons to center

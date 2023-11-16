@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:signature/signature.dart';
 import 'package:tru_dawson_project/generation.dart';
+import 'package:tru_dawson_project/repeatable_section.dart';
+import 'package:tru_dawson_project/section.dart';
 import 'picture_widget.dart';
 
 class FormPage extends StatefulWidget {
@@ -58,20 +60,19 @@ class _FormPageState extends State<FormPage> {
                       if (isValid) {
                         Map<String, dynamic>? formData =
                             widget.fbKey.currentState?.value ?? {};
-                        Map<String, dynamic>? formDataWithUniqueIds = {};
+                        // Map<String, dynamic>? formDataWithUniqueIds = {};
 
-                        int extraIdentifier = 0;
-                        formData.forEach((key, value) {
-                          // Append an extra identifier to each field in order to display the fields in the proper order in view past forms
-                          formDataWithUniqueIds['$key $extraIdentifier'] =
-                              value;
-                          extraIdentifier++;
-                        });
+                        // int extraIdentifier = 0;
+                        // formData.forEach((key, value) {
+                        //   // Append an extra identifier to each field in order to display the fields in the proper order in view past forms
+                        //   formDataWithUniqueIds['$key $extraIdentifier'] =
+                        //       value;
+                        //   extraIdentifier++;
+                        // });
 
-                        print("On submission: $formDataWithUniqueIds");
-                        if (formDataWithUniqueIds != null) {
-                          formData =
-                              Map<String, dynamic>.from(formDataWithUniqueIds);
+                        print("On submission: $formData");
+                        if (formData != null) {
+                          formData = Map<String, dynamic>.from(formData);
                           for (var element in strUrlList) {
                             formData.putIfAbsent(
                                 element['name']!, () => element['url']);
@@ -86,6 +87,9 @@ class _FormPageState extends State<FormPage> {
                           strUrlList.clear();
                           widget.signatureURL.clear();
                           signatureController.clear();
+                          // Reset Identifers after submission
+                          extraIdentifier = 0;
+                          repeatableSectionExtraIdentifier = 100;
                           // if (isSubmitted) {
                           // Form submission successful
                           showDialog(
@@ -156,6 +160,9 @@ class _FormPageState extends State<FormPage> {
                   width: 300,
                   child: ElevatedButton(
                     onPressed: () {
+                      // Reset Identifers after submission
+                      extraIdentifier = 0;
+                      repeatableSectionExtraIdentifier = 100;
                       widget.signatureController.clear();
                       Navigator.of(context).pop();
                       strUrlList = [];
@@ -176,9 +183,4 @@ class _FormPageState extends State<FormPage> {
       ),
     );
   }
-}
-
-// Identifier will be a time string. This will ensure uniqueness everytime
-String _generateIdentifier() {
-  return DateTime.now().millisecondsSinceEpoch.toString();
 }

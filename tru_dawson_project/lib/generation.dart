@@ -47,7 +47,7 @@ Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
 
 dynamic globalResult;
 String globalEmail = "";
-List<String> globallist = []; 
+List<String> globallist = [];
 
 // dynamically create form list based on # of JSON forms pulled
 class Generator extends StatelessWidget {
@@ -111,7 +111,8 @@ class Generator extends StatelessWidget {
                 // Navigate to the User Settings page when the gear icon is pressed
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => ViewPastForms(globalEmail: globalEmail),
+                    builder: (context) =>
+                        ViewPastForms(globalEmail: globalEmail),
                     //builder: (context) => ViewPastForms(),
                   ),
                 );
@@ -204,8 +205,6 @@ List<Widget> generateForm(
     Map<String, dynamic>? form, GlobalKey<FormBuilderState> fbKey) {
   List<Widget> formFields = [];
 
-  //print(form);
-
   for (var page in form?['pages']) {
     // Loop through the pages in the form
     for (var section in page['sections']) {
@@ -223,6 +222,7 @@ Map<String, Widget> sections =
 List<Widget> generateSection(
     Map<String, dynamic> section, GlobalKey<FormBuilderState> fbKey) {
   List<Widget> sectionFields = [];
+
   // Loop through the sections on each page
   var label =
       section['label']; // Store the label for the section in the variable
