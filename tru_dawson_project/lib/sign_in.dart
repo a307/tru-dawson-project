@@ -28,8 +28,6 @@ Future<Map<String, SharedPreferences>> getSharedPreferences() async {
 }
 
 class _SignInState extends State<SignIn> {
-  dynamic variable = getJSON();
-
   @override
   Widget build(BuildContext context) {
     //Initialize form key, used for validation later on
@@ -120,6 +118,9 @@ class _SignInState extends State<SignIn> {
                                 false);
                           } else {
                             print('user has signed in');
+                            dynamic variable = await getJSON();
+                            // print("List: " + list.toString());
+                            // print("Separated" + separatedForms.toString());
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -199,6 +200,8 @@ class _SignInState extends State<SignIn> {
                           //attempt to sign in anonymously and get back result containing Uid
                           Map<String, SharedPreferences> sharedPreferences =
                               await getSharedPreferences();
+                          Map<String, SharedPreferences> sharedPreferencesSnap =
+                              await getSharedPreferencesSnap();
                           dynamic result = await auth.SignInEmailPassOffline(
                               emailTEC.text,
                               passwordTEC.text,
@@ -218,8 +221,17 @@ class _SignInState extends State<SignIn> {
                             Navigator.of(context)
                                 .push(MaterialPageRoute(builder: (context) {
                               return Material(
-                                  child: Generator(list, separatedForms, result,
-                                      auth, emailTEC.text));
+                                  child: Generator(
+                                      sharedPreferencesSnap["list"]!
+                                          .getStringList("list")!,
+                                      jsonDecode(sharedPreferencesSnap[
+                                                  "separatedForms"]!
+                                              .getString("separatedForms")!)
+                                          .cast<Map<String, dynamic>>()
+                                          .toList(),
+                                      result,
+                                      auth,
+                                      emailTEC.text));
                             }));
                           }
                           print("");
@@ -310,7 +322,7 @@ Future<Map<String, SharedPreferences>> getSharedPreferencesSnap() async {
   return {"separatedForms": separatedPref, "list": listPref};
 }
 
-getJSON() async {
+Future<bool?> getJSON() async {
   Map<String, SharedPreferences> sharedPreferences =
       await getSharedPreferencesSnap();
   try {
@@ -369,8 +381,10 @@ getJSON() async {
               .setString("separatedForms", json.encode(separatedForms));
           // print(separatedForms.toString());
           sharedPreferences["list"]!.setStringList("list", list);
+          return true;
         } else {
           print('No data available.');
+          return false;
         }
       }
     }
@@ -424,8 +438,10 @@ getJSON() async {
             .setString("separatedForms", json.encode(separatedForms));
         // print(separatedForms.toString());
         sharedPreferences["list"]!.setStringList("list", list);
+        return true;
       } else {
         print('No data available.');
+        return false;
       }
     }
   } on SocketException catch (_) {
@@ -437,7 +453,9 @@ getJSON() async {
         .toList();
     print(separatedForms);
     list = sharedPreferences["list"]!.getStringList("list")!;
+    return false;
   }
+  return false;
 }
 
 Map<String, dynamic> convertToMap(Map<Object?, Object?> original) {
