@@ -123,7 +123,6 @@ class _SignInState extends State<SignIn> {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
-                                  dynamic variable = getJSON();
                                   return Material(
                                       child: Generator(list, separatedForms,
                                           result, auth, emailTEC.text));
