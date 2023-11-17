@@ -200,6 +200,8 @@ class _SignInState extends State<SignIn> {
                           //attempt to sign in anonymously and get back result containing Uid
                           Map<String, SharedPreferences> sharedPreferences =
                               await getSharedPreferences();
+                          Map<String, SharedPreferences> sharedPreferencesSnap =
+                              await getSharedPreferencesSnap();
                           dynamic result = await auth.SignInEmailPassOffline(
                               emailTEC.text,
                               passwordTEC.text,
@@ -219,8 +221,15 @@ class _SignInState extends State<SignIn> {
                             Navigator.of(context)
                                 .push(MaterialPageRoute(builder: (context) {
                               return Material(
-                                  child: Generator(list, separatedForms, result,
-                                      auth, emailTEC.text));
+                                  child: Generator(
+                                      sharedPreferencesSnap["list"]!
+                                          .getStringList("list")!,
+                                      jsonDecode(sharedPreferencesSnap[
+                                              "separatedForms"]!
+                                          .getString("separatedForms")!),
+                                      result,
+                                      auth,
+                                      emailTEC.text));
                             }));
                           }
                           print("");
