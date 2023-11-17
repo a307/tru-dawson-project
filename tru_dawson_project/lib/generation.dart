@@ -64,135 +64,144 @@ class Generator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Dawson Group Reporting App', //made name not demo text haha
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: [
-        FormBuilderLocalizations.delegate,
-        ...GlobalMaterialLocalizations.delegates,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: FormBuilderLocalizations.supportedLocales,
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor:
-              Color(0xFFC00205), // Set the background color to #234094
-          title: const Text('Dawson Forms'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.logout),
-              tooltip: 'Sign Out',
-              onPressed: () {
-                Navigator.of(context).pop();
-                list.clear();
-                auth.SignOut();
-              },
-            ),
-            IconButton(
-              // user setting icon
-              icon: const Icon(Icons.settings),
-              tooltip: 'User Settings',
-              onPressed: () {
-                // Navigate to the User Settings page when the gear icon is pressed
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => UserSettingsPage(),
-                  ),
-                );
-              },
-            ),
-            IconButton(
-              // view past forms icon
-              icon: const Icon(Icons.access_time),
-              tooltip: 'View Past Forms',
-              onPressed: () {
-                //ViewPastForms vpf = ViewPastForms();
-                //vpf.getFormData('Equipment Inspection');
-                // Navigate to the User Settings page when the gear icon is pressed
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ViewPastForms(globalEmail: globalEmail),
-                    //builder: (context) => ViewPastForms(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-        body: ListView(
-          children: <Widget>[
-            for (String item in list) // number of forms = loop size
-              Column(
-                children: [
-                  // creation of individual form list for UI display (ie sign inspection, road inspection, etc)
-                  ListTile(
-                    trailing: const Icon(Icons.arrow_right_sharp),
-                    title: Text(item),
-                    onTap: () {
-                      // Everything that occurs here happens when one of the items is clicked/tapped on
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            try {
-                              Map<String, dynamic>? targetForm =
-                                  separatedForms?.firstWhere((formMap) {
-                                return formMap['metadata']['formName'] == item;
-                              });
-                              final GlobalKey<FormBuilderState> fbKey =
-                                  GlobalKey<FormBuilderState>();
-
-                              List<Widget> formFields =
-                                  generateForm(targetForm, fbKey);
-
-                              return FormPage(
-                                formName: item,
-                                formFields: formFields,
-                                fbKey: fbKey,
-                                globalEmail: globalEmail,
-                                signatureURL: signatureURL,
-                                signatureController: signatureController,
-                                //onsubmit function mentioned in FormPage, allows us to pass the data from the form into a a firebase submission function
-                                onSubmit: (formData) {
-                                  print('Form Data: $formData');
-                                  print('Submitting form data to Firebase...');
-                                  //get collection with name as the form name (item)
-                                  final CollectionReference collection =
-                                      FirebaseFirestore.instance
-                                          .collection(item);
-                                  //pass formData and collection to submission function
-                                  submitFormToFirebase(formData, collection);
-                                },
-                              );
-                            } catch (e, stacktrace) {
-                              print('$e Something Went wrong');
-                              //print('Stacktrace: ' + stacktrace.toString());
-                              return FormPage(
-                                formFields: [],
-                                formName: '',
-                                globalEmail: '',
-                                signatureURL: [],
-                                signatureController: SignatureController(),
-                                fbKey: GlobalKey<FormBuilderState>(),
-                                onSubmit: (formData) {
-                                  print('Form Data: $formData');
-                                  print('Submitting form data to Firebase...');
-                                  final CollectionReference collection =
-                                      FirebaseFirestore.instance
-                                          .collection(item);
-                                  submitFormToFirebase(formData, collection);
-                                },
-                              );
-                            }
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                  const Divider(), // Add a Divider() after each ListTile
-                ],
+    return WillPopScope(
+      onWillPop: () async {
+        list.clear();
+        return true;
+      },
+      child: MaterialApp(
+        title: 'Dawson Group Reporting App', //made name not demo text haha
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: [
+          FormBuilderLocalizations.delegate,
+          ...GlobalMaterialLocalizations.delegates,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: FormBuilderLocalizations.supportedLocales,
+        home: Scaffold(
+          appBar: AppBar(
+            backgroundColor:
+                Color(0xFFC00205), // Set the background color to #234094
+            title: const Text('Dawson Forms'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout),
+                tooltip: 'Sign Out',
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  list.clear();
+                  auth.SignOut();
+                },
               ),
-          ],
+              IconButton(
+                // user setting icon
+                icon: const Icon(Icons.settings),
+                tooltip: 'User Settings',
+                onPressed: () {
+                  // Navigate to the User Settings page when the gear icon is pressed
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => UserSettingsPage(),
+                    ),
+                  );
+                },
+              ),
+              IconButton(
+                // view past forms icon
+                icon: const Icon(Icons.access_time),
+                tooltip: 'View Past Forms',
+                onPressed: () {
+                  //ViewPastForms vpf = ViewPastForms();
+                  //vpf.getFormData('Equipment Inspection');
+                  // Navigate to the User Settings page when the gear icon is pressed
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ViewPastForms(globalEmail: globalEmail),
+                      //builder: (context) => ViewPastForms(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          body: ListView(
+            children: <Widget>[
+              for (String item in list) // number of forms = loop size
+                Column(
+                  children: [
+                    // creation of individual form list for UI display (ie sign inspection, road inspection, etc)
+                    ListTile(
+                      trailing: const Icon(Icons.arrow_right_sharp),
+                      title: Text(item),
+                      onTap: () {
+                        // Everything that occurs here happens when one of the items is clicked/tapped on
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              try {
+                                Map<String, dynamic>? targetForm =
+                                    separatedForms?.firstWhere((formMap) {
+                                  return formMap['metadata']['formName'] ==
+                                      item;
+                                });
+                                final GlobalKey<FormBuilderState> fbKey =
+                                    GlobalKey<FormBuilderState>();
+
+                                List<Widget> formFields =
+                                    generateForm(targetForm, fbKey);
+
+                                return FormPage(
+                                  formName: item,
+                                  formFields: formFields,
+                                  fbKey: fbKey,
+                                  globalEmail: globalEmail,
+                                  signatureURL: signatureURL,
+                                  signatureController: signatureController,
+                                  //onsubmit function mentioned in FormPage, allows us to pass the data from the form into a a firebase submission function
+                                  onSubmit: (formData) {
+                                    print('Form Data: $formData');
+                                    print(
+                                        'Submitting form data to Firebase...');
+                                    //get collection with name as the form name (item)
+                                    final CollectionReference collection =
+                                        FirebaseFirestore.instance
+                                            .collection(item);
+                                    //pass formData and collection to submission function
+                                    submitFormToFirebase(formData, collection);
+                                  },
+                                );
+                              } catch (e, stacktrace) {
+                                print('$e Something Went wrong');
+                                //print('Stacktrace: ' + stacktrace.toString());
+                                return FormPage(
+                                  formFields: [],
+                                  formName: '',
+                                  globalEmail: '',
+                                  signatureURL: [],
+                                  signatureController: SignatureController(),
+                                  fbKey: GlobalKey<FormBuilderState>(),
+                                  onSubmit: (formData) {
+                                    print('Form Data: $formData');
+                                    print(
+                                        'Submitting form data to Firebase...');
+                                    final CollectionReference collection =
+                                        FirebaseFirestore.instance
+                                            .collection(item);
+                                    submitFormToFirebase(formData, collection);
+                                  },
+                                );
+                              }
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    const Divider(), // Add a Divider() after each ListTile
+                  ],
+                ),
+            ],
+          ),
         ),
       ),
     );
