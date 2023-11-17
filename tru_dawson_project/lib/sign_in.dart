@@ -227,7 +227,8 @@ class _SignInState extends State<SignIn> {
                                       jsonDecode(sharedPreferencesSnap[
                                                   "separatedForms"]!
                                               .getString("separatedForms")!)
-                                          as List<Map<String, dynamic>>?,
+                                          .cast<Map<String, dynamic>>()
+                                          .toList(),
                                       result,
                                       auth,
                                       emailTEC.text));
