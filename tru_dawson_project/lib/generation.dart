@@ -22,7 +22,6 @@ import 'repeatable_section.dart';
 import 'section.dart';
 import 'form_page.dart';
 import 'package:signature/signature.dart';
-
 // List to hold all of the individual JSONs
 
 //Convert DataSnapshot to JSON map
@@ -83,10 +82,12 @@ class Generator extends StatelessWidget {
               tooltip: 'Sign Out',
               onPressed: () {
                 Navigator.of(context).pop();
+                list.clear();
                 auth.SignOut();
               },
             ),
-            IconButton( // user setting icon
+            IconButton(
+              // user setting icon
               icon: const Icon(Icons.settings),
               tooltip: 'User Settings',
               onPressed: () {
@@ -98,7 +99,8 @@ class Generator extends StatelessWidget {
                 );
               },
             ),
-             IconButton( // view past forms icon
+            IconButton(
+              // view past forms icon
               icon: const Icon(Icons.access_time),
               tooltip: 'View Past Forms',
               onPressed: () {

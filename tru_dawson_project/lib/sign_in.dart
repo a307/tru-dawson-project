@@ -27,8 +27,6 @@ Future<Map<String, SharedPreferences>> getSharedPreferences() async {
 }
 
 class _SignInState extends State<SignIn> {
-  dynamic variable = getJSON();
-
   @override
   Widget build(BuildContext context) {
     //Initialize form key, used for validation later on
@@ -119,9 +117,13 @@ class _SignInState extends State<SignIn> {
                                 false);
                           } else {
                             print('user has signed in');
+                            dynamic variable = await getJSON();
+                            // print("List: " + list.toString());
+                            // print("Separated" + separatedForms.toString());
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
+                                  dynamic variable = getJSON();
                                   return Material(
                                       child: Generator(list, separatedForms,
                                           result, auth, emailTEC.text));
@@ -309,7 +311,7 @@ Future<Map<String, SharedPreferences>> getSharedPreferencesSnap() async {
   return {"separatedForms": separatedPref, "list": listPref};
 }
 
-getJSON() async {
+Future<bool?> getJSON() async {
   Map<String, SharedPreferences> sharedPreferences =
       await getSharedPreferencesSnap();
   try {
@@ -368,8 +370,10 @@ getJSON() async {
               .setString("separatedForms", json.encode(separatedForms));
           // print(separatedForms.toString());
           sharedPreferences["list"]!.setStringList("list", list);
+          return true;
         } else {
           print('No data available.');
+          return false;
         }
       }
     }
@@ -423,8 +427,10 @@ getJSON() async {
             .setString("separatedForms", json.encode(separatedForms));
         // print(separatedForms.toString());
         sharedPreferences["list"]!.setStringList("list", list);
+        return true;
       } else {
         print('No data available.');
+        return false;
       }
     }
   } on SocketException catch (_) {
@@ -436,7 +442,9 @@ getJSON() async {
         .toList();
     print(separatedForms);
     list = sharedPreferences["list"]!.getStringList("list")!;
+    return false;
   }
+  return false;
 }
 
 Map<String, dynamic> convertToMap(Map<Object?, Object?> original) {
