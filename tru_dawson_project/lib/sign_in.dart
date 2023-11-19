@@ -333,7 +333,7 @@ Future<bool?> getJSON() async {
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         print('connected');
         //Connect to Firebase Real time database
-        final ref = FirebaseDatabase.instance.ref();
+        final ref = FirebaseDatabase.instance.ref().child("Dawson_Forms");
         //get instance of json
         final snapshot = await ref.get();
         //Convert DataSnapshot to JSON map (string of JSON form content)
@@ -391,7 +391,7 @@ Future<bool?> getJSON() async {
     //If web then dont check for internet connection
     else {
       //Connect to Firebase Real time database
-      final ref = FirebaseDatabase.instance.ref();
+      final ref = FirebaseDatabase.instance.ref().child("Dawson_Forms");
       //get instance of json
       final snapshot = await ref.get();
       //Convert DataSnapshot to JSON map (string of JSON form content)
