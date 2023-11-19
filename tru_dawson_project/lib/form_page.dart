@@ -33,167 +33,204 @@ class FormPage extends StatefulWidget {
 }
 
 class _FormPageState extends State<FormPage> {
+// When the back button is pressed, display an alert dialog
+  Future<bool> onBackPressed() async {
+    final shouldLeave = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Confirm'),
+        content: Text('Do you want to go back? Changes will be lost.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context)
+                .pop(false), // Dismiss dialog and do not leave the page
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              // If Yes is selected
+              extraIdentifier = 0;
+              repeatableSectionExtraIdentifier = 100;
+              strUrlList.clear();
+              widget.signatureURL.clear();
+              signatureController.clear();
+              currentLoc = LatLng(0, 0);
+
+              Navigator.of(context).pop(true);
+            }, // Dismiss dialog and leave the page
+            child: Text('Yes'),
+          ),
+        ],
+      ),
+    );
+
+    return shouldLeave ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor:
-            Color.fromRGBO(192, 2, 5, 1), // Set the background color to #234094
-        title: Text(widget.formName),
-      ),
-      body: FormBuilder(
-        key: widget.fbKey,
-        child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-          children: [
-            ...widget.formFields,
-            SizedBox(height: 20.0),
-            SizedBox(
-              child: Align(
-                alignment: Alignment.center,
-                child: Container(
-                  width: 300,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      bool isValid =
-                          widget.fbKey.currentState?.saveAndValidate() ?? false;
+    return WillPopScope(
+      onWillPop: onBackPressed,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color.fromRGBO(
+              192, 2, 5, 1), // Set the background color to #234094
+          title: Text(widget.formName),
+        ),
+        body: FormBuilder(
+          key: widget.fbKey,
+          child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            children: [
+              ...widget.formFields,
+              SizedBox(height: 20.0),
+              SizedBox(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    width: 300,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        bool isValid =
+                            widget.fbKey.currentState?.saveAndValidate() ??
+                                false;
 
-                      if (isValid) {
-                        Map<String, dynamic>? formData =
-                            widget.fbKey.currentState?.value ?? {};
-                        // Map<String, dynamic>? formDataWithUniqueIds = {};
+                        if (isValid) {
+                          Map<String, dynamic>? formData =
+                              widget.fbKey.currentState?.value ?? {};
+                          // Map<String, dynamic>? formDataWithUniqueIds = {};
 
-                        // int extraIdentifier = 0;
-                        // formData.forEach((key, value) {
-                        //   // Append an extra identifier to each field in order to display the fields in the proper order in view past forms
-                        //   formDataWithUniqueIds['$key $extraIdentifier'] =
-                        //       value;
-                        //   extraIdentifier++;
-                        // });
+                          // int extraIdentifier = 0;
+                          // formData.forEach((key, value) {
+                          //   // Append an extra identifier to each field in order to display the fields in the proper order in view past forms
+                          //   formDataWithUniqueIds['$key $extraIdentifier'] =
+                          //       value;
+                          //   extraIdentifier++;
+                          // });
 
-                        print("On submission: $formData");
-                        if (formData != null) {
-                          formData = Map<String, dynamic>.from(formData);
-                          for (var element in strUrlList) {
-                            formData.putIfAbsent(
-                                element['name']!, () => element['url']);
-                          }
-                          for (var element in widget.signatureURL) {
-                            formData.putIfAbsent(
-                                element['name']!, () => element['url']);
-                          }
-                          LatLng loc = LatLng(0, 0);
-                          if (currentLoc != loc) {
-                            formData.putIfAbsent(
-                                "Current Location",
-                                () =>
-                                    currentLoc.latitude.toString() +
-                                    ", " +
-                                    currentLoc.longitude.toString());
-                          }
-                          // formData.putIfAbsent("image", () => strUrl);
-                          // bool isSubmitted = widget.onSubmit(formData);
-                          widget.onSubmit(formData);
-                          strUrlList.clear();
-                          widget.signatureURL.clear();
-                          signatureController.clear();
-                          // Reset Identifers after submission
-                          extraIdentifier = 0;
-                          repeatableSectionExtraIdentifier = 100;
-                          currentLoc = LatLng(0, 0);
-                          // if (isSubmitted) {
-                          // Form submission successful
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                content: const Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      // green check icon
-                                      Icons.check_circle,
-                                      color: Colors.green,
-                                      size: 48.0,
-                                    ),
-                                    SizedBox(height: 16.0),
-                                    Text(
-                                      'Form Submission Successful',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.bold,
+                          print("On submission: $formData");
+                          if (formData != null) {
+                            formData = Map<String, dynamic>.from(formData);
+                            for (var element in strUrlList) {
+                              formData.putIfAbsent(
+                                  element['name']!, () => element['url']);
+                            }
+                            for (var element in widget.signatureURL) {
+                              formData.putIfAbsent(
+                                  element['name']!, () => element['url']);
+                            }
+                            LatLng loc = LatLng(0, 0);
+                            if (currentLoc != loc) {
+                              formData.putIfAbsent(
+                                  "Current Location",
+                                  () =>
+                                      currentLoc.latitude.toString() +
+                                      ", " +
+                                      currentLoc.longitude.toString());
+                            }
+                            // formData.putIfAbsent("image", () => strUrl);
+                            // bool isSubmitted = widget.onSubmit(formData);
+                            widget.onSubmit(formData);
+                            strUrlList.clear();
+                            widget.signatureURL.clear();
+                            signatureController.clear();
+                            // Reset Identifers after submission
+                            extraIdentifier = 0;
+                            repeatableSectionExtraIdentifier = 100;
+                            currentLoc = LatLng(0, 0);
+                            // if (isSubmitted) {
+                            // Form submission successful
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  content: const Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        // green check icon
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                        size: 48.0,
                                       ),
-                                    ),
-                                    SizedBox(height: 12.0),
-                                    Text(
-                                      'Your form has been submitted successfully.',
-                                      textAlign: TextAlign.center,
+                                      SizedBox(height: 16.0),
+                                      Text(
+                                        'Form Submission Successful',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 12.0),
+                                      Text(
+                                        'Your form has been submitted successfully.',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pop(); // Close the alert dialog
+                                      },
+                                      child: Text('OK'),
                                     ),
                                   ],
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                          .pop(); // Close the alert dialog
-                                    },
-                                    child: Text('OK'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
+                                );
+                              },
+                            );
+                          }
+                          //}
+                        } else {
+                          print('Form validation failed.');
                         }
-                        //}
-                      } else {
-                        print('Form validation failed.');
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Color.fromRGBO(192, 2, 5, 1),
-                      minimumSize: Size(250, 40),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            24), // Adjust the radius for roundness
-                      ),
-                    ),
-                    child: Text('Submit'),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 12.0),
-            SizedBox(
-              child: Align(
-                alignment: Alignment.center,
-                child: Container(
-                  width: 300,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Reset Identifers after submission
-                      extraIdentifier = 0;
-                      repeatableSectionExtraIdentifier = 100;
-                      widget.signatureController.clear();
-                      Navigator.of(context).pop();
-                      strUrlList.clear();
-                      widget.signatureURL.clear();
-                      signatureController.clear();
-                      currentLoc = LatLng(0, 0);
-                    },
-                    style: ElevatedButton.styleFrom(
+                      },
+                      style: ElevatedButton.styleFrom(
                         primary: Color.fromRGBO(192, 2, 5, 1),
                         minimumSize: Size(250, 40),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        )),
-                    child: Text('Go Back'),
+                          borderRadius: BorderRadius.circular(
+                              24), // Adjust the radius for roundness
+                        ),
+                      ),
+                      child: Text('Submit'),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+              SizedBox(height: 12.0),
+              SizedBox(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    width: 300,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Reset Identifers after submission
+                        extraIdentifier = 0;
+                        repeatableSectionExtraIdentifier = 100;
+                        widget.signatureController.clear();
+                        Navigator.of(context).pop();
+                        strUrlList.clear();
+                        widget.signatureURL.clear();
+                        signatureController.clear();
+                        currentLoc = LatLng(0, 0);
+                      },
+                      style: ElevatedButton.styleFrom(
+                          primary: Color.fromRGBO(192, 2, 5, 1),
+                          minimumSize: Size(250, 40),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          )),
+                      child: Text('Go Back'),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
