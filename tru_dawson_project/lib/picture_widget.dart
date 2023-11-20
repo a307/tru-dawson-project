@@ -7,25 +7,18 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class PictureWidget extends StatefulWidget {
   final String? controlName;
-  PictureWidget({
+  const PictureWidget({
     Key? key,
     required this.controlName,
   }) : super(key: key);
 
-  final GlobalKey<PictureWidgetState> key = GlobalKey();
-
-  void clearImage() {
-    key.currentState?.clearImage();
-  }
-
   @override
-  State<PictureWidget> createState() => PictureWidgetState();
+  State<PictureWidget> createState() => _PictureWidgetState();
 }
 
 String? selectedImageString;
 File? selectedFile;
 File? selectedFileChrome;
-
 // String strUrl = "monkey";
 List<Map<String, String>> strUrlList = [];
 Future<String> photoUpload() async {
@@ -50,9 +43,12 @@ Future<String> photoUpload() async {
   }
 }
 
-class PictureWidgetState extends State<PictureWidget> {
+class _PictureWidgetState extends State<PictureWidget>
+    with AutomaticKeepAliveClientMixin {
   @override
+  bool get wantKeepAlive => true;
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -136,17 +132,6 @@ class PictureWidgetState extends State<PictureWidget> {
         SizedBox(height: 20)
       ],
     );
-  }
-
-  // Used for clearing images when navigating
-  void clearImage() {
-    setState(() {
-      selectedImageString = null;
-      selectedFile = null;
-      selectedFileChrome = null;
-      strUrlList
-          .removeWhere((element) => element['name'] == widget.controlName);
-    });
   }
 
   Future _pickImageFromGallery() async {

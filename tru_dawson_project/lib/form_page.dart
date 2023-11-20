@@ -32,9 +32,6 @@ class FormPage extends StatefulWidget {
   _FormPageState createState() => _FormPageState();
 }
 
-List<PictureWidget> pictureWidgets =
-    []; // List for holding all of the picture widgets. Required for managing pictureWidget states
-
 class _FormPageState extends State<FormPage> {
 // When the back button is pressed, display an alert dialog
   Future<bool> onBackPressed() async {
@@ -58,13 +55,6 @@ class _FormPageState extends State<FormPage> {
               widget.signatureURL.clear();
               signatureController.clear();
               currentLoc = LatLng(0, 0);
-
-              for (var pictureWidget in pictureWidgets) {
-                pictureWidget
-                    .clearImage(); // Get rid of all of the pictures when navigating away
-              }
-
-              pictureWidgets.clear();
 
               Navigator.of(context).pop(true);
             }, // Dismiss dialog and leave the page
@@ -211,34 +201,34 @@ class _FormPageState extends State<FormPage> {
                 ),
               ),
               SizedBox(height: 12.0),
-              // SizedBox(
-              //   child: Align(
-              //     alignment: Alignment.center,
-              //     child: Container(
-              //       width: 300,
-              //       child: ElevatedButton(
-              //         onPressed: () {
-              //           // Reset Identifers after submission
-              //           extraIdentifier = 0;
-              //           repeatableSectionExtraIdentifier = 100;
-              //           widget.signatureController.clear();
-              //           Navigator.of(context).pop();
-              //           strUrlList.clear();
-              //           widget.signatureURL.clear();
-              //           signatureController.clear();
-              //           currentLoc = LatLng(0, 0);
-              //         },
-              //         style: ElevatedButton.styleFrom(
-              //             primary: Color.fromRGBO(192, 2, 5, 1),
-              //             minimumSize: Size(250, 40),
-              //             shape: RoundedRectangleBorder(
-              //               borderRadius: BorderRadius.circular(24),
-              //             )),
-              //         child: Text('Go Back'),
-              //       ),
-              //     ),
-              //   ),
-              // ),
+              SizedBox(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    width: 300,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Reset Identifers after submission
+                        extraIdentifier = 0;
+                        repeatableSectionExtraIdentifier = 100;
+                        widget.signatureController.clear();
+                        Navigator.of(context).pop();
+                        strUrlList.clear();
+                        widget.signatureURL.clear();
+                        signatureController.clear();
+                        currentLoc = LatLng(0, 0);
+                      },
+                      style: ElevatedButton.styleFrom(
+                          primary: Color.fromRGBO(192, 2, 5, 1),
+                          minimumSize: Size(250, 40),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          )),
+                      child: Text('Go Back'),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

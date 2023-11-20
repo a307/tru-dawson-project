@@ -3,7 +3,6 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:tru_dawson_project/google_map_field.dart';
 import 'picture_widget.dart';
 import 'package:signature/signature.dart';
-import 'form_page.dart';
 
 class RepeatableSection extends StatefulWidget {
   final dynamic section;
@@ -226,14 +225,8 @@ class _RepeatableSectionState extends State<RepeatableSection>
           }
         case 'picture':
           {
-            final GlobalKey<PictureWidgetState> key =
-                GlobalKey<PictureWidgetState>();
             //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
-            var pictureWidget =
-                PictureWidget(controlName: controlName, key: key);
-            repeatableFields.add(pictureWidget);
-            pictureWidgets.add(
-                pictureWidget); // Add the image to the pictureWidgets list. Required for resetting states while navigating.
+            repeatableFields.add(PictureWidget(controlName: fieldName));
             break;
           }
         case 'checkbox':

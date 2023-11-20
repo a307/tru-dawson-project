@@ -3,7 +3,6 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:tru_dawson_project/generation.dart';
 import 'package:tru_dawson_project/google_map_field.dart';
 import 'picture_widget.dart';
-import 'form_page.dart';
 import 'package:signature/signature.dart';
 
 class Section extends StatefulWidget {
@@ -183,14 +182,8 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
           }
         case 'picture':
           {
-            final GlobalKey<PictureWidgetState> key =
-                GlobalKey<PictureWidgetState>();
             //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
-            var pictureWidget =
-                PictureWidget(controlName: controlName, key: key);
-            fields.add(pictureWidget);
-            pictureWidgets.add(
-                pictureWidget); // Add the image to the pictureWidgets list. Required for resetting states while navigating.
+            fields.add(PictureWidget(controlName: fieldName));
             break;
           }
         case 'Signature': // If the type is signature, make signature box.
