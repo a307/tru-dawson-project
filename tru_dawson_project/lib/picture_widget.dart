@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+// ignore: must_be_immutable
 class PictureWidget extends StatefulWidget {
   final String? controlName;
   String? selectedImageString;
@@ -86,7 +87,6 @@ class _PictureWidgetState extends State<PictureWidget>
                 textColor: Colors.white,
                 child: const Text('Camera')),
             SizedBox(width: 10, height: 10),
-            //TODO clicking remove button removes photo from all upload fields
             MaterialButton(
                 onPressed: () {
                   setState(() {

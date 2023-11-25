@@ -207,6 +207,7 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                       ),
                       //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
                       child: Signature(
+                        controlName: fieldName,
                         height:
                             200, //you can make the field smaller by adjusting this
                         controller: signatureController,
@@ -219,7 +220,10 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                         tooltip: "Confirm your signature",
                         onPressed: () async {
                           if (signatureController.isNotEmpty) {
-                            final signature = await exportSignature();
+                            signatureURL.add({
+                              "name": fieldName,
+                              "url": await signatureUpload(signatureController)
+                            });
                           }
                         },
                         icon: Icon(Icons.check),
@@ -228,8 +232,8 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                         tooltip: "Clear your signature",
                         onPressed: () {
                           signatureController.clear();
-                          //TODO: fix removing all signatures
-                          signatureURL = [];
+                          signatureURL.removeWhere(
+                              (element) => element["name"] == fieldName);
                         },
                         icon: Icon(Icons.clear),
                         color: Colors.red),
