@@ -182,8 +182,9 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
           }
         case 'picture':
           {
+            final key = GlobalKey();
             //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
-            fields.add(PictureWidget(controlName: fieldName));
+            fields.add(PictureWidget(controlName: fieldName, key: key));
             break;
           }
         case 'Signature': // If the type is signature, make signature box.
