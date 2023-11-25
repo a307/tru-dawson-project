@@ -295,13 +295,6 @@ SignatureController signatureController = SignatureController(
 );
 
 List<Map<String, String>> signatureURL = [];
-Future<void> exportSignature() async {
-  int len = signatureURL.length;
-  signatureURL.add({
-    "name": "signature$len",
-    "url": await signatureUpload(signatureController)
-  });
-}
 
 Future<String> signatureUpload(SignatureController signature) async {
   String url = "";
