@@ -7,44 +7,51 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class PictureWidget extends StatefulWidget {
   final String? controlName;
-  const PictureWidget({
+  String? selectedImageString;
+  File? selectedFile;
+  File? selectedFileChrome;
+  PictureWidget({
     Key? key,
     required this.controlName,
+    this.selectedImageString,
+    this.selectedFile,
+    this.selectedFileChrome,
   }) : super(key: key);
 
   @override
   State<PictureWidget> createState() => _PictureWidgetState();
 }
 
-String? selectedImageString;
-File? selectedFile;
-File? selectedFileChrome;
-// String strUrl = "monkey";
+// String? selectedImageString;
+// File? selectedFile;
+// File? selectedFileChrome;
+
 List<Map<String, String>> strUrlList = [];
-Future<String> photoUpload() async {
-  String url = "";
-  final ref =
-      FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
-  if (!kIsWeb && selectedFile != null) {
-    TaskSnapshot task = await ref.putFile(selectedFile!);
-    await task;
-    return await ref.getDownloadURL();
-  } else if (kIsWeb && selectedFileChrome != null) {
-    try {
-      TaskSnapshot task =
-          await ref.putData(await XFile(selectedImageString!).readAsBytes());
-      return await task.ref.getDownloadURL();
-    } catch (error) {
-      print("Error uploading image: $error");
-      return "";
-    }
-  } else {
-    return "";
-  }
-}
 
 class _PictureWidgetState extends State<PictureWidget>
     with AutomaticKeepAliveClientMixin {
+  Future<String> photoUpload() async {
+    String url = "";
+    final ref =
+        FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
+    if (!kIsWeb && widget.selectedFile != null) {
+      TaskSnapshot task = await ref.putFile(widget.selectedFile!);
+      await task;
+      return await ref.getDownloadURL();
+    } else if (kIsWeb && widget.selectedFileChrome != null) {
+      try {
+        TaskSnapshot task = await ref
+            .putData(await XFile(widget.selectedImageString!).readAsBytes());
+        return await task.ref.getDownloadURL();
+      } catch (error) {
+        print("Error uploading image: $error");
+        return "";
+      }
+    } else {
+      return "";
+    }
+  }
+
   @override
   bool get wantKeepAlive => true;
   Widget build(BuildContext context) {
@@ -60,8 +67,8 @@ class _PictureWidgetState extends State<PictureWidget>
         Row(
           children: [
             MaterialButton(
-              onPressed: () {
-                _pickImageFromGallery();
+              onPressed: () async {
+                await _pickImageFromGallery();
               },
               color: Color(0xFF6F768A),
               textColor: Colors.white,
@@ -72,7 +79,7 @@ class _PictureWidgetState extends State<PictureWidget>
               height: 10,
             ),
             MaterialButton(
-                onPressed: () {
+                onPressed: () async {
                   _pickImageFromCamera();
                 },
                 color: Color(0xFF6F768A),
@@ -87,8 +94,8 @@ class _PictureWidgetState extends State<PictureWidget>
                         (element) => element["name"] == widget.controlName);
                     // print(strUrlList);
                     // print(widget.controlName);
-                    selectedImageString = null;
-                    selectedFile = null;
+                    widget.selectedImageString = null;
+                    widget.selectedFile = null;
                   });
                 },
                 color: Color(0xFF6F768A),
@@ -97,9 +104,9 @@ class _PictureWidgetState extends State<PictureWidget>
           ],
         ),
         //if the slected image string (chrome) isnt null and platform is web, get image using Image.Network, otherwise display empty sizedbox
-        selectedImageString != null && kIsWeb
+        widget.selectedImageString != null && kIsWeb
             ? Image.network(
-                selectedImageString!,
+                widget.selectedImageString!,
                 fit: BoxFit.contain,
                 //Make photo only 100x100
                 width: 100.0,
@@ -107,9 +114,9 @@ class _PictureWidgetState extends State<PictureWidget>
               )
             : SizedBox(height: 0),
         //if selected file (ios and android) isnt null and platform is android or ios, get image using Image.file, otherwise display empty sizedbox
-        selectedFile != null && !kIsWeb
+        widget.selectedFile != null && !kIsWeb
             ? Image.file(
-                selectedFile!,
+                widget.selectedFile!,
                 fit: BoxFit.contain,
                 //Make photo only 100x100
                 width: 100.0,
@@ -143,11 +150,11 @@ class _PictureWidgetState extends State<PictureWidget>
       setState(() {
         if (!kIsWeb) {
           //get selected file when on ios or android
-          selectedFile = File(returnedImage!.path);
+          widget.selectedFile = File(returnedImage!.path);
         } else if (kIsWeb) {
           //just get the path when on chrome
-          selectedFileChrome = File(returnedImage!.path);
-          selectedImageString = returnedImage!.path;
+          widget.selectedFileChrome = File(returnedImage!.path);
+          widget.selectedImageString = returnedImage!.path;
         }
       });
     }
@@ -162,11 +169,11 @@ class _PictureWidgetState extends State<PictureWidget>
       setState(() {
         if (!kIsWeb) {
           //get selected file when on ios or android
-          selectedFile = File(returnedImage!.path);
+          widget.selectedFile = File(returnedImage!.path);
         } else if (kIsWeb) {
           //just get the path when on chrome
-          selectedFileChrome = File(returnedImage!.path);
-          selectedImageString = returnedImage!.path;
+          widget.selectedFileChrome = File(returnedImage!.path);
+          widget.selectedImageString = returnedImage!.path;
         }
       });
     }
