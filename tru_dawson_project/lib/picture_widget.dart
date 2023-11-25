@@ -141,28 +141,6 @@ class _PictureWidgetState extends State<PictureWidget>
     );
   }
 
-  Future<String> photoUpload() async {
-    String url = "";
-    final ref =
-        FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
-    if (!kIsWeb && selectedFile != null) {
-      TaskSnapshot task = await ref.putFile(selectedFile!);
-      await task;
-      return await ref.getDownloadURL();
-    } else if (kIsWeb && selectedFileChrome != null) {
-      try {
-        TaskSnapshot task =
-            await ref.putData(await XFile(selectedImageString!).readAsBytes());
-        return await task.ref.getDownloadURL();
-      } catch (error) {
-        print("Error uploading image: $error");
-        return "";
-      }
-    } else {
-      return "";
-    }
-  }
-
   Future _pickImageFromGallery() async {
     //get image from gallery or file system
     final returnedImage =
