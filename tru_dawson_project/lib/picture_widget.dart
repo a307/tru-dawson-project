@@ -16,35 +16,14 @@ class PictureWidget extends StatefulWidget {
   State<PictureWidget> createState() => _PictureWidgetState();
 }
 
-String? selectedImageString;
-File? selectedFile;
-File? selectedFileChrome;
-// String strUrl = "monkey";
 List<Map<String, String>> strUrlList = [];
-Future<String> photoUpload() async {
-  String url = "";
-  final ref =
-      FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
-  if (!kIsWeb && selectedFile != null) {
-    TaskSnapshot task = await ref.putFile(selectedFile!);
-    await task;
-    return await ref.getDownloadURL();
-  } else if (kIsWeb && selectedFileChrome != null) {
-    try {
-      TaskSnapshot task =
-          await ref.putData(await XFile(selectedImageString!).readAsBytes());
-      return await task.ref.getDownloadURL();
-    } catch (error) {
-      print("Error uploading image: $error");
-      return "";
-    }
-  } else {
-    return "";
-  }
-}
 
 class _PictureWidgetState extends State<PictureWidget>
     with AutomaticKeepAliveClientMixin {
+  String? selectedImageString;
+  File? selectedFile;
+  File? selectedFileChrome;
+
   @override
   bool get wantKeepAlive => true;
   Widget build(BuildContext context) {
@@ -132,6 +111,28 @@ class _PictureWidgetState extends State<PictureWidget>
         SizedBox(height: 20)
       ],
     );
+  }
+
+  Future<String> photoUpload() async {
+    String url = "";
+    final ref =
+        FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
+    if (!kIsWeb && selectedFile != null) {
+      TaskSnapshot task = await ref.putFile(selectedFile!);
+      await task;
+      return await ref.getDownloadURL();
+    } else if (kIsWeb && selectedFileChrome != null) {
+      try {
+        TaskSnapshot task =
+            await ref.putData(await XFile(selectedImageString!).readAsBytes());
+        return await task.ref.getDownloadURL();
+      } catch (error) {
+        print("Error uploading image: $error");
+        return "";
+      }
+    } else {
+      return "";
+    }
   }
 
   Future _pickImageFromGallery() async {

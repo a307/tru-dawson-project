@@ -225,8 +225,10 @@ class _RepeatableSectionState extends State<RepeatableSection>
           }
         case 'picture':
           {
+            final key = GlobalKey();
             //add custom PictureWidget to the formfields with the controlName passed through to add to a title later
-            repeatableFields.add(PictureWidget(controlName: fieldName));
+            repeatableFields
+                .add(PictureWidget(controlName: fieldName, key: key));
             break;
           }
         case 'checkbox':
