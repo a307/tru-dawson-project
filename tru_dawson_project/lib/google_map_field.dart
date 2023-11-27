@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'google_map.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -96,7 +95,7 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
   Widget build(BuildContext context) {
     Set<Marker> mapMarker = {
       Marker(
-        markerId: MarkerId('current_location'),
+        markerId: const MarkerId('current_location'),
         position: widget.currentUserLocation,
         draggable: true,
         onDragEnd: (LatLng newLatLng) {
@@ -127,7 +126,7 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
           setState(() {
             mapMarker.clear();
             mapMarker.add(Marker(
-              markerId: MarkerId('current_location'),
+              markerId: const MarkerId('current_location'),
               position: latLng,
               onDragEnd: (LatLng newLatLng) {
                 widget.currentUserLocation = newLatLng;

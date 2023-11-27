@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:tru_dawson_project/google_map_field.dart';
 import 'picture_widget.dart';
-import 'package:signature/signature.dart';
 
 class RepeatableSection extends StatefulWidget {
   final dynamic section;
   final String uniqueKey;
   final GlobalKey<FormBuilderState> fbKey;
 
-  RepeatableSection(
+  const RepeatableSection(
       {required this.section,
       required this.uniqueKey,
       Key? key,
@@ -33,6 +32,7 @@ class _RepeatableSectionState extends State<RepeatableSection>
 
   @override
   bool get wantKeepAlive => true;
+  @override
   void initState() {
     super.initState();
     // Start with a default set of fields
@@ -101,13 +101,13 @@ class _RepeatableSectionState extends State<RepeatableSection>
                   decoration: InputDecoration(
                     labelText: controlName,
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
                   inputType: InputType.date,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
               ],
             ));
             break;
@@ -122,12 +122,12 @@ class _RepeatableSectionState extends State<RepeatableSection>
                   decoration: InputDecoration(
                     labelText: controlName,
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
                 ),
-                SizedBox(height: 20)
+                const SizedBox(height: 20)
               ],
             ));
             break;
@@ -140,13 +140,13 @@ class _RepeatableSectionState extends State<RepeatableSection>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(controlName),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 FormBuilderDropdown(
                   name: fieldName,
                   decoration: InputDecoration(
                     labelText: controlName,
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
@@ -157,7 +157,7 @@ class _RepeatableSectionState extends State<RepeatableSection>
                     );
                   }).toList(),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ));
             break;
@@ -175,24 +175,24 @@ class _RepeatableSectionState extends State<RepeatableSection>
               repeatableFields.add(Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   FormBuilderCheckboxGroup(
                     name: fieldName,
                     options: optionsList
                         .map((option) => FormBuilderFieldOption(
-                            value: option as String, // Cast option to String
+                            value: option, // Cast option to String
                             child: Text(
-                                option as String))) // Cast option to String
+                                option))) // Cast option to String
                         .toList(),
                     decoration: InputDecoration(
                       labelText: controlName,
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
+                        borderSide: const BorderSide(color: Colors.grey),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ));
             } else {
@@ -200,24 +200,24 @@ class _RepeatableSectionState extends State<RepeatableSection>
               repeatableFields.add(Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   FormBuilderCheckboxGroup(
                     name: fieldName,
                     options: optionsList
                         .map((option) => FormBuilderFieldOption(
-                            value: option as String, // Cast option to String
+                            value: option, // Cast option to String
                             child: Text(
-                                option as String))) // Cast option to String
+                                option))) // Cast option to String
                         .toList(),
                     decoration: InputDecoration(
                       labelText: controlName,
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
+                        borderSide: const BorderSide(color: Colors.grey),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ));
             }
@@ -237,24 +237,24 @@ class _RepeatableSectionState extends State<RepeatableSection>
             repeatableFields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 FormBuilderRadioGroup(
                   name: fieldName,
                   options: optionsList
                       .map((option) => FormBuilderFieldOption(
-                            value: option as String,
-                            child: Text(option as String),
+                            value: option,
+                            child: Text(option),
                           ))
                       .toList(),
                   decoration: InputDecoration(
                     labelText: controlName,
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ));
             break;
@@ -264,7 +264,7 @@ class _RepeatableSectionState extends State<RepeatableSection>
             repeatableFields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Pin is on your current location. Drag pin to edit.',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
@@ -280,7 +280,7 @@ class _RepeatableSectionState extends State<RepeatableSection>
                         ),
                       ),
                       //map :O
-                      child: MapField(),
+                      child: const MapField(),
                     ))
               ],
             ));
@@ -313,12 +313,12 @@ class _RepeatableSectionState extends State<RepeatableSection>
                     children: [
                       Text(
                         labelName,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 36),
                       ),
                       Text(
                         labelText,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 24),
                       ),
                     ],
@@ -367,7 +367,7 @@ class _RepeatableSectionState extends State<RepeatableSection>
               MainAxisAlignment.center, // Optional: Align buttons to center
           children: [
             Container(
-              padding: EdgeInsets.all(16.0), // Add space around the button
+              padding: const EdgeInsets.all(16.0), // Add space around the button
               child: ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -376,9 +376,9 @@ class _RepeatableSectionState extends State<RepeatableSection>
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(
-                      Color(0xFF6F768A)), // Make the button grey
+                      const Color(0xFF6F768A)), // Make the button grey
                 ),
-                child: Icon(Icons.add),
+                child: const Icon(Icons.add),
               ),
             ),
             // SizedBox(width: 10), // Space between buttons

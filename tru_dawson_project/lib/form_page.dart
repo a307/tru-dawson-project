@@ -38,13 +38,13 @@ class _FormPageState extends State<FormPage> {
     final shouldLeave = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Confirm'),
-        content: Text('Do you want to go back? Changes will be lost.'),
+        title: const Text('Confirm'),
+        content: const Text('Do you want to go back? Changes will be lost.'),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context)
                 .pop(false), // Dismiss dialog and do not leave the page
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
@@ -54,11 +54,11 @@ class _FormPageState extends State<FormPage> {
               strUrlList.clear();
               widget.signatureURL.clear();
               signatureController.clear();
-              currentLoc = LatLng(0, 0);
+              currentLoc = const LatLng(0, 0);
 
               Navigator.of(context).pop(true);
             }, // Dismiss dialog and leave the page
-            child: Text('Yes'),
+            child: const Text('Yes'),
           ),
         ],
       ),
@@ -73,21 +73,21 @@ class _FormPageState extends State<FormPage> {
       onWillPop: onBackPressed,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(
+          backgroundColor: const Color.fromRGBO(
               192, 2, 5, 1), // Set the background color to #234094
           title: Text(widget.formName),
         ),
         body: FormBuilder(
           key: widget.fbKey,
           child: ListView(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             children: [
               ...widget.formFields,
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               SizedBox(
                 child: Align(
                   alignment: Alignment.center,
-                  child: Container(
+                  child: SizedBox(
                     width: 300,
                     child: ElevatedButton(
                       onPressed: () {
@@ -109,102 +109,98 @@ class _FormPageState extends State<FormPage> {
                           // });
 
                           print("On submission: $formData");
-                          if (formData != null) {
-                            formData = Map<String, dynamic>.from(formData);
-                            for (var element in strUrlList) {
-                              formData.putIfAbsent(
-                                  element['name']!, () => element['url']);
-                            }
-                            for (var element in widget.signatureURL) {
-                              formData.putIfAbsent(
-                                  element['name']!, () => element['url']);
-                            }
-                            LatLng loc = LatLng(0, 0);
-                            if (currentLoc != loc) {
-                              formData.putIfAbsent(
-                                  "Current Location",
-                                  () =>
-                                      currentLoc.latitude.toString() +
-                                      ", " +
-                                      currentLoc.longitude.toString());
-                            }
-                            // formData.putIfAbsent("image", () => strUrl);
-                            // bool isSubmitted = widget.onSubmit(formData);
-                            widget.onSubmit(formData);
-                            strUrlList.clear();
-                            widget.signatureURL.clear();
-                            signatureController.clear();
-                            // Reset Identifers after submission
-                            extraIdentifier = 0;
-                            repeatableSectionExtraIdentifier = 100;
-                            currentLoc = LatLng(0, 0);
-                            // if (isSubmitted) {
-                            // Form submission successful
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  content: const Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        // green check icon
-                                        Icons.check_circle,
-                                        color: Colors.green,
-                                        size: 48.0,
+                          formData = Map<String, dynamic>.from(formData);
+                          for (var element in strUrlList) {
+                            formData.putIfAbsent(
+                                element['name']!, () => element['url']);
+                          }
+                          for (var element in widget.signatureURL) {
+                            formData.putIfAbsent(
+                                element['name']!, () => element['url']);
+                          }
+                          LatLng loc = const LatLng(0, 0);
+                          if (currentLoc != loc) {
+                            formData.putIfAbsent(
+                                "Current Location",
+                                () =>
+                                    "${currentLoc.latitude}, ${currentLoc.longitude}");
+                          }
+                          // formData.putIfAbsent("image", () => strUrl);
+                          // bool isSubmitted = widget.onSubmit(formData);
+                          widget.onSubmit(formData);
+                          strUrlList.clear();
+                          widget.signatureURL.clear();
+                          signatureController.clear();
+                          // Reset Identifers after submission
+                          extraIdentifier = 0;
+                          repeatableSectionExtraIdentifier = 100;
+                          currentLoc = const LatLng(0, 0);
+                          // if (isSubmitted) {
+                          // Form submission successful
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: const Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      // green check icon
+                                      Icons.check_circle,
+                                      color: Colors.green,
+                                      size: 48.0,
+                                    ),
+                                    SizedBox(height: 16.0),
+                                    Text(
+                                      'Form Submission Successful',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      SizedBox(height: 16.0),
-                                      Text(
-                                        'Form Submission Successful',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 12.0),
-                                      Text(
-                                        'Your form has been submitted successfully.',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context)
-                                            .pop(); // Close the alert dialog
-                                      },
-                                      child: Text('OK'),
+                                    ),
+                                    SizedBox(height: 12.0),
+                                    Text(
+                                      'Your form has been submitted successfully.',
+                                      textAlign: TextAlign.center,
                                     ),
                                   ],
-                                );
-                              },
-                            );
-                          }
-                          //}
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Close the alert dialog
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                                                  //}
                         } else {
                           print('Form validation failed.');
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Color.fromRGBO(192, 2, 5, 1),
-                        minimumSize: Size(250, 40),
+                        backgroundColor: const Color.fromRGBO(192, 2, 5, 1),
+                        minimumSize: const Size(250, 40),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                               24), // Adjust the radius for roundness
                         ),
                       ),
-                      child: Text('Submit'),
+                      child: const Text('Submit'),
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 12.0),
+              const SizedBox(height: 12.0),
               SizedBox(
                 child: Align(
                   alignment: Alignment.center,
-                  child: Container(
+                  child: SizedBox(
                     width: 300,
                     child: ElevatedButton(
                       onPressed: () {
@@ -216,15 +212,15 @@ class _FormPageState extends State<FormPage> {
                         strUrlList.clear();
                         widget.signatureURL.clear();
                         signatureController.clear();
-                        currentLoc = LatLng(0, 0);
+                        currentLoc = const LatLng(0, 0);
                       },
                       style: ElevatedButton.styleFrom(
-                          primary: Color.fromRGBO(192, 2, 5, 1),
-                          minimumSize: Size(250, 40),
+                          backgroundColor: const Color.fromRGBO(192, 2, 5, 1),
+                          minimumSize: const Size(250, 40),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(24),
                           )),
-                      child: Text('Go Back'),
+                      child: const Text('Go Back'),
                     ),
                   ),
                 ),

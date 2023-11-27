@@ -34,10 +34,10 @@ class _PictureWidgetState extends State<PictureWidget>
   Future<String> photoUpload() async {
     String url = "";
     final ref =
-        FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
+        FirebaseStorage.instance.ref("images/${DateTime.now()}");
     if (!kIsWeb && widget.selectedFile != null) {
       TaskSnapshot task = await ref.putFile(widget.selectedFile!);
-      await task;
+      task;
       return await ref.getDownloadURL();
     } else if (kIsWeb && widget.selectedFileChrome != null) {
       try {
@@ -55,27 +55,28 @@ class _PictureWidgetState extends State<PictureWidget>
 
   @override
   bool get wantKeepAlive => true;
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           "Picture", // Changed the name here to "Pictures" as it would display the appended identifier in repeatable sections
           textScaleFactor: 1.25,
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Row(
           children: [
             MaterialButton(
               onPressed: () async {
                 await _pickImageFromGallery();
               },
-              color: Color(0xFF6F768A),
+              color: const Color(0xFF6F768A),
               textColor: Colors.white,
               child: const Text('Gallery'),
             ),
-            SizedBox(
+            const SizedBox(
               width: 10,
               height: 10,
             ),
@@ -83,10 +84,10 @@ class _PictureWidgetState extends State<PictureWidget>
                 onPressed: () async {
                   _pickImageFromCamera();
                 },
-                color: Color(0xFF6F768A),
+                color: const Color(0xFF6F768A),
                 textColor: Colors.white,
                 child: const Text('Camera')),
-            SizedBox(width: 10, height: 10),
+            const SizedBox(width: 10, height: 10),
             MaterialButton(
                 onPressed: () {
                   setState(() {
@@ -98,7 +99,7 @@ class _PictureWidgetState extends State<PictureWidget>
                     widget.selectedFile = null;
                   });
                 },
-                color: Color(0xFF6F768A),
+                color: const Color(0xFF6F768A),
                 textColor: Colors.white,
                 child: const Text('Remove')),
           ],
@@ -112,7 +113,7 @@ class _PictureWidgetState extends State<PictureWidget>
                 width: 100.0,
                 height: 100.0,
               )
-            : SizedBox(height: 0),
+            : const SizedBox(height: 0),
         //if selected file (ios and android) isnt null and platform is android or ios, get image using Image.file, otherwise display empty sizedbox
         widget.selectedFile != null && !kIsWeb
             ? Image.file(
@@ -122,8 +123,8 @@ class _PictureWidgetState extends State<PictureWidget>
                 width: 100.0,
                 height: 100.0,
               )
-            : SizedBox(height: 0),
-        SizedBox(width: 10, height: 10),
+            : const SizedBox(height: 0),
+        const SizedBox(width: 10, height: 10),
         MaterialButton(
             onPressed: () {
               photoUpload().then((String result) {
@@ -133,10 +134,10 @@ class _PictureWidgetState extends State<PictureWidget>
                 });
               });
             },
-            color: Color(0xFF6F768A),
+            color: const Color(0xFF6F768A),
             textColor: Colors.white,
             child: const Text('Confirm Image')),
-        SizedBox(height: 20)
+        const SizedBox(height: 20)
       ],
     );
   }
@@ -150,11 +151,11 @@ class _PictureWidgetState extends State<PictureWidget>
       setState(() {
         if (!kIsWeb) {
           //get selected file when on ios or android
-          widget.selectedFile = File(returnedImage!.path);
+          widget.selectedFile = File(returnedImage.path);
         } else if (kIsWeb) {
           //just get the path when on chrome
-          widget.selectedFileChrome = File(returnedImage!.path);
-          widget.selectedImageString = returnedImage!.path;
+          widget.selectedFileChrome = File(returnedImage.path);
+          widget.selectedImageString = returnedImage.path;
         }
       });
     }
@@ -169,11 +170,11 @@ class _PictureWidgetState extends State<PictureWidget>
       setState(() {
         if (!kIsWeb) {
           //get selected file when on ios or android
-          widget.selectedFile = File(returnedImage!.path);
+          widget.selectedFile = File(returnedImage.path);
         } else if (kIsWeb) {
           //just get the path when on chrome
-          widget.selectedFileChrome = File(returnedImage!.path);
-          widget.selectedImageString = returnedImage!.path;
+          widget.selectedFileChrome = File(returnedImage.path);
+          widget.selectedImageString = returnedImage.path;
         }
       });
     }

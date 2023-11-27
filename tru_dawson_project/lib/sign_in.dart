@@ -1,16 +1,11 @@
 import 'package:crypt/crypt.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crypt/crypt.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tru_dawson_project/auth.dart';
-import 'package:tru_dawson_project/code_page.dart';
-import 'package:tru_dawson_project/database.dart';
 import 'package:tru_dawson_project/generation.dart';
-import 'package:tru_dawson_project/main.dart';
 import 'dart:io';
 import 'dart:convert';
 
@@ -31,7 +26,7 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     //Initialize form key, used for validation later on
-    final _formKey = GlobalKey<FormBuilderState>();
+    final formKey = GlobalKey<FormBuilderState>();
     //keep track of the options from the dropdown
     int? option;
     //Initilize instance of AuthService, used to create user with unique user id
@@ -49,17 +44,17 @@ class _SignInState extends State<SignIn> {
       body: SingleChildScrollView(
         // Wrap the content with SingleChildScrollView for scrolling when typing
         child: FormBuilder(
-          key: _formKey,
+          key: formKey,
           child: Column(
             children: [
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               Image.asset(
                 'lib/assets/dawson_updated_logo.png', //  dawson group logo image
                 width: 500,
               ),
               //Text("Emaill"),
-              SizedBox(height: 10.0),
-              Container(
+              const SizedBox(height: 10.0),
+              SizedBox(
                 width: 300,
                 child: FormBuilderTextField(
                   name: "email",
@@ -67,15 +62,15 @@ class _SignInState extends State<SignIn> {
                   decoration: InputDecoration(
                     labelText: "Email",
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               //Text("Password"),
-              Container(
+              SizedBox(
                 width: 300,
                 child: FormBuilderTextField(
                   name: "password",
@@ -84,20 +79,20 @@ class _SignInState extends State<SignIn> {
                   decoration: InputDecoration(
                     labelText: "Password",
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
                       onPressed: () async {
                         //Validate that forms are valid with the formkey
-                        if (_formKey.currentState!.saveAndValidate() == true) {
+                        if (formKey.currentState!.saveAndValidate() == true) {
                           //attempt to sign in anonymously and get back result containing Uid
                           dynamic result = await auth.SignInEmailPass(
                               emailTEC.text.trim(), passwordTEC.text.trim());
@@ -136,8 +131,8 @@ class _SignInState extends State<SignIn> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Color(0xFFC00205),
-                        minimumSize: Size(300, 45),
+                        backgroundColor: const Color(0xFFC00205),
+                        minimumSize: const Size(300, 45),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                               24), // Adjust the radius for roundness
@@ -153,7 +148,7 @@ class _SignInState extends State<SignIn> {
                   ElevatedButton(
                       onPressed: () async {
                         //Validate that forms are valid with the formkey
-                        if (_formKey.currentState!.saveAndValidate() == true) {
+                        if (formKey.currentState!.saveAndValidate() == true) {
                           //attempt to sign in anonymously and get back result containing Uid
                           dynamic result = await auth.SignUp(
                               emailTEC.text.trim(), passwordTEC.text.trim());
@@ -172,15 +167,15 @@ class _SignInState extends State<SignIn> {
                           print("");
                           //print out data in form
                           debugPrint(
-                              _formKey.currentState?.instantValue.toString() ??
+                              formKey.currentState?.instantValue.toString() ??
                                   '');
 
                           //Login to firebase
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Color(0xFFC00205),
-                        minimumSize: Size(300, 45),
+                        backgroundColor: const Color(0xFFC00205),
+                        minimumSize: const Size(300, 45),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                               24), // Adjust the radius for roundness
@@ -196,7 +191,7 @@ class _SignInState extends State<SignIn> {
                   ElevatedButton(
                       onPressed: () async {
                         //Validate that forms are valid with the formkey
-                        if (_formKey.currentState!.saveAndValidate() == true) {
+                        if (formKey.currentState!.saveAndValidate() == true) {
                           //attempt to sign in anonymously and get back result containing Uid
                           Map<String, SharedPreferences> sharedPreferences =
                               await getSharedPreferences();
@@ -248,8 +243,8 @@ class _SignInState extends State<SignIn> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Color(0xFFC00205),
-                        minimumSize: Size(300, 45),
+                        backgroundColor: const Color(0xFFC00205),
+                        minimumSize: const Size(300, 45),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                               24), // Adjust the radius for roundness
@@ -271,8 +266,8 @@ showAlertDialog(
     BuildContext context, String title, String content, bool isGood) {
   // Set up the icon based on isGood
   Icon icon = isGood
-      ? Icon(Icons.check, color: Colors.green, size: 48) // Green checkmark
-      : Icon(Icons.close, color: Colors.red, size: 48); // Red X symbol
+      ? const Icon(Icons.check, color: Colors.green, size: 48) // Green checkmark
+      : const Icon(Icons.close, color: Colors.red, size: 48); // Red X symbol
 
   // Set up the buttons
   Widget continueButton = TextButton(
@@ -287,12 +282,12 @@ showAlertDialog(
     content: Container(
       // Wrap the content in a Container
       constraints:
-          BoxConstraints(maxHeight: 200), // Adjust the maxHeight as needed
+          const BoxConstraints(maxHeight: 200), // Adjust the maxHeight as needed
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           icon, // Display the icon
-          SizedBox(height: 16), // Add spacing
+          const SizedBox(height: 16), // Add spacing
           Text(title),
           Text(content),
         ],

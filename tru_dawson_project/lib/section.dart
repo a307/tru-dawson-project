@@ -10,7 +10,7 @@ class Section extends StatefulWidget {
   final String uniqueKey;
   final GlobalKey<FormBuilderState> fbKey;
 
-  Section(
+  const Section(
       {required this.section,
       required this.uniqueKey,
       Key? key,
@@ -27,9 +27,6 @@ int extraIdentifier =
 class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
-  void initState() {
-    super.initState();
-  }
 
   // Identifier will be a time string. This will ensure uniqueness everytime
   String generateIdentifier() {
@@ -58,13 +55,13 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                   decoration: InputDecoration(
                     labelText: controlName,
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
                   inputType: InputType.date,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
               ],
             ));
             break;
@@ -79,12 +76,12 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                   decoration: InputDecoration(
                     labelText: controlName,
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
                 ),
-                SizedBox(height: 20)
+                const SizedBox(height: 20)
               ],
             ));
             break;
@@ -97,13 +94,13 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(controlName),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 FormBuilderDropdown(
                   name: fieldName,
                   decoration: InputDecoration(
                     labelText: controlName,
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
@@ -114,7 +111,7 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                     );
                   }).toList(),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ));
             break;
@@ -132,24 +129,24 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
               fields.add(Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   FormBuilderCheckboxGroup(
                     name: fieldName,
                     options: optionsList
                         .map((option) => FormBuilderFieldOption(
-                            value: option as String, // Cast option to String
+                            value: option, // Cast option to String
                             child: Text(
-                                option as String))) // Cast option to String
+                                option))) // Cast option to String
                         .toList(),
                     decoration: InputDecoration(
                       labelText: controlName,
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
+                        borderSide: const BorderSide(color: Colors.grey),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ));
             } else {
@@ -157,24 +154,24 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
               fields.add(Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   FormBuilderCheckboxGroup(
                     name: fieldName,
                     options: optionsList
                         .map((option) => FormBuilderFieldOption(
-                            value: option as String, // Cast option to String
+                            value: option, // Cast option to String
                             child: Text(
-                                option as String))) // Cast option to String
+                                option))) // Cast option to String
                         .toList(),
                     decoration: InputDecoration(
                       labelText: controlName,
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
+                        borderSide: const BorderSide(color: Colors.grey),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ));
             }
@@ -192,7 +189,7 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
             fields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Please provide your signature:',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
@@ -226,7 +223,7 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                             });
                           }
                         },
-                        icon: Icon(Icons.check),
+                        icon: const Icon(Icons.check),
                         color: Colors.green),
                     IconButton(
                         tooltip: "Clear your signature",
@@ -235,7 +232,7 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                           signatureURL.removeWhere(
                               (element) => element["name"] == fieldName);
                         },
-                        icon: Icon(Icons.clear),
+                        icon: const Icon(Icons.clear),
                         color: Colors.red),
                   ],
                 )
@@ -249,24 +246,24 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
             fields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 FormBuilderRadioGroup(
                   name: fieldName,
                   options: optionsList
                       .map((option) => FormBuilderFieldOption(
-                            value: option as String,
-                            child: Text(option as String),
+                            value: option,
+                            child: Text(option),
                           ))
                       .toList(),
                   decoration: InputDecoration(
                     labelText: controlName,
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ));
             break;
@@ -276,7 +273,7 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
             fields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Pin is on your current location. Drag pin to edit.',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
@@ -292,7 +289,7 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                         ),
                       ),
                       //map :O
-                      child: MapField(),
+                      child: const MapField(),
                     ))
               ],
             ));
@@ -325,12 +322,12 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                     children: [
                       Text(
                         labelName,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 36),
                       ),
                       Text(
                         labelText,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 24),
                       ),
                     ],

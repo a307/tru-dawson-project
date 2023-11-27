@@ -2,8 +2,6 @@
 //flutter pub add form_builder_validators
 //flutter pub add signature
 // ignore_for_file: prefer_const_literals_to_create_immutables
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -13,11 +11,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:tru_dawson_project/auth.dart';
-import 'package:tru_dawson_project/google_map_field.dart';
 import 'package:tru_dawson_project/sign_in.dart';
 import 'package:tru_dawson_project/view_past_forms.dart';
 import 'user_settings_page.dart';
-import 'picture_widget.dart';
 import 'repeatable_section.dart';
 import 'section.dart';
 import 'form_page.dart';
@@ -41,7 +37,7 @@ Map<String, dynamic>? dataSnapshotToMap(DataSnapshot? snapshot) {
     });
   }
 
-  return result as Map<String, dynamic>;
+  return result;
 }
 
 dynamic globalResult;
@@ -56,7 +52,7 @@ class Generator extends StatelessWidget {
   AuthService auth;
   String email;
   Generator(
-      this.list, this.separatedForms, this.result, this.auth, this.email) {
+      this.list, this.separatedForms, this.result, this.auth, this.email, {super.key}) {
     globalResult = result;
     globalEmail = email;
     globallist = list;
@@ -81,7 +77,7 @@ class Generator extends StatelessWidget {
         home: Scaffold(
           appBar: AppBar(
             backgroundColor:
-                Color(0xFFC00205), // Set the background color to #234094
+                const Color(0xFFC00205), // Set the background color to #234094
             title: const Text('Dawson Forms'),
             actions: [
               IconButton(
@@ -101,7 +97,7 @@ class Generator extends StatelessWidget {
                   // Navigate to the User Settings page when the gear icon is pressed
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => UserSettingsPage(),
+                      builder: (context) => const UserSettingsPage(),
                     ),
                   );
                 },
@@ -171,7 +167,7 @@ class Generator extends StatelessWidget {
                                     submitFormToFirebase(formData, collection);
                                   },
                                 );
-                              } catch (e, stacktrace) {
+                              } catch (e) {
                                 print('$e Something Went wrong');
                                 //print('Stacktrace: ' + stacktrace.toString());
                                 return FormPage(
@@ -240,13 +236,13 @@ List<Widget> generateSection(
     children: [
       Container(
         width: double.infinity,
-        padding: EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
-          color: Color(0xFFC00205), // Red header in forms
+          color: const Color(0xFFC00205), // Red header in forms
           borderRadius:
               BorderRadius.circular(12.0), // Adjust the radius for rounding
           boxShadow: [
-            BoxShadow(
+            const BoxShadow(
               color: Colors.grey, // Shadow color
               offset: Offset(0, 2), // Shadow offset
               blurRadius: 4, // Shadow blur radius
@@ -256,12 +252,12 @@ List<Widget> generateSection(
         child: Text(
           label,
           textScaleFactor: 1.25,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white, // Set the text color to white
           ),
         ),
       ),
-      SizedBox(height: 10)
+      const SizedBox(height: 10)
     ],
   ));
   String uniqueKey = DateTime.now()
@@ -299,7 +295,7 @@ List<Map<String, String>> signatureURL = [];
 Future<String> signatureUpload(SignatureController signature) async {
   String url = "";
   final ref =
-      FirebaseStorage.instance.ref("images/" + DateTime.now().toString());
+      FirebaseStorage.instance.ref("images/${DateTime.now()}");
 
   try {
     TaskSnapshot task = await ref.putData((await signature.toPngBytes())!);
@@ -318,6 +314,6 @@ void submitFormToFirebase(
   final databaseReference = FirebaseDatabase.instance.ref();
   //send data to the database with UID and formdata
   return collection
-      .doc(globalEmail + "--" + DateTime.now().toString())
+      .doc("$globalEmail--${DateTime.now()}")
       .set(formData);
 }

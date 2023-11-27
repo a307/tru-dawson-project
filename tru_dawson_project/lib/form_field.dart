@@ -24,12 +24,12 @@ class FormFieldWidget extends StatelessWidget {
         children: <Widget>[
           Text(
             '$fieldName:',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Image.network(
             '$value',
             width: 250,
@@ -45,14 +45,14 @@ class FormFieldWidget extends StatelessWidget {
         children: <Widget>[
           Text(
             '$fieldName: ',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
           Text(
             content,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.normal,
             ),

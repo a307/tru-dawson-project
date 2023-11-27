@@ -2,10 +2,9 @@
 //flutter pub add form_builder_validators
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart'; 
 import 'package:tru_dawson_project/sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'dart:io' show Platform;
@@ -42,7 +41,7 @@ void main() async {
       storageBucket: "gs://tru-dawson-project-2023.appspot.com",
     ));
   } else {
-    if (!(Firebase.apps.length == 0)) {
+    if (!(Firebase.apps.isEmpty)) {
       await Firebase.initializeApp(
           options: const FirebaseOptions(
         apiKey: 'AIzaSyChE23oQe0lYW_Y2TAKbCCjl1ox5yTikTc',
@@ -67,7 +66,7 @@ void main() async {
   //     ));
   LocationPermission permission;
   permission = await Geolocator.requestPermission();
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: SignIn(), //class
     debugShowCheckedModeBanner: false,
   ));

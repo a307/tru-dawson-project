@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'form_field.dart';
 import 'generation.dart';
 import 'package:intl/intl.dart'; // to turn the timestamp object back into a date
 import 'package:tuple/tuple.dart'; //to make tuples, for ordering "Inspector Name 5734892754893 1" -> tuple
 //this image package also has an instance of Color, which messes with everything. :/
 //import 'package:image/image.dart'; // to load the images of previous forms from firebase to display
-import 'picture_widget.dart';
 
 
 class ViewPastForms extends StatefulWidget {
   final String globalEmail;
 
-  ViewPastForms({required this.globalEmail});
+  const ViewPastForms({super.key, required this.globalEmail});
 
   @override
   _ViewPastFormsState createState() => _ViewPastFormsState();
@@ -29,8 +27,8 @@ class _ViewPastFormsState extends State<ViewPastForms> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(192, 2, 5, 1),
-        title: Text('Past Submitted Forms'),
+        backgroundColor: const Color.fromRGBO(192, 2, 5, 1),
+        title: const Text('Past Submitted Forms'),
         actions: [
           // Toggle switch to show all forms or only user-submitted forms
           Switch(
@@ -51,7 +49,7 @@ class _ViewPastFormsState extends State<ViewPastForms> {
         ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
@@ -113,7 +111,7 @@ class _ViewPastFormsState extends State<ViewPastForms> {
   String getFormType(QueryDocumentSnapshot formDocument) {
     // Extract form type from the document (you may need to adjust this based on your data structure)
     // Assuming the form type is encoded in the collection name
-    return formDocument.reference.parent?.id ?? 'Unknown';
+    return formDocument.reference.parent.id ?? 'Unknown';
   }
 }
 
@@ -121,7 +119,7 @@ class _ViewPastFormsState extends State<ViewPastForms> {
 class FormDetailsPage extends StatelessWidget {
   final QueryDocumentSnapshot formDocument;
 
-  FormDetailsPage(this.formDocument);
+  const FormDetailsPage(this.formDocument, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +128,7 @@ class FormDetailsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(192, 2, 5, 1),
+        backgroundColor: const Color.fromRGBO(192, 2, 5, 1),
         title: Text('Form Details - $formType'),
       ),
       body: Padding(
@@ -139,14 +137,14 @@ class FormDetailsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(formType, style: TextStyle(fontSize: 20,color: Colors.black),),
-              SizedBox(height: 8),
+              Text(formType, style: const TextStyle(fontSize: 20,color: Colors.black),),
+              const SizedBox(height: 8),
               Text('Date Submitted: ${extractDateFromFormId(formDocument.id) ?? 'N/A'}'),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text('Submitted by: ${extractEmailFromFormId(formDocument.id) ?? 'N/A'}'),
-              SizedBox(height: 16),
-              Text('Form Data:', style: TextStyle(fontSize: 20,color: Colors.black)),
-              SizedBox(height: 8),
+              const SizedBox(height: 16),
+              const Text('Form Data:', style: TextStyle(fontSize: 20,color: Colors.black)),
+              const SizedBox(height: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: _buildFormDataWidgets(formData),
@@ -182,9 +180,7 @@ formData.forEach((key, value) {
         } else {
           value = 'No image'; // Handle the case where the list is empty
         }
-      } else if (value == null) {
-        value = 'Field left blank.';
-      } 
+      } else value ??= 'Field left blank.'; 
       formFields.add(Tuple3(name, shortNumber, value));
   } else {
       // Handle cases where the regex doesn't match
@@ -211,11 +207,11 @@ List<Widget> styledWidgets = formFields.map((field) {
     Row(
       children: [
         Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Color.fromRGBO(192, 2, 5, 1),
+            color: const Color.fromRGBO(192, 2, 5, 1),
             borderRadius: BorderRadius.circular(9),
-            boxShadow: [
+            boxShadow: const [
             BoxShadow(
               color: Colors.grey, 
               offset: Offset(0, 2), 
@@ -225,25 +221,25 @@ List<Widget> styledWidgets = formFields.map((field) {
           ),
           child: Text(
             '${field.item1}:',
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white, // Set the text color for item1
               fontSize: 16,
             ),
           ),
         ),
-        SizedBox(width: 8), // Add some spacing between the two parts
+        const SizedBox(width: 8), // Add some spacing between the two parts
         Text(
           field.item3,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.black, // Set the text color for item3
             fontSize: 16,
           ),
         ),
       ],
     ),
-    SizedBox(height: 8), // Add some vertical spacing as a spacer
+    const SizedBox(height: 8), // Add some vertical spacing as a spacer
   ],
-);;
+);
 }).toList();
 
 return styledWidgets;
@@ -273,6 +269,6 @@ return styledWidgets;
   String getFormType(QueryDocumentSnapshot formDocument) {
     // Extract form type from the document (you may need to adjust this based on your data structure)
     // Assuming the form type is encoded in the collection name
-    return formDocument.reference.parent?.id ?? 'Unknown';
+    return formDocument.reference.parent.id ?? 'Unknown';
   }
 }
