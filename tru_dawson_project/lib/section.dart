@@ -208,7 +208,6 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                       ),
                       //clipRRect to hold signature field, doesn't allow draw outside box as opposed to container
                       child: Signature(
-                        controlName: fieldName,
                         height:
                             200, //you can make the field smaller by adjusting this
                         controller: signatureController,
