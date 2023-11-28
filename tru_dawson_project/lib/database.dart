@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+//TESTING, HOW TO USE FIRESTORE DATABASE
 class DatabaseService {
   final String uid;
   //Constructor to create DatabaseService instance with Uid as its only field

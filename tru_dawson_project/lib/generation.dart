@@ -53,6 +53,7 @@ class Generator extends StatelessWidget {
   String email;
   Generator(this.list, this.separatedForms, this.result, this.auth, this.email,
       {super.key}) {
+    //assign globals for using in other widgets
     globalResult = result;
     globalEmail = email;
     globallist = list;
@@ -60,8 +61,11 @@ class Generator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //listens for back button presses
     return WillPopScope(
+      //if back button on phone is pressed trigger this function
       onWillPop: () async {
+        //clear list and separated form data
         list.clear();
         separatedForms!.clear();
         return true;
@@ -172,6 +176,7 @@ class Generator extends StatelessWidget {
                               } catch (e) {
                                 print('$e Something Went wrong');
                                 //print('Stacktrace: ' + stacktrace.toString());
+                                //if error, initialize formpage with empty data
                                 return FormPage(
                                   formFields: [],
                                   formName: '',
@@ -179,6 +184,7 @@ class Generator extends StatelessWidget {
                                   signatureURL: [],
                                   signatureController: SignatureController(),
                                   fbKey: GlobalKey<FormBuilderState>(),
+                                  //provide onsubmit function for FormPage
                                   onSubmit: (formData) {
                                     print('Form Data: $formData');
                                     print(

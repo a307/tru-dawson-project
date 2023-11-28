@@ -53,12 +53,7 @@ class AuthService {
   Future SignInEmailPassOffline(
       String email, String password, String spEmail, String spPassword) async {
     try {
-      //Call signInWithEmailAndPassword to actually complete the sign in
-      // UserCredential result = await _auth.signInWithEmailAndPassword(
-      //     email: email.trim(), password: password);
-      // User? user = result.user;
-      // //Call function to get DawsonUser from FirebaseUser
-      // return _userFromFirebaseUser(user);
+      //if email and password from form matches sharedpreferences return the email
       if (email == spEmail && Crypt(spPassword).match(password)) {
         return email;
       } else {
@@ -69,6 +64,7 @@ class AuthService {
     }
   }
 
+//disconnect user from firebase
   void SignOut() async {
     await _auth.signOut();
     print('Signed out of Firebase');

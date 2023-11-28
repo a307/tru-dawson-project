@@ -26,23 +26,30 @@ class PictureWidget extends StatefulWidget {
 // String? selectedImageString;
 // File? selectedFile;
 // File? selectedFileChrome;
-
+//URL list, associated with fieldname
 List<Map<String, String>> strUrlList = [];
 
 class _PictureWidgetState extends State<PictureWidget>
     with AutomaticKeepAliveClientMixin {
   Future<String> photoUpload() async {
     String url = "";
-    final ref =
-        FirebaseStorage.instance.ref("images/${DateTime.now()}");
+    //get instance of firebase storage in images with todays date and time as the name of the image file
+    final ref = FirebaseStorage.instance.ref("images/${DateTime.now()}");
+    //if on IOS or Android and there is a selected file
     if (!kIsWeb && widget.selectedFile != null) {
+      //add file to firebase storage
       TaskSnapshot task = await ref.putFile(widget.selectedFile!);
       task;
+      //wait for URL to come back from storage
       return await ref.getDownloadURL();
-    } else if (kIsWeb && widget.selectedFileChrome != null) {
+    }
+    //if on web and theres a selected file
+    else if (kIsWeb && widget.selectedFileChrome != null) {
       try {
+        //upload image as bytes
         TaskSnapshot task = await ref
             .putData(await XFile(widget.selectedImageString!).readAsBytes());
+        //wait for URL to come back from storage
         return await task.ref.getDownloadURL();
       } catch (error) {
         print("Error uploading image: $error");
@@ -89,6 +96,7 @@ class _PictureWidgetState extends State<PictureWidget>
                 child: const Text('Camera')),
             const SizedBox(width: 10, height: 10),
             MaterialButton(
+                //if remove image button is pressed, remove URL from submission form and null out selected image data
                 onPressed: () {
                   setState(() {
                     strUrlList.removeWhere(
@@ -126,6 +134,7 @@ class _PictureWidgetState extends State<PictureWidget>
             : const SizedBox(height: 0),
         const SizedBox(width: 10, height: 10),
         MaterialButton(
+            //when confirm image is clicked, add URL and control name to the URL list above
             onPressed: () {
               photoUpload().then((String result) {
                 setState(() {
