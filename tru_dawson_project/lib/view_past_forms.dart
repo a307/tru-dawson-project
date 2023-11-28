@@ -241,9 +241,7 @@ class FormDetailsPage extends StatelessWidget {
               //if the slected image string (chrome) isnt null and platform is web, get image using Image.Network, otherwise display empty sizedbox
               //To get this to work we had to enable CORS, https://firebase.google.com/docs/storage/web/download-files#cors_configuration
               field.item3 != null &&
-                      field.item3
-                          .startsWith("https://firebasestorage.google") &&
-                      kIsWeb
+                      field.item3.startsWith("https://firebasestorage.google")
                   ? Image.network(
                       field.item3,
                       loadingBuilder: (BuildContext context, Widget child,
