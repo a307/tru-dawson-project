@@ -271,26 +271,6 @@ class FormDetailsPage extends StatelessWidget {
                         fontSize: 16,
                       ),
                     ),
-              // field.item3 != null &&
-              //         field.item3
-              //             .startsWith("https://firebasestorage.google") &&
-              //         kIsWeb
-              //     ? Container(
-              //         decoration: BoxDecoration(
-              //           image: DecorationImage(
-              //             image: NetworkImage(field.item3),
-              //             //whatever image you can put here
-              //             fit: BoxFit.cover,
-              //           ),
-              //         ),
-              //       )
-              //     : Text(
-              //         field.item3,
-              //         style: const TextStyle(
-              //           color: Colors.black, // Set the text color for item3
-              //           fontSize: 16,
-              //         ),
-              //       ),
             ],
           ),
           const SizedBox(height: 8), // Add some vertical spacing as a spacer

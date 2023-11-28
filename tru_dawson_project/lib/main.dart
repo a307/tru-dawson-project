@@ -16,6 +16,7 @@ List<Map<String, dynamic>>? separatedForms =
 void main() async {
   //Ensures flutter widgets are initialized
   WidgetsFlutterBinding.ensureInitialized();
+  //if app is running on the web (chrome) then run this firebase initilization setup
   if (kIsWeb) {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
@@ -26,9 +27,12 @@ void main() async {
       //Must be used to connect to Firebase Realtime database
       databaseURL:
           'https://tru-dawson-project-2023-default-rtdb.firebaseio.com/',
+      //storage bucket for images and signature images, must be here in order to use database
       storageBucket: "gs://tru-dawson-project-2023.appspot.com",
     ));
-  } else if (Platform.isAndroid) {
+  }
+  //if app is running on an android device, initialize using this firebase configuration
+  else if (Platform.isAndroid) {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
       apiKey: 'AIzaSyChE23oQe0lYW_Y2TAKbCCjl1ox5yTikTc',
@@ -38,9 +42,12 @@ void main() async {
       //Must be used to connect to Firebase Realtime database
       databaseURL:
           'https://tru-dawson-project-2023-default-rtdb.firebaseio.com/',
+      //storage bucket for images and signature images, must be here in order to use database
       storageBucket: "gs://tru-dawson-project-2023.appspot.com",
     ));
-  } else {
+  }
+  //if app is running on IOS, check to see if any other instances of firebase are running, if there isnt an instance run firebase config
+  else {
     if (!(Firebase.apps.isEmpty)) {
       await Firebase.initializeApp(
           options: const FirebaseOptions(
@@ -51,6 +58,7 @@ void main() async {
         //Must be used to connect to Firebase Realtime database
         databaseURL:
             'https://tru-dawson-project-2023-default-rtdb.firebaseio.com/',
+        //storage bucket for images and signature images, must be here in order to use database
         storageBucket: "gs://tru-dawson-project-2023.appspot.com",
       ));
     } else {
@@ -58,16 +66,14 @@ void main() async {
     }
   }
 
-  //Initialize Firebase
-
-  // FirebaseDatabase.instance.setPersistenceEnabled(true); // commented this out as chrome says it does not support it?
-  //Run Application starting with Generator as home
-  // runApp(MaterialApp(home: Generator(list, separatedForms) //class
-  //     ));
+  //request location permissions from user, to be used later with Maps API
   LocationPermission permission;
   permission = await Geolocator.requestPermission();
+
+  //start app with Sign in page as the home screen
   runApp(const MaterialApp(
     home: SignIn(), //class
+    //disable debug banner
     debugShowCheckedModeBanner: false,
   ));
 }

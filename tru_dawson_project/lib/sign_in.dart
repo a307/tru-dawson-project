@@ -16,9 +16,12 @@ class SignIn extends StatefulWidget {
   State<SignIn> createState() => _SignInState();
 }
 
+//Creates two instances of SharedPreferences, one for email, one for password. Used when signing in offline. User first signs in online and then they are allowed to sign in offline as the last person who signed in.
 Future<Map<String, SharedPreferences>> getSharedPreferences() async {
+  //Get shared preference instance
   final SharedPreferences emailPref = await SharedPreferences.getInstance();
   final SharedPreferences passwordPref = await SharedPreferences.getInstance();
+  //return map of sharedpreferences
   return {"email": emailPref, "password": passwordPref};
 }
 
@@ -36,11 +39,6 @@ class _SignInState extends State<SignIn> {
     final TextEditingController passwordTEC = TextEditingController();
 
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor:
-      //       Color(0xFFC00205), // Set the background color to #234094,
-      //   title: Text("Sign In"),
-      // ),
       body: SingleChildScrollView(
         // Wrap the content with SingleChildScrollView for scrolling when typing
         child: FormBuilder(
@@ -52,12 +50,12 @@ class _SignInState extends State<SignIn> {
                 'lib/assets/dawson_updated_logo.png', //  dawson group logo image
                 width: 500,
               ),
-              //Text("Emaill"),
               const SizedBox(height: 10.0),
               SizedBox(
                 width: 300,
                 child: FormBuilderTextField(
                   name: "email",
+                  //assign controller so the contents can be read later on
                   controller: emailTEC,
                   decoration: InputDecoration(
                     labelText: "Email",
@@ -75,6 +73,7 @@ class _SignInState extends State<SignIn> {
                 child: FormBuilderTextField(
                   name: "password",
                   obscureText: true,
+                  //assign controller so the contents can be read later on
                   controller: passwordTEC,
                   decoration: InputDecoration(
                     labelText: "Password",
@@ -93,17 +92,20 @@ class _SignInState extends State<SignIn> {
                       onPressed: () async {
                         //Validate that forms are valid with the formkey
                         if (formKey.currentState!.saveAndValidate() == true) {
-                          //attempt to sign in anonymously and get back result containing Uid
+                          //attempt to sign in using email and password and get back result containing Uid
                           dynamic result = await auth.SignInEmailPass(
                               emailTEC.text.trim(), passwordTEC.text.trim());
+                          //get shared preferences isntances for email and password
                           Map<String, SharedPreferences> sharedPreferences =
                               await getSharedPreferences();
+                          //assign shared preferences data
                           await sharedPreferences["email"]
                               ?.setString('email', emailTEC.text);
                           await sharedPreferences['password']?.setString(
                               'password',
+                              //hash password
                               Crypt.sha256(passwordTEC.text).toString());
-                          //If theres data print out the Uid
+                          //if no result (bad sign in) display error messsage
                           if (result == null) {
                             print('error signing in');
                             showAlertDialog(
@@ -113,13 +115,14 @@ class _SignInState extends State<SignIn> {
                                 false);
                           } else {
                             print('user has signed in');
+                            //if user signed in successfully, get JSON data from Firebase Realtime Database
                             dynamic variable = await getJSON();
-                            // print("List: " + list.toString());
-                            // print("Separated" + separatedForms.toString());
+                            //push main menu page to front
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
                                   return Material(
+                                      //supply generator with the list of forms, the data for each form, login result, auth result, and email
                                       child: Generator(list, separatedForms,
                                           result, auth, emailTEC.text));
                                 },
@@ -149,17 +152,16 @@ class _SignInState extends State<SignIn> {
                       onPressed: () async {
                         //Validate that forms are valid with the formkey
                         if (formKey.currentState!.saveAndValidate() == true) {
-                          //attempt to sign in anonymously and get back result containing Uid
+                          //attempt to sign up with email and password and get back result containing Uid
                           dynamic result = await auth.SignUp(
                               emailTEC.text.trim(), passwordTEC.text.trim());
-
-                          //If theres data print out the Uid
                           if (result == null) {
                             print('error signing up');
                             showAlertDialog(context, "Error Signing Up",
                                 "Please try again.", false);
                           } else {
                             print('user has signed up');
+                            //user has signed in successfully, prompt user to sign in with those credentials now
                             showAlertDialog(context, 'Successful Sign Up!',
                                 "Please press Sign In.", true);
                             print(result.uid);
@@ -192,18 +194,20 @@ class _SignInState extends State<SignIn> {
                       onPressed: () async {
                         //Validate that forms are valid with the formkey
                         if (formKey.currentState!.saveAndValidate() == true) {
-                          //attempt to sign in anonymously and get back result containing Uid
+                          //get email and password shared preferences
                           Map<String, SharedPreferences> sharedPreferences =
                               await getSharedPreferences();
+                          //get form data shared preferences
                           Map<String, SharedPreferences> sharedPreferencesSnap =
                               await getSharedPreferencesSnap();
+                          //sign in with credentials in inputs, and verify they match with shared preferences (last user log in)
                           dynamic result = await auth.SignInEmailPassOffline(
                               emailTEC.text,
                               passwordTEC.text,
                               sharedPreferences["email"]!.getString("email")!,
                               sharedPreferences["password"]!
                                   .getString("password")!);
-
+                          //users dont match
                           if (result == false) {
                             print('error signing in offline');
                             showAlertDialog(
@@ -211,11 +215,14 @@ class _SignInState extends State<SignIn> {
                                 "User Not Found!",
                                 "Email or password may be incorrect. \nDid you Sign Up?",
                                 false);
-                          } else {
+                          }
+                          //users match
+                          else {
                             print('user has signed in offline');
                             Navigator.of(context)
                                 .push(MaterialPageRoute(builder: (context) {
                               return Material(
+                                  //push generator to forfront and give it sharedpreferences formdata and list of forms, result from earlier, auth, and email from form
                                   child: Generator(
                                       sharedPreferencesSnap["list"]!
                                           .getStringList("list")!,
@@ -230,16 +237,6 @@ class _SignInState extends State<SignIn> {
                             }));
                           }
                           print("");
-                          //print out data in form
-                          // debugPrint(
-                          //     _formKey.currentState?.instantValue.toString() ??
-                          //         '');
-                          // print(
-                          //     sharedPreferences["email"]!.getString("email")!);
-                          // print(sharedPreferences["password"]!
-                          //     .getString("password")!);
-
-                          //Login to firebase
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -266,7 +263,8 @@ showAlertDialog(
     BuildContext context, String title, String content, bool isGood) {
   // Set up the icon based on isGood
   Icon icon = isGood
-      ? const Icon(Icons.check, color: Colors.green, size: 48) // Green checkmark
+      ? const Icon(Icons.check,
+          color: Colors.green, size: 48) // Green checkmark
       : const Icon(Icons.close, color: Colors.red, size: 48); // Red X symbol
 
   // Set up the buttons
@@ -281,8 +279,8 @@ showAlertDialog(
   AlertDialog alert = AlertDialog(
     content: Container(
       // Wrap the content in a Container
-      constraints:
-          const BoxConstraints(maxHeight: 200), // Adjust the maxHeight as needed
+      constraints: const BoxConstraints(
+          maxHeight: 200), // Adjust the maxHeight as needed
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -355,21 +353,11 @@ Future<bool?> getJSON() async {
 
         //Print data out if there is any
         if (snapshot.exists) {
-          //print whole file structure
-          //print(snapshot.value);
-
-          //print just form 0
-          //print(snapshot.child('form0').value);
-
           //Loop through forms
           for (int i = 0; i < snapshot.children.length; i++) {
             //print out form names from metadata, two ways, through snapshot or through map
             list.add(
                 snapshot.child('form$i/metadata/formName').value.toString());
-            //list.add(jsonMap?['form$i']['metadata']['formName']);
-
-            //print(snapshot.child('form$i/metadata/formName').value);
-            //print(jsonMap?['form$i']['metadata']['formName']);
           }
 
           sharedPreferences["separatedForms"]!
@@ -413,25 +401,17 @@ Future<bool?> getJSON() async {
 
       //Print data out if there is any
       if (snapshot.exists) {
-        //print whole file structure
-        //print(snapshot.value);
-
-        //print just form 0
-        //print(snapshot.child('form0').value);
-
         //Loop through forms
         for (int i = 0; i < snapshot.children.length; i++) {
           //print out form names from metadata, two ways, through snapshot or through map
           list.add(snapshot.child('form$i/metadata/formName').value.toString());
-          //list.add(jsonMap?['form$i']['metadata']['formName']);
-
-          //print(snapshot.child('form$i/metadata/formName').value);
-          //print(jsonMap?['form$i']['metadata']['formName']);
         }
 
+        //add form data to sharedpreferences in a json format
         sharedPreferences["separatedForms"]!
             .setString("separatedForms", json.encode(separatedForms));
         // print(separatedForms.toString());
+        //add list of forms to sharedpreferences
         sharedPreferences["list"]!.setStringList("list", list);
         return true;
       } else {
@@ -442,17 +422,20 @@ Future<bool?> getJSON() async {
   } on SocketException catch (_) {
     print('not connected');
     //print(sharedPreferences["separatedForms"]!.getString("separatedForms")!);
+    //if not connected get sharedpreferences and decode the data back into separated forms
     separatedForms = jsonDecode(
             sharedPreferences["separatedForms"]!.getString("separatedForms")!)
         .cast<Map<String, dynamic>>()
         .toList();
     print(separatedForms);
+    //get list from sharedpreferences
     list = sharedPreferences["list"]!.getStringList("list")!;
     return false;
   }
   return false;
 }
 
+//Convert Map<Object?, Object?> to Map<String, dynamic>
 Map<String, dynamic> convertToMap(Map<Object?, Object?> original) {
   Map<String, dynamic> converted = {};
   original.forEach((key, value) {

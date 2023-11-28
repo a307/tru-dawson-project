@@ -135,8 +135,7 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                     options: optionsList
                         .map((option) => FormBuilderFieldOption(
                             value: option, // Cast option to String
-                            child: Text(
-                                option))) // Cast option to String
+                            child: Text(option))) // Cast option to String
                         .toList(),
                     decoration: InputDecoration(
                       labelText: controlName,
@@ -160,8 +159,7 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                     options: optionsList
                         .map((option) => FormBuilderFieldOption(
                             value: option, // Cast option to String
-                            child: Text(
-                                option))) // Cast option to String
+                            child: Text(option))) // Cast option to String
                         .toList(),
                     decoration: InputDecoration(
                       labelText: controlName,
@@ -215,6 +213,7 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                   children: [
                     IconButton(
                         tooltip: "Confirm your signature",
+                        //upon confirming signatrure, it will be sent to firebase storage
                         onPressed: () async {
                           if (signatureController.isNotEmpty) {
                             signatureURL.add({
@@ -225,6 +224,7 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
                         },
                         icon: const Icon(Icons.check),
                         color: Colors.green),
+                    //clear the signature and remove from URL list
                     IconButton(
                         tooltip: "Clear your signature",
                         onPressed: () {
