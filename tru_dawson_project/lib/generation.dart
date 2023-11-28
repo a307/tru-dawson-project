@@ -51,8 +51,8 @@ class Generator extends StatelessWidget {
   dynamic result;
   AuthService auth;
   String email;
-  Generator(
-      this.list, this.separatedForms, this.result, this.auth, this.email, {super.key}) {
+  Generator(this.list, this.separatedForms, this.result, this.auth, this.email,
+      {super.key}) {
     globalResult = result;
     globalEmail = email;
     globallist = list;
@@ -63,6 +63,7 @@ class Generator extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         list.clear();
+        separatedForms!.clear();
         return true;
       },
       child: MaterialApp(
@@ -86,6 +87,7 @@ class Generator extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pop();
                   list.clear();
+                  separatedForms!.clear();
                   auth.SignOut();
                 },
               ),
@@ -294,8 +296,7 @@ List<Map<String, String>> signatureURL = [];
 
 Future<String> signatureUpload(SignatureController signature) async {
   String url = "";
-  final ref =
-      FirebaseStorage.instance.ref("images/${DateTime.now()}");
+  final ref = FirebaseStorage.instance.ref("images/${DateTime.now()}");
 
   try {
     TaskSnapshot task = await ref.putData((await signature.toPngBytes())!);
@@ -313,7 +314,5 @@ void submitFormToFirebase(
   // Initialize the Firebase database reference
   final databaseReference = FirebaseDatabase.instance.ref();
   //send data to the database with UID and formdata
-  return collection
-      .doc("$globalEmail--${DateTime.now()}")
-      .set(formData);
+  return collection.doc("$globalEmail--${DateTime.now()}").set(formData);
 }
