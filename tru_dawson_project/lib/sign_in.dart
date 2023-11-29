@@ -49,7 +49,7 @@ class _SignInState extends State<SignIn> {
               Image.asset(
                 'lib/assets/dawson_updated_logo.png', //  dawson group logo image
                 //width: 500,
-                width: MediaQuery.of(context).size.width * 0.3, // adjust for iphone
+                width: MediaQuery.of(context).size.width * 0.8, // adjust for iphone
               ),
               const SizedBox(height: 10.0),
               SizedBox(
