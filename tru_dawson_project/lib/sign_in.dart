@@ -48,7 +48,8 @@ class _SignInState extends State<SignIn> {
               const SizedBox(height: 20.0),
               Image.asset(
                 'lib/assets/dawson_updated_logo.png', //  dawson group logo image
-                width: 500,
+                //width: 500,
+                width: MediaQuery.of(context).size.width * 0.3, // adjust for iphone
               ),
               const SizedBox(height: 10.0),
               SizedBox(
