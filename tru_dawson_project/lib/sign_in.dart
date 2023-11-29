@@ -41,6 +41,8 @@ class _SignInState extends State<SignIn> {
     return Scaffold(
       body: SingleChildScrollView(
         // Wrap the content with SingleChildScrollView for scrolling when typing
+      child: Padding(
+      padding: EdgeInsets.only(top: 20.0), // Adjust the top padding as needed
         child: FormBuilder(
           key: formKey,
           child: Column(
@@ -255,7 +257,7 @@ class _SignInState extends State<SignIn> {
           ),
         ),
       ),
-    );
+    ));
   }
 }
 
