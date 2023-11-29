@@ -184,7 +184,7 @@ class _SectionState extends State<Section> with AutomaticKeepAliveClientMixin {
           }
         case 'Signature': // If the type is signature, make signature box.
           {
-            fieldName = "$fieldName 999999";
+            fieldName = fieldName + "99999";
             fields.add(Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
