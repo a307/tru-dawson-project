@@ -8,6 +8,7 @@ import 'package:tru_dawson_project/auth.dart';
 import 'package:tru_dawson_project/generation.dart';
 import 'dart:io';
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -51,7 +52,10 @@ class _SignInState extends State<SignIn> {
               Image.asset(
                 'lib/assets/dawson_updated_logo.png', //  dawson group logo image
                 //width: 500,
-                width: MediaQuery.of(context).size.width * 0.8, // adjust for iphone
+               // width: MediaQuery.of(context).size.width * 0.8, // adjust for iphone
+               width: kIsWeb
+                  ? MediaQuery.of(context).size.width * 0.3 // Adjust for web
+                  : MediaQuery.of(context).size.width * 0.8, // Adjust for iOS
               ),
               const SizedBox(height: 10.0),
               SizedBox(
