@@ -209,76 +209,106 @@ class FormDetailsPage extends StatelessWidget {
 //   return Text('${field.item1}: ${field.item3}');
 // }).toList();
 
-// Create styled widgets
-    List<Widget> styledWidgets = formFields.map((field) {
-      return Column(
-        children: [
-          Row(
+// Create stylized widgets
+List<Widget> styledWidgets = formFields.map((field) {
+  return Column(
+    children: [
+      // Red header row
+      Container(
+        decoration: BoxDecoration(
+          color: const Color.fromRGBO(192, 2, 5, 1),
+          borderRadius: BorderRadius.circular(8), // Set borderRadius for all corners
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey,
+              offset: Offset(0, 2),
+              blurRadius: 4,
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color.fromRGBO(192, 2, 5, 1),
-                  borderRadius: BorderRadius.circular(9),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(0, 2),
-                      blurRadius: 4,
-                    ),
-                  ],
-                ),
-                child: Text(
-                  '${field.item1}:',
-                  style: const TextStyle(
-                    color: Colors.white, // Set the text color for item1
-                    fontSize: 16,
-                  ),
+              Text(
+                '${field.item1}:',
+                style: const TextStyle(
+                  color: Colors.white, // Set the text color for item1
+                  fontSize: 16,
                 ),
               ),
-              const SizedBox(
-                  width: 8), // Add some spacing between the two parts
-              //if the slected image string (chrome) isnt null and platform is web, get image using Image.Network, otherwise display empty sizedbox
-              //To get this to work we had to enable CORS, https://firebase.google.com/docs/storage/web/download-files#cors_configuration
-              field.item3 != null &&
-                      field.item3.startsWith("https://firebasestorage.google")
-                  ? Image.network(
-                      field.item3,
-                      loadingBuilder: (BuildContext context, Widget child,
-                          ImageChunkEvent? loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child;
-                        } else {
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      (loadingProgress.expectedTotalBytes ?? 1)
-                                  : null,
-                            ),
-                          );
-                        }
-                      },
-                      fit: BoxFit.contain,
-                      //Make photo only 100x100
-                      width: 100.0,
-                      height: 100.0,
-                    )
-                  : Text(
-                      field.item3,
-                      style: const TextStyle(
-                        color: Colors.black, // Set the text color for item3
-                        fontSize: 16,
-                      ),
-                    ),
             ],
           ),
-          const SizedBox(height: 8), // Add some vertical spacing as a spacer
-        ],
-      );
-    }).toList();
+        ),
+      ),
+      // Line box below the header
+      Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(9),
+        ),
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        height: 1, // Adjust the height of the line box as needed
+      ),
+      // Data row inside an outlined box
+      Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+           borderRadius: BorderRadius.circular(9),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white,
+              offset: Offset(0, 2),
+              blurRadius: 4,
+            ),
+          ],
+        ),
+        margin: const EdgeInsets.all(8),
+        child: Row(
+          children: [
+            const SizedBox(width: 8), // Add some spacing
+            // Display image or text data
+            field.item3 != null &&
+                    field.item3.startsWith("https://firebasestorage.google")
+                ? Image.network(
+                    field.item3,
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child;
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    (loadingProgress.expectedTotalBytes ?? 1)
+                                : null,
+                          ),
+                        );
+                      }
+                    },
+                    fit: BoxFit.contain,
+                    // Make photo only 100x100
+                    width: 100.0,
+                    height: 100.0,
+                  )
+                : Text(
+                    field.item3,
+                    style: const TextStyle(
+                      color: Colors.black, // Set the text color for item3
+                      fontSize: 16,
+                    ),
+                  ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 8), // Add some vertical spacing as a spacer
+    ],
+  );
+}).toList();
 
-    return styledWidgets;
+return styledWidgets;
+
   }
 
   String? extractDateFromFormId(String formId) {
