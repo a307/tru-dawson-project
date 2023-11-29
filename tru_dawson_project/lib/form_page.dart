@@ -80,7 +80,8 @@ class _FormPageState extends State<FormPage> {
         body: FormBuilder(
           key: widget.fbKey,
           child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             children: [
               ...widget.formFields,
               const SizedBox(height: 20.0),
@@ -121,7 +122,12 @@ class _FormPageState extends State<FormPage> {
                           LatLng loc = const LatLng(0, 0);
                           if (currentLoc != loc) {
                             formData.putIfAbsent(
-                                "Current Location",
+                                "Current Location " +
+                                    DateTime.now()
+                                        .millisecondsSinceEpoch
+                                        .toString() +
+                                    " " +
+                                    extraIdentifier.toString(),
                                 () =>
                                     "${currentLoc.latitude}, ${currentLoc.longitude}");
                           }
@@ -178,7 +184,7 @@ class _FormPageState extends State<FormPage> {
                               );
                             },
                           );
-                                                  //}
+                          //}
                         } else {
                           print('Form validation failed.');
                         }
