@@ -22,7 +22,7 @@ Windows
 6. Navigate to main.dart and launch in debug mode.
 
 IOS/Mac
-1. https://docs.flutter.dev/get-started/install/macos and follow the guide for IOS installation.
+1. Go to https://docs.flutter.dev/get-started/install/macos and follow the guide for IOS installation.
 
 2. Download Visual Studio Code via https://code.visualstudio.com/download and select the mac option.
 
