@@ -19,4 +19,13 @@ Windows
 IOS
 
 
-FIREBASE
+Firebase
+1. Navigate to https://firebase.google.com/
+   
+3. Select "Go to Console".
+   
+4. Select "Add New Project".
+   
+5. Select "Create New Flutter Project" and go through setup.
+
+
