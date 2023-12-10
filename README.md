@@ -29,3 +29,5 @@ Firebase
 5. Select "Create New Flutter Project" and go through setup.
 
 
+CORS - For enabling retrieving photos and signatures from Firebase Storage
+https://firebase.google.com/docs/storage/web/download-files#cors_configuration
