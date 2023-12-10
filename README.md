@@ -2,6 +2,7 @@
 TRU Dawson Document Rendering Application for Capstone Project
 
 SUMMARY
+
 This is a cross-platform application built in Dart with the Flutter SDK with the goal of rendering form data into form fields. This is a proof-of-concept application to test out the capabilities of the Flutter framework by working on multiple platforms, automatically generating forms based on JSON data, submit data to a Firebase database, and retrieve from the Firebase database to view submitted data.
 
 INSTALL AND SETUP
