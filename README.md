@@ -21,8 +21,18 @@ Windows
 
 6. Navigate to main.dart and launch in debug mode.
 
-IOS
+IOS/Mac
+1. https://docs.flutter.dev/get-started/install/macos and follow the guide for IOS installation.
 
+2. Download Visual Studio Code via https://code.visualstudio.com/download and select the mac option.
+
+3. Download the project repo on Github and open the project file in Visual Studio Code.
+
+4. Upon Prompt run Flutter pub get (will appear at bottom right corner of screen).
+
+5. Upon Prompt run dart fix.
+
+6. Navigate to main.dart and launch in debug mode.
 
 Firebase
 1. Navigate to https://firebase.google.com/
